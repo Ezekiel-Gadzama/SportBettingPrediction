@@ -10,4 +10,5 @@ if __name__ == "__main__":
     # List all markets you want to scrape
     markets = ["Winner", "1st game - winner", "Correct Score"]
     scraper = MarketScraper(url, markets)
-    scraper.run()
+    csv_path = "UI_webscraping/Table_Tennis/live data.csv"
+    scraper.run(csv_path)

@@ -6,7 +6,11 @@ from datetime import datetime
 import time
 import sys
 import os
+from datetime import datetime, timedelta, timezone
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Define Nigeria's timezone
+NIGERIA_TZ = timezone(timedelta(hours=1))
 
 class FindMatch(SportyBetLoginBot):
     def __init__(self, url):
@@ -23,7 +27,15 @@ class FindMatch(SportyBetLoginBot):
             for match in match_elements:
                 try:
                     time_text = match.find_element(By.CLASS_NAME, "clock-time").text.strip()    
-                    match_time = datetime.strptime(time_text, "%H:%M")
+                    match_hour_minute = datetime.strptime(time_text, "%H:%M").time()
+
+                    # Get current date in Nigeria
+                    nigeria_now = datetime.now(NIGERIA_TZ)
+                    match_datetime = datetime.combine(nigeria_now.date(), match_hour_minute, tzinfo=NIGERIA_TZ)
+
+                    # Handle past match times that are actually scheduled for the next day
+                    if match_datetime < nigeria_now:
+                        match_datetime += timedelta(days=1)
 
                     home_player = match.find_element(By.CLASS_NAME, "home-team").text.strip()
                     away_player = match.find_element(By.CLASS_NAME, "away-team").text.strip()
@@ -35,7 +47,7 @@ class FindMatch(SportyBetLoginBot):
                     match_info = {
                         "home_player": home_player,
                         "away_player": away_player,
-                        "start_time": match_time,
+                        "start_time": match_datetime,
                         "home_odd": home_odd,
                         "away_odd": away_odd,
                         "element": match
@@ -47,27 +59,48 @@ class FindMatch(SportyBetLoginBot):
         except Exception as e:
             print(f"[ERROR] Failed to extract matches: {e}")
 
+
     def click_earliest_match(self):
         if not self.matches:
             print("[INFO] No matches found.")
-            return
+            return None
 
-        # Sort matches by time (earliest first)
         self.matches.sort(key=lambda x: x["start_time"])
         earliest_match = self.matches[0]
 
         print(f"[INFO] Clicking earliest match: {earliest_match['home_player']} vs {earliest_match['away_player']} at {earliest_match['start_time'].strftime('%H:%M')}")
 
-        # Scroll into view
         self.driver.execute_script("arguments[0].scrollIntoView();", earliest_match['element'])
 
         try:
-            # Try clicking a more specific inner element (like .teams)
             teams_element = earliest_match['element'].find_element(By.CLASS_NAME, "teams")
             self.driver.execute_script("arguments[0].click();", teams_element)
             print("[INFO] Click successful.")
         except Exception as e:
             print(f"[ERROR] Failed to click match: {e}")
+
+        return {
+            "home_player": earliest_match["home_player"],
+            "away_player": earliest_match["away_player"],
+            "start_time": earliest_match["start_time"].strftime("%Y-%m-%d %H:%M")
+        }
+    
+    def insert_live_into_url(self, url):
+        """
+        Inserts 'live' into the SportyBet URL path after the 'sport' segment.
+        Example:
+        https://www.sportybet.com/ng/sport/tableTennis/... ->
+        https://www.sportybet.com/ng/sport/live/tableTennis/...
+        """
+        url_parts = url.split('/')
+        if 'live' not in url_parts:
+            try:
+                sport_index = url_parts.index('sport')
+                url_parts.insert(sport_index + 2, 'live')
+                return '/'.join(url_parts)
+            except ValueError:
+                print("[WARN] 'sport' not found in the URL.")
+        return url
 
 
     def run_FindMatch(self):
@@ -77,9 +110,11 @@ class FindMatch(SportyBetLoginBot):
         time.sleep(5)  # Let the page load
 
         self.extract_matches()
-        self.click_earliest_match()
+        match_info = self.click_earliest_match()
+        current_url = self.driver.current_url
 
-        # Optional: Print match data for verification
-        for match in self.matches:
-            print(match)
+        self.url = self.insert_live_into_url(current_url)
+        print(f"[INFO] Updated URL: {self.url}")
+        self.driver.get(self.url)
+        return match_info
 
