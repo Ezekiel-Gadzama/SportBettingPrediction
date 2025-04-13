@@ -1,14 +1,14 @@
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from Login.login import SportyBetLoginBot
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
 import time
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-class SportyBetScraper(SportyBetLoginBot):
+class FindMatch(SportyBetLoginBot):
     def __init__(self, url):
         super().__init__(url)
         self.matches = []
@@ -57,10 +57,20 @@ class SportyBetScraper(SportyBetLoginBot):
         earliest_match = self.matches[0]
 
         print(f"[INFO] Clicking earliest match: {earliest_match['home_player']} vs {earliest_match['away_player']} at {earliest_match['start_time'].strftime('%H:%M')}")
-        self.driver.execute_script("arguments[0].scrollIntoView();", earliest_match['element'])
-        earliest_match['element'].click()
 
-    def run(self):
+        # Scroll into view
+        self.driver.execute_script("arguments[0].scrollIntoView();", earliest_match['element'])
+
+        try:
+            # Try clicking a more specific inner element (like .teams)
+            teams_element = earliest_match['element'].find_element(By.CLASS_NAME, "teams")
+            self.driver.execute_script("arguments[0].click();", teams_element)
+            print("[INFO] Click successful.")
+        except Exception as e:
+            print(f"[ERROR] Failed to click match: {e}")
+
+
+    def run_FindMatch(self):
         self.login()
         print("[INFO] Logged in, scraping matches now...")
 
@@ -73,7 +83,3 @@ class SportyBetScraper(SportyBetLoginBot):
         for match in self.matches:
             print(match)
 
-
-if __name__ == "__main__":
-    scraper = SportyBetScraper("https://www.sportybet.com/ng/sport/tableTennis/upcoming?time=0")  # login first
-    scraper.run()
