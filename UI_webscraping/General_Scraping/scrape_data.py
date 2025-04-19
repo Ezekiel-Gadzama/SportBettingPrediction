@@ -24,13 +24,145 @@ class MarketScraper(FindMatch):
         return wait.until(
             EC.presence_of_element_located((By.XPATH, f"//span[text()='{market_name}']"))
         )
+    
+    def find_market_without_waiting(self, market_name):
+        """Try to find a specific market section (e.g., 'Winner') without waiting."""
+        return self.driver.find_element(By.XPATH, f"//span[text()='{market_name}']")
+
+    
+    def get_match_id(self):
+        try:
+            current_url = self.driver.current_url
+            if "sr:match:" in current_url:
+                return current_url.split("sr:match:")[-1].split("/")[0]
+            else:
+                print("[WARNING] Match ID not found in URL.")
+                return "Unknown"
+        except Exception as e:
+            print(f"[ERROR] Failed to extract match ID: {e}")
+            return "Error"
+
+    
+    def extract_scores(self, sport_name: str, current_time: int) -> dict:
+        try:
+            if sport_name == "tableTennis":
+                return self.extract_table_tennis_scores(current_time)
+            elif sport_name == "football":
+                return self.extract_football_scores(current_time)
+            # Add more sports as needed
+            else:
+                print(f"[WARNING] No score extractor implemented for: {sport_name}")
+                return {}
+        except Exception as e:
+            print(f"[ERROR] Failed to extract scores for {sport_name}: ")
+            return {}
+        
+    def extract_table_tennis_scores(self, current_time: int) -> dict:
+        scores = {}
+
+        try:
+            # Find the scoreboard container
+            wrapper = self.driver.find_element(By.CLASS_NAME, "sr-lmt-plus__wrapper")
+
+            # Locate the total score column (where "T" is the title and the scores follow)
+            total_score_column = wrapper.find_element(By.CLASS_NAME, "sr-lmt-plus-pd-gen__col-total")
+            score_cells = total_score_column.find_elements(By.CLASS_NAME, "sr-lmt-plus-pd-scr__cell")
+
+            if len(score_cells) >= 2:
+                try:
+                    # Extract home and away scores
+                    home_score = int(score_cells[0].text)
+                    away_score = int(score_cells[1].text)
+                except ValueError:
+                    home_score = "N/A"
+                    away_score = "N/A"
+
+                scores["match_score_home"] = home_score
+                scores["match_score_away"] = away_score
+            else:
+                scores["match_score_home"] = "N/A"
+                scores["match_score_away"] = "N/A"
+
+            # Get set scores
+            set_count = 1
+            try:
+                set_columns = wrapper.find_elements(By.CLASS_NAME, "sr-lmt-plus-pd-gen__col")
+                for col in set_columns:
+                    try:
+                        cells = col.find_elements(By.CLASS_NAME, "sr-lmt-plus-pd-scr__cell")
+                        if len(cells) >= 2:
+                            home_set_text = cells[0].text.strip()
+                            away_set_text = cells[1].text.strip()
+
+                            try:
+                                scores[f"set_{set_count}_home_point"] = int(home_set_text)
+                            except ValueError:
+                                scores[f"set_{set_count}_home_point"] = "N/A"
+
+                            try:
+                                scores[f"set_{set_count}_away_point"] = int(away_set_text)
+                            except ValueError:
+                                scores[f"set_{set_count}_away_point"] = "N/A"
+
+                            set_count += 1
+                            if set_count > 5:
+                                break
+                    except Exception as e:
+                        print(f"[WARNING] Failed to extract set {set_count}: {e}")
+                        continue
+            except Exception as e:
+                print(f"[ERROR] extracting set scores: {e}")
+
+            # Pad with N/A if less than 5 sets were found
+            while set_count <= 5:
+                scores[f"set_{set_count}_home_point"] = "N/A"
+                scores[f"set_{set_count}_away_point"] = "N/A"
+                set_count += 1
+
+        except Exception as e:
+            print(f"[ERROR] extract_table_tennis_scores: {e}")
+
+        return scores
+    
+    def extract_football_scores(self, current_time: int) -> dict:
+        scores = {}
+
+        try:
+            # Find the result container
+            score_container = self.driver.find_element(By.CLASS_NAME, "sr-lmt-plus-scb__result")
+
+            # Extract the individual team scores
+            home_score_element = score_container.find_element(By.CLASS_NAME, "srm-team1")
+            away_score_element = score_container.find_element(By.CLASS_NAME, "srm-team2")
+
+            try:
+                home_score = int(home_score_element.text.strip())
+            except ValueError:
+                home_score = "N/A"
+
+            try:
+                away_score = int(away_score_element.text.strip())
+            except ValueError:
+                away_score = "N/A"
+
+            scores["match_score_home"] = home_score
+            scores["match_score_away"] = away_score
+
+        except Exception as e:
+            print(f"[ERROR] extract_football_scores: {e}")
+            scores["match_score_home"] = "N/A"
+            scores["match_score_away"] = "N/A"
+
+        return scores
+
+
 
     def extract_market_odds(self, market_name):
-        """General method to extract odds for a given market."""
+        """Extract and convert odds for a given market to implied probabilities."""
         try:
             with self.lock:  # thread-safe access to the driver
                 print(f"[INFO] Searching for '{market_name}' market...")
-                market_header = self.wait_for_market(market_name)
+                market_header = self.find_market_without_waiting(market_name)
 
                 wrapper = market_header.find_element(
                     By.XPATH, "./ancestor::div[contains(@class, 'm-table__wrapper')]"
@@ -44,72 +176,248 @@ class MarketScraper(FindMatch):
                     items = cell.find_elements(By.CLASS_NAME, "m-table-cell-item")
                     if len(items) >= 2:
                         label = items[0].text.strip()
-                        odd = items[1].text.strip()
-                        market_odds.append((label, odd))
+                        odd_str = items[1].text.strip()
+                        try:
+                            odd = float(odd_str)
+                            market_odds.append((label, odd))
+                        except ValueError:
+                            print(f"[WARNING] Skipping invalid odd: {odd_str}")
+                            market_odds[label] = "N/A"
 
-            self.scraped_data[market_name] = market_odds
-            print(f"[INFO] Market: {market_name}")
+            # Calculate implied probabilities and normalize
+            total_inverse = sum(1 / odd for _, odd in market_odds if odd > 0)
+            market_probs = []
             for label, odd in market_odds:
-                print(f"  {label}: {odd}")
+                if odd > 0:
+                    implied_prob = (1 / odd) / total_inverse
+                    market_probs.append((label, round(implied_prob, 4)))  # Rounded for readability
+
+            self.scraped_data[market_name] = market_probs
+            print(f"[INFO] Market: {market_name}")
+            for label, prob in market_probs:
+                print(f"  {label}: {prob:.2%}")  # Display as percentage for easier reading
 
         except Exception as e:
-            print(f"[ERROR] Failed to extract {market_name} market: {e}")
+            print(f"[ERROR] Failed to extract {market_name} market:")
 
 
-    def extract_multiple_markets(self, market_list):
-        """Extract markets in parallel using threads."""
-        with ThreadPoolExecutor(max_workers=len(market_list)) as executor:
-            futures = [executor.submit(self.extract_market_odds, market) for market in market_list]
+    def extract_data(self, market_list, sport_name, current_time):
+        """Extract markets and scores in parallel using threads."""
+        futures = []
+        with ThreadPoolExecutor(max_workers=len(market_list) + 1) as executor:
+            # Submit market scraping tasks
+            futures.extend(executor.submit(self.extract_market_odds, market) for market in market_list)
+            # Submit score extraction as an additional task
+            futures.append(executor.submit(self.extract_scores, sport_name, current_time))
+
+            results = {}
             for future in as_completed(futures):
                 try:
-                    future.result()  # Raise any exceptions
+                    result = future.result()
+                    if isinstance(result, dict):
+                        results.update(result)
                 except Exception as e:
                     print(f"[THREAD ERROR] {e}")
+        
+        return results
+    
+    def has_data_changed(self, current_data, previous_data):
+        """Compare current data with previous data, ignoring timestamp."""
+        if previous_data is None:
+            return True
+            
+        # Compare all fields except timestamp
+        keys_to_compare = [k for k in current_data.keys() if k != "Timestamp"]
+        for key in keys_to_compare:
+            if key not in previous_data or current_data[key] != previous_data[key]:
+                return True
+        return False
+    
+    def is_match_ended(self):
+        """Check if the match has ended by looking for the 'Ended' div."""
+        try:
+            # Find the div with class 'srm-is-uppercase'
+            ended_div = self.driver.find_element(By.CLASS_NAME, "srm-is-uppercase")
+            
+            # Check if its text is "Ended" (case-insensitive)
+            if "ended" in ended_div.text.strip().lower():
+                return True
+        except Exception as e:
+            pass  # Element not found, match hasn't ended
+        
+        return False
+    
+    def _write_complete_row(self, fieldnames: list, row_data: dict, file_path: str):
+        """
+        Writes a complete row of data to the specified CSV file.
+        Automatically adds new columns if they are not already in the CSV.
+        """
+        file_exists = os.path.isfile(file_path)
+
+        # If file exists, read existing header
+        existing_fieldnames = None
+        if file_exists:
+            with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+                reader = csv.DictReader(file)
+                existing_fieldnames = reader.fieldnames or []
+
+        # Handle case where existing_fieldnames is None
+        if existing_fieldnames is None:
+            existing_fieldnames = []
+
+        # Detect and add new columns if any
+        new_columns = [col for col in fieldnames if col not in existing_fieldnames]
+        all_columns = existing_fieldnames + [col for col in fieldnames if col not in existing_fieldnames]
+
+        if new_columns:
+            print(f"[INFO] New columns detected: {set(new_columns)}")
+
+            # Read old data
+            old_data = []
+            if file_exists:
+                with open(file_path, mode='r', newline='', encoding='utf-8') as file:
+                    reader = csv.DictReader(file)
+                    old_data = list(reader)
+
+            # Write new file with updated headers
+            with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.DictWriter(file, fieldnames=all_columns)
+                writer.writeheader()
+
+                # Rewrite old data
+                for row in old_data:
+                    # Fill missing new fields with "N/A"
+                    for col in new_columns:
+                        row[col] = "N/A"
+                    writer.writerow(row)
+
+        # Write the new row
+        with open(file_path, mode='a', newline='', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames=all_columns)
+            # Ensure all required fields are in the row
+            complete_row = {col: row_data.get(col, "N/A") for col in all_columns}
+            writer.writerow(complete_row)
 
 
-    def run(self, live_data_csv, duration=5):
-        match_info = self.run_FindMatch()
-        print("[INFO] Logged in and match clicked.")
-        time.sleep(duration)
-
-        # Base info (match details)
-        base_row = {
-            "Team A": match_info["home_player"],
-            "Team B": match_info["away_player"],
-            "Start Time": match_info["start_time"],
-        }
-
-        start_time = time.time()
-        collected_data = {}  # this will be the evolving dictionary of all columns
+    def run(self, sport_name: str):
+        # Create folders and paths
+        folder = os.path.join("Database", "Data")
+        os.makedirs(folder, exist_ok=True)
+        long_path = os.path.join(folder, f"{sport_name.lower().replace(' ', '_')}_long_format.csv")
 
         while True:
-            current_time = int(time.time() - start_time)
-            print(f"[INFO] Scraping at +{current_time}s")
+            # Match setup - get new match info
+            match_info = self.run_FindMatch()
+            print("[INFO] Logged in and match clicked.")
+            match_id = self.get_match_id()
 
-            self.scraped_data.clear()
-            self.extract_multiple_markets(self.markets_to_scrape)
+            # Base row with match information - now includes match_finished
+            base_row = {
+                "Match ID": match_id,
+                "Team A": match_info["home_player"],
+                "Team B": match_info["away_player"],
+                "Start Time": match_info["start_time"],
+                "match_finished": False
+            }
 
-            # Add scraped values with dynamic keys (e.g., winner_home_0s, etc.)
-            for market, outcomes in self.scraped_data.items():
-                for label, odd in outcomes:
-                    if not label:  # skip empty labels
+            start_time = time.time()
+            collected_data = {}
+            previous_data = None
+            refresh_count = 0
+            same_data_count = 0
+            MAX_REFRESHES = 3
+            WRITE_THRESHOLD = 5
+            all_columns_seen = set(base_row.keys()) | {"Timestamp"}
+            match_ended = False
+
+            fieldnames = list(base_row.keys()) + ["Timestamp"]
+
+            while not match_ended or not self.is_match_ended():
+                loop_start = time.time()
+                current_time = int(loop_start - start_time)
+
+                current_match_status = self.is_match_ended()
+                if current_match_status and not match_ended:
+                    print(f"[INFO] Match {match_id} has ended. Processing final data...")
+                    match_ended = True
+                    base_row["match_finished"] = True
+                    print(f"[INFO] Scraping at +{current_time}s (Match ended: {match_ended})")
+
+                self.scraped_data.clear()
+                scores_and_odds = self.extract_data(self.markets_to_scrape, sport_name, current_time)
+
+                market_odds_missing = len(self.scraped_data) == 0
+
+                if market_odds_missing and not match_ended:
+                    print("[WARNING] Market odds missing - attempting refresh")
+                    if refresh_count < MAX_REFRESHES:
+                        self.driver.refresh()
+                        time.sleep(3)
+                        refresh_count += 1
                         continue
-                    key = f"{market.lower().replace(' ', '_')}_{label.lower().replace(' ', '_')}_{current_time}"
-                    collected_data[key] = odd
+                    else:
+                        print("[WARNING] Max refreshes reached without finding market odds")
+                        refresh_count = 0
+                else:
+                    refresh_count = 0
 
-            # Combine match info and all collected market data into one row
-            full_row = {**base_row, **collected_data}
+                current_data = {}
+                for market, outcomes in self.scraped_data.items():
+                    for label, odd in outcomes:
+                        if not label:
+                            continue
+                        key = f"{market.lower().replace(' ', '_')}_{label.lower().replace(' ', '_')}"
+                        current_data[key] = odd
 
-            # Write to CSV each second
-            file_exists = os.path.isfile(live_data_csv)
-            with open(live_data_csv, mode='w', newline='', encoding='utf-8') as csvfile:
-                writer = csv.DictWriter(csvfile, fieldnames=full_row.keys())
-                writer.writeheader()
-                writer.writerow(full_row)
+                for key, val in scores_and_odds.items():
+                    current_data[key] = val
 
-            print(f"[INFO] Wrote updated data at +{current_time}s")
+                new_columns = set(current_data.keys()) - all_columns_seen
+                if new_columns:
+                    print(f"[INFO] New columns detected: {new_columns}")
+                    all_columns_seen.update(new_columns)
+                    fieldnames.extend(col for col in sorted(new_columns) if col not in fieldnames)
 
+                if self.has_data_changed(current_data, previous_data) or (match_ended and previous_data is None):
+                    print(f"[INFO] Data changed at +{current_time}s - writing to file")
+                    same_data_count = 0
+                    refresh_count = 0
 
+                    collected_data = current_data.copy()
+                    previous_data = current_data.copy()
 
+                elif same_data_count >= WRITE_THRESHOLD:
+                    print(f"[INFO] Same data for {same_data_count} times — writing again and refreshing once")
+                    collected_data = previous_data.copy() if previous_data else {}
+
+                    if refresh_count < MAX_REFRESHES:
+                        self.driver.refresh()
+                        time.sleep(3)
+                        refresh_count += 1
+                        same_data_count = 0
+                    else:
+                        print("[WARNING] Max refreshes reached due to stagnant data")
+                        refresh_count = 0
+
+                else:
+                    same_data_count += 1
+                    print(f"[INFO] Data unchanged ({same_data_count} times in a row)")
+                    collected_data = previous_data.copy() if previous_data else {}
+
+                complete_row = {**base_row, "Timestamp": current_time}
+                for col in all_columns_seen:
+                    if col not in complete_row:
+                        complete_row[col] = collected_data.get(col, "N/A")
+                self._write_complete_row(list(all_columns_seen), complete_row, long_path)
+
+                if not match_ended:
+                    elapsed = time.time() - loop_start
+                    if elapsed < 1:
+                        time.sleep(1 - elapsed)
+                else:
+                    if current_match_status:
+                        break
+
+            print(f"[INFO] Finished processing match {match_id}. Moving to the next match...")
 
 

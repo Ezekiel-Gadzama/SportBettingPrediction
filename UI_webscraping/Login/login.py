@@ -13,6 +13,7 @@ class SportyBetLoginBot:
     def __init__(self, url):
         self.driver = None
         self.url = url
+        self.logged_in = False
 
     def open_browser(self):
         try:
@@ -66,25 +67,29 @@ class SportyBetLoginBot:
 
     def login(self):
         try:
+            if not self.logged_in:
+                            # Build absolute path to the .env file
+                env_path = Path(__file__).resolve().parents[2] / ".env"
+                load_dotenv(dotenv_path=env_path)
+                phone = os.getenv("SPORTY_PHONE")
+                password = os.getenv("SPORTY_PASSWORD")
+                if not phone or not password:
+                    raise ValueError("Phone number or password not found in .env file.")
+                print("[INFO] Environment variables loaded.")
 
-                        # Build absolute path to the .env file
-            env_path = Path(__file__).resolve().parents[2] / ".env"
-            load_dotenv(dotenv_path=env_path)
-            phone = os.getenv("SPORTY_PHONE")
-            password = os.getenv("SPORTY_PASSWORD")
-            if not phone or not password:
-                raise ValueError("Phone number or password not found in .env file.")
-            print("[INFO] Environment variables loaded.")
+                self.open_browser()
+                self.load_url(self.url)
+                time.sleep(2)  # Wait for the page to load
 
-            self.open_browser()
-            self.load_url(self.url)
-            time.sleep(2)  # Wait for the page to load
+                self.enter_credentials(phone, password)
+                self.click_login()
 
-            self.enter_credentials(phone, password)
-            self.click_login()
-
-            # Optional: Wait before closing (to confirm login success)
-            time.sleep(5)
+                # Optional: Wait before closing (to confirm login success)
+                time.sleep(5)
+                self.logged_in = True
+            else:
+                print("[INFO] Already logged in.")
+                self.load_url(self.url)
             
         except Exception as e:
             print(f"[ERROR] An error occurred during login: {e}")
