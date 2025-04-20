@@ -304,6 +304,9 @@ class MarketScraper(FindMatch):
         folder = os.path.join("Database", "Data")
         os.makedirs(folder, exist_ok=True)
         long_path = os.path.join(folder, f"{sport_name.lower().replace(' ', '_')}_long_format.csv")
+        print(f"[INFO] Long format CSV path: {long_path}")
+        print("Current working directory:", os.getcwd())
+        print(f"Writing to file: {os.path.abspath(long_path)}")
 
         while True:
             # Match setup - get new match info
