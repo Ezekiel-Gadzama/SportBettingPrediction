@@ -73,7 +73,7 @@ def clean_and_reorder_csv(input_file, output_file=None):
 
     return df_clean
 
-if __name__ == "main":
+if __name__ == "__main__":
     # Example usage
     input_csv = "Database/Data/tabletennis_long_format.csv"
     output_csv = "Database/Data/tabletennis_clean.csv"

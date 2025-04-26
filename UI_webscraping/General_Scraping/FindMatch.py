@@ -9,9 +9,22 @@ import os
 import re
 from datetime import datetime, timedelta, timezone
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from threading import Lock
+from queue import Queue
+import time
 
 # Define Nigeria's timezone
 NIGERIA_TZ = timezone(timedelta(hours=1))
+
+from threading import Lock
+import time
+
+# Define Nigeria's timezone
+NIGERIA_TZ = timezone(timedelta(hours=1))
+
+# Global variables for match tracking
+global_claimed_matches = set()  # Now stores match names instead of IDs
+global_matches_lock = Lock()
 
 class FindMatch(SportyBetLoginBot):
     def __init__(self, url):
@@ -34,13 +47,16 @@ class FindMatch(SportyBetLoginBot):
                     # Get current date in Nigeria
                     nigeria_now = datetime.now(NIGERIA_TZ)
                     match_datetime = datetime.combine(nigeria_now.date(), match_hour_minute, tzinfo=NIGERIA_TZ)
-
+                    
                     # Handle past match times that are actually scheduled for the next day
                     if match_datetime < nigeria_now:
                         match_datetime += timedelta(days=1)
 
                     home_player = match.find_element(By.CLASS_NAME, "home-team").text.strip()
                     away_player = match.find_element(By.CLASS_NAME, "away-team").text.strip()
+                    
+                    # Create a unique match identifier using team names and start time
+                    match_identifier = f"{home_player} vs {away_player} | {match_datetime.strftime('%Y-%m-%d %H:%M')}"
 
                     odds = match.find_elements(By.CLASS_NAME, "m-outcome-odds")
                     home_odd = odds[0].text.strip() if len(odds) > 0 else "N/A"
@@ -52,127 +68,164 @@ class FindMatch(SportyBetLoginBot):
                         "start_time": match_datetime,
                         "home_odd": home_odd,
                         "away_odd": away_odd,
-                        "element": match
+                        "element": match,
+                        "match_identifier": match_identifier  # Added unique identifier
                     }
 
                     self.matches.append(match_info)
                 except Exception as inner_e:
                     print(f"[WARNING] Skipped a match due to error: ")
         except Exception as e:
-            print(f"[ERROR] Failed to extract matches: ")
+            print(f"[ERROR] Failed to extract matches:")
 
+    def extract_match_id_from_url(self, url):
+        """Extract numeric match ID from URL"""
+        try:
+            # Example URL: https://www.sportybet.com/ng/sport/tableTennis/sr:match:12345678
+            match = re.search(r'sr:match:(\d+)', url)
+            return match.group(1) if match else None
+        except Exception as e:
+            print(f"[WARNING] Failed to extract ID from URL: {url} - ")
+            return None
+
+    def get_next_unique_match(self):
+        """Thread-safe method to get next available match using match identifiers"""
+        with global_matches_lock:
+            for match in self.matches:
+                if match["match_identifier"] not in global_claimed_matches:
+                    global_claimed_matches.add(match["match_identifier"])
+                    return match
+            return None
 
     def click_earliest_match(self):
-        if not self.matches:
-            print("[INFO] No matches found.")
+        match = self.get_next_unique_match()
+        if not match:
+            print("[INFO] No unclaimed matches available.")
             return None
-        print(f"[INFO] Found {len(self.matches)} matches.")
-        
-        # Sort matches by start time and select the earliest one
-        self.matches.sort(key=lambda x: x["start_time"])
-        earliest_match = self.matches[0]
-        self.matches = []  # Clear matches after clicking
 
-        print(f"[INFO] Clicking earliest match: {earliest_match['home_player']} vs {earliest_match['away_player']} at {earliest_match['start_time'].strftime('%H:%M')}")
+        print(f"[INFO] Claiming match: {match['match_identifier']}")
 
         try:
-            self.driver.execute_script("arguments[0].scrollIntoView();", earliest_match['element'])
-            teams_element = earliest_match['element'].find_element(By.CLASS_NAME, "teams")
+            # Scroll to center of viewport for better click reliability
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView({block: 'center', behavior: 'smooth'});", 
+                match['element']
+            )
+            time.sleep(0.5)  # Allow scroll to complete
+            
+            teams_element = match['element'].find_element(By.CLASS_NAME, "teams")
             self.driver.execute_script("arguments[0].click();", teams_element)
             print("[INFO] Click successful.")
+            
+            # Now that we've clicked, we can get the match ID from the URL
+            current_url = self.driver.current_url
+            match_id = self.extract_match_id_from_url(current_url)
+            if "simulated" in current_url.lower():
+                print(f"[INFO] Skipping simulated match: {match['match_url']}")
+                return None
+            
+            if match_id:
+                print(f"[INFO] Found match ID: {match_id}")
+                return {
+                    "home_player": match["home_player"],
+                    "away_player": match["away_player"],
+                    "start_time": match["start_time"].strftime("%Y-%m-%d %H:%M"),
+                    "match_id": match_id,
+                    "match_url": current_url,
+                    "match_identifier": match["match_identifier"]  # Include the identifier
+                }
+            else:
+                print("[WARNING] Could not extract match ID from URL")
+                return None
+                
         except Exception as e:
             print(f"[ERROR] Failed to click match: {str(e)}")
+            with global_matches_lock:
+                global_claimed_matches.discard(match["match_identifier"])
             return None
-        
-        # Return match info for verification
 
-        return {
-            "home_player": earliest_match["home_player"],
-            "away_player": earliest_match["away_player"],
-            "start_time": earliest_match["start_time"].strftime("%Y-%m-%d %H:%M")
-        }
-    
-    def insert_live_into_url(self, url):
-        """
-        Inserts 'live' into the SportyBet URL path after the 'sport/.../' segment.
-        Example:
-        https://www.sportybet.com/ng/sport/tableTennis/... ->
-        https://www.sportybet.com/ng/sport/tableTennis/live/...
-        """
-        url_parts = url.split('/')
-        if 'live' not in url_parts:
-            try:
-                sport_index = url_parts.index('sport')
-                url_parts.insert(sport_index + 2, 'live')
-                return '/'.join(url_parts)
-            except ValueError:
-                print("[WARN] 'sport' not found in the URL.")
-        return url
-    
-    def wait_until_match_start(self, start_time_str):
-        """Wait until 10 seconds before the match start time"""
-        now = datetime.now()
-        start_time = datetime.strptime(start_time_str, "%Y-%m-%d %H:%M")
-        wait_seconds = (start_time - now).total_seconds() # 30 seconds before match start
+    def verify_live_teams(self, match_info, max_attempts=100, refresh_interval=4):
+        """Continuously refresh and verify teams for up to 300 seconds"""
+        count = 0
+        attempt = 0
         
-        if wait_seconds > 0:
-            print(f"[INFO] Waiting {wait_seconds:.1f} seconds until 30s before match start")
-            time.sleep(wait_seconds)
-
-    def verify_live_teams(self, match_info):
-        """Verify team names on live match page"""
-        try:
-            wait = WebDriverWait(self.driver, 10)  # Wait up to 10 seconds
-            title_element = wait.until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "h4.m-tracker-title span"))
-            )
+        while count < max_attempts:
+            count += 1
+            attempt += 1
+            print(f"[INFO] Verification attempt {attempt} and count ({count} elapsed)")
             
-            full_match_text = title_element.text.strip()
-            print(f"[DEBUG] Found match title text: {full_match_text}")
-
-            if " vs " in full_match_text:
-                home_team_live, away_team_live = [team.strip() for team in full_match_text.split(" vs ")]
-
-                if (home_team_live == match_info["home_player"] and 
-                    away_team_live == match_info["away_player"]):
-                    print("[INFO] Team names verified on live page")
-                    return True
-
-            print("[WARNING] Team names mismatch or not found on live page")
-
-        except Exception as e:
-            print(f"[ERROR] Failed to verify teams on live page: {str(e)}")
-
-        return False
-    
-    def wait_for_game_start(self, timeout=300):
-        """Wait until the date in the match header is replaced (i.e., game has started)"""
-        print("[INFO] Waiting for game to start...")
-        start_time = time.time()
-
-        while time.time() - start_time < timeout:
             try:
-                # Get the container that holds the date and time
+                # Refresh the page every 3 attempts
+                if attempt % 3 == 0:
+                    self.driver.refresh()
+                    time.sleep(2)  # Allow page to load after refresh
+                
+                wait = WebDriverWait(self.driver, 10)
+                title_element = wait.until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, "h4.m-tracker-title span")))
+                
+                full_match_text = title_element.text.strip()
+                if " vs " in full_match_text:
+                    home_team_live, away_team_live = [team.strip() for team in full_match_text.split(" vs ")]
+                    if (home_team_live == match_info["home_player"] and 
+                        away_team_live == match_info["away_player"]):
+                        print("[INFO] Team names verified on live page")
+                        return True
+
+            except Exception as e:
+                print(f"[WARNING] Verification attempt failed: {str(e)}")
+            
+            time.sleep(refresh_interval)
+
+        print("[ERROR] Failed to verify teams within timeout period")
+        return False
+
+    def wait_for_game_start(self, timeout=100, refresh_interval=4):
+        """Wait until game starts with periodic refreshing.
+        Works for both real and virtual football matches."""
+        print("[INFO] Waiting for game to start with refreshing...")
+        count = 0
+        attempt = 0
+        
+        while count < timeout:
+            count += 1
+            attempt += 1
+            print(f"[INFO] wait_for_game_start attempt {attempt}, {count*refresh_interval} seconds elapsed")
+            
+            try:
+                # Refresh every 3 attempts
+                if attempt % 3 == 0:
+                    self.driver.refresh()
+                    time.sleep(5)  # Extra time after refresh
+
+                # First try virtual football detection
+                try:
+                    time_element = self.driver.find_element(By.CLASS_NAME, "time")
+                    time_text = time_element.text.strip()
+                    if '|' in time_text:  # Virtual football format found
+                        period, clock = [part.strip() for part in time_text.split('|')]
+                        if ':' in clock:  # Valid time format
+                            print("[INFO] Virtual game has started!")
+                            return True
+                except:
+                    pass  # Not virtual football, try real football check
+                
+                # Real football detection (original logic)
                 status_element = self.driver.find_element(
-                    By.CSS_SELECTOR,
-                    ".sr-lmt-plus-scb__status"
-                )
-                # Extract all text inside
+                    By.CSS_SELECTOR, ".sr-lmt-plus-scb__status")
                 status_text = status_element.text.strip()
                 
-                # Regex to match formats like "19 Apr" or "08 May"
                 date_pattern = r"\b\d{1,2} [A-Za-z]{3}\b"
-                
-                # If it no longer matches a date, game has likely started
                 if not re.search(date_pattern, status_text):
-                    print("[INFO] Game has started.")
+                    print("[INFO] Real game has started!")
                     return True
-            except Exception:
-                pass  # Ignore temporary failures
+                
+            except Exception as e:
+                print(f"[WARNING] Game start check failed: ")
+            
+            time.sleep(refresh_interval)
 
-            time.sleep(1)
-
-        print("[WARNING] Game did not start within timeout period.")
+        print("[ERROR] Game did not start within timeout period")
         return False
     
     def set_time_filter_to_1h(self, timeout: int = 10):
@@ -189,7 +242,7 @@ class FindMatch(SportyBetLoginBot):
                     if label.text.strip() == "1 h":
                         label.click()
                         print("[INFO] Time filter set to 1 h")
-                        time.sleep(4)  # Allow time for the page to update
+                        time.sleep(10)  # Allow time for the page to update
                         return True
                 except Exception as e:
                     continue
@@ -198,13 +251,41 @@ class FindMatch(SportyBetLoginBot):
             return False
 
         except Exception as e:
-            print(f"[ERROR] Failed to set time filter to 1 h: {e}")
+            print(f"[ERROR] Failed to set time filter to 1 h: ")
             return False
+        
+    def insert_live_into_url(self, url):
+        """
+        Inserts 'live' into the SportyBet URL path after the 'sport/.../' segment.
+        Example:
+        https://www.sportybet.com/ng/sport/tableTennis/... ->
+        https://www.sportybet.com/ng/sport/tableTennis/live/...
+        """
+        url_parts = url.split('/')
+        if 'live' not in url_parts:
+            try:
+                sport_index = url_parts.index('sport')
+                url_parts.insert(sport_index + 2, 'live')
+                print("URL found")
+                return '/'.join(url_parts)
+            except ValueError:
+                print("[WARN] 'sport' not found in the URL.")
+        return url
+    
+    def wait_until_match_start(self, start_time_str):
+        """Wait until 120 seconds before the match start time"""
+        now = datetime.now()
+        start_time = datetime.strptime(start_time_str, "%Y-%m-%d %H:%M")
+        wait_seconds = (start_time - now).total_seconds() - 120 # 30 seconds before match start
+        
+        if wait_seconds > 0:
+            print(f"[INFO] Waiting {wait_seconds:.1f} seconds until 120s before match start")
+            time.sleep(wait_seconds)
 
     def run_FindMatch(self):
         self.login()
         print("[INFO] Logged in, scraping matches now...")
-        time.sleep(5)  # Let the page load
+        time.sleep(10)  # Let the page load
 
         self.set_time_filter_to_1h()
         self.extract_matches()
@@ -219,14 +300,20 @@ class FindMatch(SportyBetLoginBot):
         
         # Get live URL
         self.live_url = self.insert_live_into_url(self.driver.current_url)
-        self.driver.get(self.live_url)
+        try:
+            self.driver.get(self.live_url)
+            print("Opened live url")
+        except:
+            return self.run_FindMatch()
+
         print(f"[INFO] Navigated to live URL: {self.live_url}")
         time.sleep(10)  # Allow page to load
 
         # Verify teams on live page
         if not self.verify_live_teams(match_info) or not self.wait_for_game_start():
             print("[INFO] Retrying to find a valid match...")
+            with global_matches_lock:
+                global_claimed_matches.discard(match_info["match_identifier"])
             return self.run_FindMatch()
         
-
         return match_info

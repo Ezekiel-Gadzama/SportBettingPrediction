@@ -15,6 +15,7 @@ class MarketScraper(FindMatch):
     def __init__(self, url, markets_to_scrape):
         super().__init__(url)
         self.scraped_data = {}
+        self.scraped_odd = {}
         self.markets_to_scrape = markets_to_scrape
         self.lock = threading.Lock()  # for thread-safe WebDriver access
 
@@ -30,24 +31,13 @@ class MarketScraper(FindMatch):
         return self.driver.find_element(By.XPATH, f"//span[text()='{market_name}']")
 
     
-    def get_match_id(self):
-        try:
-            current_url = self.driver.current_url
-            if "sr:match:" in current_url:
-                return current_url.split("sr:match:")[-1].split("/")[0]
-            else:
-                print("[WARNING] Match ID not found in URL.")
-                return "Unknown"
-        except Exception as e:
-            print(f"[ERROR] Failed to extract match ID: {e}")
-            return "Error"
-
-    
     def extract_scores(self, sport_name: str, current_time: int) -> dict:
         try:
             if sport_name == "tableTennis":
                 return self.extract_table_tennis_scores(current_time)
             elif sport_name == "football":
+                return self.extract_football_scores(current_time)
+            elif sport_name == "vFootball":
                 return self.extract_football_scores(current_time)
             # Add more sports as needed
             else:
@@ -108,10 +98,10 @@ class MarketScraper(FindMatch):
                             if set_count > 5:
                                 break
                     except Exception as e:
-                        print(f"[WARNING] Failed to extract set {set_count}: {e}")
+                        print(f"[WARNING] Failed to extract set {set_count}: ")
                         continue
             except Exception as e:
-                print(f"[ERROR] extracting set scores: {e}")
+                print(f"[ERROR] extracting set scores: ")
 
             # Pad with N/A if less than 5 sets were found
             while set_count <= 5:
@@ -120,45 +110,44 @@ class MarketScraper(FindMatch):
                 set_count += 1
 
         except Exception as e:
-            print(f"[ERROR] extract_table_tennis_scores: {e}")
+            print(f"[ERROR] extract_table_tennis_scores: ")
 
         return scores
     
     def extract_football_scores(self, current_time: int) -> dict:
-        scores = {}
-
+        """Extracts scores from both real and virtual football matches"""
+        scores = {"match_score_home": "N/A", "match_score_away": "N/A"}
+        
         try:
-            # Find the result container
+            # First try virtual football format
+            try:
+                score_element = self.driver.find_element(By.CLASS_NAME, "score")
+                score_text = score_element.text.strip()
+                if ':' in score_text:
+                    home_score, away_score = score_text.split(':')
+                    scores["match_score_home"] = int(home_score.strip())
+                    scores["match_score_away"] = int(away_score.strip())
+                    return scores
+            except:
+                pass  # Not virtual football, try real football format
+            
+            # Real football format
             score_container = self.driver.find_element(By.CLASS_NAME, "sr-lmt-plus-scb__result")
-
-            # Extract the individual team scores
             home_score_element = score_container.find_element(By.CLASS_NAME, "srm-team1")
             away_score_element = score_container.find_element(By.CLASS_NAME, "srm-team2")
-
-            try:
-                home_score = int(home_score_element.text.strip())
-            except ValueError:
-                home_score = "N/A"
-
-            try:
-                away_score = int(away_score_element.text.strip())
-            except ValueError:
-                away_score = "N/A"
-
-            scores["match_score_home"] = home_score
-            scores["match_score_away"] = away_score
-
+            
+            scores["match_score_home"] = int(home_score_element.text.strip())
+            scores["match_score_away"] = int(away_score_element.text.strip())
+            
         except Exception as e:
-            print(f"[ERROR] extract_football_scores: {e}")
-            scores["match_score_home"] = "N/A"
-            scores["match_score_away"] = "N/A"
-
+            print(f"[ERROR] extract_football_scores: {str(e)}")
+        
         return scores
 
 
 
     def extract_market_odds(self, market_name):
-        """Extract and convert odds for a given market to implied probabilities."""
+        """Extract and convert odds for a given market to implied probabilities, while also storing raw odds."""
         try:
             with self.lock:  # thread-safe access to the driver
                 print(f"[INFO] Searching for '{market_name}' market...")
@@ -170,6 +159,8 @@ class MarketScraper(FindMatch):
                 outcome_rows = wrapper.find_elements(By.CLASS_NAME, "m-outcome")
 
             market_odds = []
+            raw_odds = []  # To store the raw odds before conversion
+            
             for row in outcome_rows:
                 cells = row.find_elements(By.CLASS_NAME, "m-table-cell")
                 for cell in cells:
@@ -180,25 +171,44 @@ class MarketScraper(FindMatch):
                         try:
                             odd = float(odd_str)
                             market_odds.append((label, odd))
+                            raw_odds.append((label, odd))  # Store raw odds
+                            
+                            # Store home/away/draw odds for betting logic
+                            if "home" in label.lower():
+                                self.current_home_odd = odd
+                            elif "away" in label.lower():
+                                self.current_away_odd = odd
+                            elif "draw" in label.lower():
+                                self.current_draw_odd = odd
+                                
                         except ValueError:
                             print(f"[WARNING] Skipping invalid odd: {odd_str}")
-                            market_odds[label] = "N/A"
+                            market_odds.append((label, "N/A"))
+                            raw_odds.append((label, "N/A"))
+
+            # Store raw odds in scraped_odd
+            self.scraped_odd[market_name] = raw_odds
 
             # Calculate implied probabilities and normalize
-            total_inverse = sum(1 / odd for _, odd in market_odds if odd > 0)
+            total_inverse = sum(1 / odd for _, odd in market_odds if isinstance(odd, (int, float)) and odd > 0)
             market_probs = []
             for label, odd in market_odds:
-                if odd > 0:
+                if isinstance(odd, (int, float)) and odd > 0:
                     implied_prob = (1 / odd) / total_inverse
                     market_probs.append((label, round(implied_prob, 4)))  # Rounded for readability
+                else:
+                    market_probs.append((label, odd))  # Keep "N/A" values
 
             self.scraped_data[market_name] = market_probs
             print(f"[INFO] Market: {market_name}")
             for label, prob in market_probs:
-                print(f"  {label}: {prob:.2%}")  # Display as percentage for easier reading
+                if isinstance(prob, (int, float)):
+                    print(f"  {label}: {prob:.2%}")  # Display as percentage for easier reading
+                else:
+                    print(f"  {label}: {prob}")  # For "N/A" values
 
         except Exception as e:
-            print(f"[ERROR] Failed to extract {market_name} market:")
+            print(f"[ERROR] Failed to extract {market_name} market: {str(e)}")
 
 
     def extract_data(self, market_list, sport_name, current_time):
@@ -234,16 +244,47 @@ class MarketScraper(FindMatch):
         return False
     
     def is_match_ended(self):
-        """Check if the match has ended by looking for the 'Ended' div."""
+        """Check if match has ended - works for both real and virtual football"""
         try:
-            # Find the div with class 'srm-is-uppercase'
-            ended_div = self.driver.find_element(By.CLASS_NAME, "srm-is-uppercase")
+            # First try virtual football format
+            try:
+                time_element = self.driver.find_element(By.CLASS_NAME, "time")
+                time_text = time_element.text.strip().upper()
+                if "ENDED" in time_text:
+                    print('Virtual football match ended')
+                    return True
+                
+                # Also check the match-info-title in virtual football
+                try:
+                    match_info = self.driver.find_element(By.CLASS_NAME, "match-info-title")
+                    if "MATCH ENDED" in match_info.text.strip().upper():
+                        print('Virtual football match ended through alternative')
+                        return True
+                except:
+                    pass
+                
+            except:
+                pass  # Not virtual football, try real football format
             
-            # Check if its text is "Ended" (case-insensitive)
-            if "ended" in ended_div.text.strip().lower():
+            # Real football format check
+            try:
+                status_div = self.driver.find_element(By.CLASS_NAME, "sr-lmt-plus-scb__status")
+                ended_div = status_div.find_element(By.CLASS_NAME, "srm-is-uppercase")
+                if "ended" in ended_div.text.strip().lower():
+                    print('real football match ended')
+                    return True
+                else:
+                    return False
+            except:
+                pass
+                
+            # Additional check for "Ended" in any visible text
+            page_text = self.driver.page_source.upper()
+            if "ENDED" in page_text or "MATCH ENDED" in page_text:
                 return True
+                
         except Exception as e:
-            pass  # Element not found, match hasn't ended
+            print(f"[ERROR] is_match_ended failed: {str(e)}")
         
         return False
     
@@ -309,10 +350,11 @@ class MarketScraper(FindMatch):
         print(f"Writing to file: {os.path.abspath(long_path)}")
 
         while True:
+            self.matches = []
             # Match setup - get new match info
             match_info = self.run_FindMatch()
             print("[INFO] Logged in and match clicked.")
-            match_id = self.get_match_id()
+            match_id = self.extract_match_id_from_url(self.driver.current_url)
 
             # Base row with match information - now includes match_finished
             base_row = {
@@ -329,7 +371,7 @@ class MarketScraper(FindMatch):
             refresh_count = 0
             same_data_count = 0
             MAX_REFRESHES = 3
-            WRITE_THRESHOLD = 5
+            WRITE_THRESHOLD = 10
             all_columns_seen = set(base_row.keys()) | {"Timestamp"}
             match_ended = False
 
