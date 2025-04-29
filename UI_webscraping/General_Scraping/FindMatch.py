@@ -140,8 +140,8 @@ class FindMatch(SportyBetLoginBot):
                 
         except Exception as e:
             print(f"[ERROR] Failed to click match: {str(e)}")
-            with global_matches_lock:
-                global_claimed_matches.discard(match["match_identifier"])
+            # with global_matches_lock:
+            #     global_claimed_matches.discard(match["match_identifier"])
             return None
 
     def verify_live_teams(self, match_info, max_attempts=100, refresh_interval=4):

@@ -278,10 +278,10 @@ class MarketScraper(FindMatch):
             except:
                 pass
                 
-            # Additional check for "Ended" in any visible text
-            page_text = self.driver.page_source.upper()
-            if "ENDED" in page_text or "MATCH ENDED" in page_text:
-                return True
+            # # Additional check for "Ended" in any visible text
+            # page_text = self.driver.page_source.upper()
+            # if "ENDED" in page_text or "MATCH ENDED" in page_text:
+            #     return True
                 
         except Exception as e:
             print(f"[ERROR] is_match_ended failed: {str(e)}")

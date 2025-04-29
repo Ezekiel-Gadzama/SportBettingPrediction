@@ -1,74 +1,76 @@
 [MAIN] Starting scraper 1
 This is the run method called
 [MAIN] Starting scraper 2
-[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
 This is the run method called
-Current working directory: C:\Users\ezeki\SportBettingPrediction
 [MAIN] Starting scraper 3
-Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
-This is the run method called
-
-Current working directory:[MAIN] Starting scraper 4
- C:\Users\ezeki\SportBettingPrediction
 [INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
-Current working directory: C:\Users\ezeki\SportBettingPrediction[MAIN] Starting scraper 5
-[INFO] Environment variables loaded.
+Current working directory: C:\Users\ezeki\SportBettingPrediction
+[MAIN] Starting scraper 4
 This is the run method called
-
+[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
 This is the run method called
 Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
 [INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
-Current working directory: [INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
-C:\Users\ezeki\SportBettingPrediction
+Current working directory: C:\Users\ezeki\SportBettingPrediction
+[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
+Current working directory: C:\Users\ezeki\SportBettingPrediction
+Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
+Current working directory: C:\Users\ezeki\SportBettingPrediction
+Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
+[MAIN] Starting scraper 5
+[INFO] Environment variables loaded.
 Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
 [MAIN] Starting scraper 6
-Current working directory: C:\Users\ezeki\SportBettingPrediction
-Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
+[INFO] Environment variables loaded.
+[INFO] Environment variables loaded.
+This is the run method called
+This is the run method called
+[INFO] Environment variables loaded.
 [MAIN] Starting scraper 7
-[INFO] Environment variables loaded.
-Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
-This is the run method calledThis is the run method called[MAIN] Starting scraper 8
-
-
-[INFO] Environment variables loaded.
-This is the run method called
 [INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
-[INFO] Environment variables loaded.
+[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
+Current working directory: C:\Users\ezeki\SportBettingPrediction
+[MAIN] Starting scraper 8
+Current working directory: C:\Users\ezeki\SportBettingPrediction
+This is the run method called
+This is the run method called
+Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
 [MAIN] Starting scraper 9
-Current working directory: C:\Users\ezeki\SportBettingPrediction
-[INFO] Environment variables loaded.
-[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csvThis is the run method called
 Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
-
-[MAIN] Starting scraper 10
-[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
-Current working directory: C:\Users\ezeki\SportBettingPrediction
-[INFO] Environment variables loaded.
-Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
-Current working directory: C:\Users\ezeki\SportBettingPrediction
-Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
-This is the run method called
-[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
-[INFO] Environment variables loaded.
-[INFO] Environment variables loaded.
 [INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
 Current working directory: C:\Users\ezeki\SportBettingPrediction
 Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
+[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
 Current working directory: C:\Users\ezeki\SportBettingPrediction
+[MAIN] Starting scraper 10[INFO] Environment variables loaded.
+[INFO] Environment variables loaded.
+
+This is the run method called[INFO] Environment variables loaded.
+
+Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csvThis is the run method called
+[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
+
+Current working directory:[INFO] Environment variables loaded.
+ C:\Users\ezeki\SportBettingPrediction
+[INFO] Arbitrage format CSV path: Database\Data\vfootballarbitrage_format.csv
+Current working directory: C:\Users\ezeki\SportBettingPrediction
+Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
 Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballarbitrage_format.csv
 [INFO] Environment variables loaded.
 [INFO] Environment variables loaded.
 [INFO] Browser opened successfully.
 [INFO] Browser opened successfully.
+[INFO] Browser opened successfully.[INFO] Browser opened successfully.
+
 [INFO] Browser opened successfully.
 [INFO] Browser opened successfully.
 [INFO] Browser opened successfully.
 [INFO] Browser opened successfully.
 [INFO] Browser opened successfully.
-[INFO] Browser opened successfully.
 [INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
 [INFO] Browser opened successfully.
-[INFO] Browser opened successfully.
+[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
+[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
 [INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
 [INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
 [INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
@@ -77,1420 +79,92 @@ Writing to file: C:\Users\ezeki\SportBettingPrediction\Database\Data\vfootballar
 [INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
 [INFO] Phone number entered.
 [INFO] Phone number entered.
-[ERROR] Failed to enter credentials: Message: element not interactable
-  (Session info: chrome=135.0.7049.115)
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D9258FEC]
-	(No symbol) [0x00007FF7D92A45C5]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92A19E6]
-	(No symbol) [0x00007FF7D92D7340]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] Phone number entered.
+[INFO] Password entered.
 [INFO] Password entered.
 [INFO] Login button clicked.
 [INFO] Phone number entered.
 [INFO] Login button clicked.
 [INFO] Phone number entered.
-[INFO] Password entered.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Password entered.
+[INFO] Phone number entered.
 [INFO] Phone number entered.
 [INFO] Password entered.
-[INFO] Login button clicked.
+[INFO] Password entered.
+[INFO] Password entered.
 [INFO] Password entered.
 [INFO] Login button clicked.
+[INFO] Phone number entered.
+[INFO] Phone number entered.
+[INFO] Login button clicked.
+[INFO] Login button clicked.
+[INFO] Password entered.
 [INFO] Login button clicked.
 [INFO] Password entered.
 [INFO] Phone number entered.
 [INFO] Login button clicked.
-[INFO] Logged in, scraping matches now...
-[INFO] Logged in, scraping matches now...
 [INFO] Password entered.
 [INFO] Login button clicked.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
+[INFO] Logged in, scraping matches now...
 [INFO] Logged in, scraping matches now...
 [INFO] Login button clicked.
 [INFO] Logged in, scraping matches now...
+[INFO] Logged in, scraping matches now...
+[INFO] Logged in, scraping matches now...
+[INFO] Logged in, scraping matches now...
+[INFO] Logged in, scraping matches now...
+[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
 [INFO] Logged in, scraping matches now...
 [INFO] Phone number entered.
 [INFO] Password entered.
 [INFO] Logged in, scraping matches now...
 [INFO] Login button clicked.
-[INFO] Logged in, scraping matches now...
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Logged in, scraping matches now...
-[INFO] Phone number entered.
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Password entered.
-[INFO] Time filter set to 1 h
-[INFO] Login button clicked.
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
 [INFO] Time filter set to 1 h
 [INFO] Time filter set to 1 h
 [INFO] Logged in, scraping matches now...
 [INFO] Time filter set to 1 h
 [INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs BOU | 2025-04-26 22:38
-[INFO] Claiming match: BRE vs AST | 2025-04-26 22:38
-[INFO] Claiming match: EVE vs FOR | 2025-04-26 22:38
+[INFO] Time filter set to 1 h
+[INFO] Time filter set to 1 h
+[INFO] Time filter set to 1 h
+[INFO] Time filter set to 1 h
+[INFO] Time filter set to 1 h
+[INFO] Time filter set to 1 h
+[INFO] Claiming match: ARS vs LEI | 2025-04-29 02:26
+[INFO] Claiming match: AST vs IPS | 2025-04-29 02:26
+[INFO] Claiming match: BHA vs FUL | 2025-04-29 02:26
 [INFO] Click successful.
-[INFO] Found match ID: 200025042621118
-[INFO] Waiting 1946.8 seconds until 120s before match start
+[INFO] Found match ID: 200025042821937
+[INFO] Waiting 1732.8 seconds until 120s before match start
 [INFO] Click successful.
-[INFO] Found match ID: 200025042621122
-[INFO] Waiting 1946.3 seconds until 120s before match start
+[INFO] Found match ID: 200025042821938
+[INFO] Waiting 1732.4 seconds until 120s before match start
 [INFO] Click successful.
-[INFO] Found match ID: 200025042621123
-[INFO] Waiting 1944.2 seconds until 120s before match start
-[INFO] Claiming match: FUL vs LEI | 2025-04-26 22:38
-[INFO] Claiming match: LIV vs CHE | 2025-04-26 22:38
-[INFO] Claiming match: MUN vs WHU | 2025-04-26 22:38
+[INFO] Found match ID: 200025042821941
+[INFO] Waiting 1731.1 seconds until 120s before match start
+[INFO] Claiming match: BOU vs LIV | 2025-04-29 02:26
+[INFO] Claiming match: CHE vs CRY | 2025-04-29 02:26
+[INFO] Claiming match: EVE vs WOL | 2025-04-29 02:26
+[INFO] Claiming match: FOR vs MCI | 2025-04-29 02:26
 [INFO] Click successful.
 [INFO] Click successful.
-[INFO] Found match ID: 200025042621121
-[INFO] Waiting 1937.6 seconds until 120s before match start
-[INFO] Found match ID: 200025042621124
-[INFO] Waiting 1936.9 seconds until 120s before match start
+[INFO] Found match ID: 200025042821944
+[INFO] Waiting 1727.6 seconds until 120s before match start
 [INFO] Click successful.
-[INFO] Found match ID: 200025042621115
-[INFO] Waiting 1935.7 seconds until 120s before match start
-[INFO] Claiming match: NEW vs IPS | 2025-04-26 22:38
-[INFO] Claiming match: SOU vs MCI | 2025-04-26 22:38
+[INFO] Found match ID: 200025042821942
+[INFO] Waiting 1727.4 seconds until 120s before match start
+[INFO] Found match ID: 200025042821943
+[INFO] Waiting 1727.3 seconds until 120s before match start
+[INFO] Claiming match: NEW vs MUN | 2025-04-29 02:26
 [INFO] Click successful.
-[INFO] Found match ID: 200025042621117
-[INFO] Waiting 1931.9 seconds until 120s before match start
+[INFO] Found match ID: 200025042821939
+[INFO] Waiting 1725.7 seconds until 120s before match start
 [INFO] Click successful.
-[INFO] Found match ID: 200025042621116
-[INFO] Waiting 1931.4 seconds until 120s before match start
-[INFO] Claiming match: TOT vs ARS | 2025-04-26 22:38
+[INFO] Found match ID: 200025042821940
+[INFO] Waiting 1724.6 seconds until 120s before match start
+[INFO] Claiming match: SOU vs WHU | 2025-04-29 02:26
+[INFO] Claiming match: TOT vs BRE | 2025-04-29 02:26
 [INFO] Click successful.
-[INFO] Found match ID: 200025042621119
-[INFO] Waiting 1928.0 seconds until 120s before match start
-[INFO] Claiming match: WOL vs CRY | 2025-04-26 22:38
+[INFO] Found match ID: 200025042821935
+[INFO] Waiting 1720.9 seconds until 120s before match start
 [INFO] Click successful.
-[INFO] Found match ID: 200025042621120
-[INFO] Waiting 1923.4 seconds until 120s before match start
-URL found
-URL found
-URL foundURL found
-
-URL found
-URL found
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/LIV_vs_CHE/sr:match:200025042621124
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/EVE_vs_FOR/sr:match:200025042621123
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/FUL_vs_LEI/sr:match:200025042621121
-URL found
-URL found
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/MUN_vs_WHU/sr:match:200025042621115
-URL found
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/SOU_vs_MCI/sr:match:200025042621116
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/BHA_vs_BOU/sr:match:200025042621122
-[INFO] Verification attempt 1 and count (1 elapsed)
-URL found
-[INFO] Verification attempt 1 and count (1 elapsed)
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/NEW_vs_IPS/sr:match:200025042621117
-[INFO] Verification attempt 1 and count (1 elapsed)
-[INFO] Team names verified on live page
-[INFO] Waiting for game to start with refreshing...
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsed
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-[INFO] Match 200025042621123 has ended. Processing final data...
-[INFO] Scraping at +0s (Match ended: True)
-[INFO] Searching for '1X2' market...
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/TOT_vs_ARS/sr:match:200025042621119
-self.loss = self.current_stake
-[INFO] Finished processing match 200025042621123. Moving to the next match...
-Shared Loss: [10]
-[INFO] Already logged in.
-[INFO] Team names verified on live page
-[INFO] Waiting for game to start with refreshing...
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsed
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-[INFO] Team names verified on live page
-[INFO] Waiting for game to start with refreshing...
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsed
-[INFO] Match 200025042621124 has ended. Processing final data...
-[INFO] Scraping at +0s (Match ended: True)
-[INFO] Searching for '1X2' market...
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/WOL_vs_CRY/sr:match:200025042621120
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-self.loss = self.current_stake
-[INFO] Finished processing match 200025042621124. Moving to the next match...
-Shared Loss: [10]
-[INFO] Already logged in.
-[INFO] Verification attempt 1 and count (1 elapsed)
-[INFO] Match 200025042621121 has ended. Processing final data...
-[INFO] Scraping at +0s (Match ended: True)
-[INFO] Team names verified on live page
-[INFO] Waiting for game to start with refreshing...
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsed
-[INFO] Searching for '1X2' market...
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Match 200025042621115 has ended. Processing final data...
-[INFO] Verification attempt 1 and count (1 elapsed)
-[INFO] Scraping at +0s (Match ended: True)
-[INFO] Searching for '1X2' market...
-self.loss = self.current_stake
-[INFO] Finished processing match 200025042621121. Moving to the next match...
-Shared Loss: [10]
-[INFO] Already logged in.
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] Team names verified on live page
-[INFO] Waiting for game to start with refreshing...
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsed
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-Opened live url
-[INFO] Navigated to live URL: https://www.sportybet.com/ng/sport/vFootball/live/England/Virtual/BRE_vs_AST/sr:match:200025042621118
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-[INFO] Verification attempt 1 and count (1 elapsed)
-[INFO] Match 200025042621116 has ended. Processing final data...
-[INFO] Scraping at +0s (Match ended: True)
-[INFO] Searching for '1X2' market...
-[INFO] Team names verified on live page
-[INFO] Waiting for game to start with refreshing...
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsed
-
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-self.loss = self.current_stake
-[INFO] Finished processing match 200025042621115. Moving to the next match...
-Shared Loss: [10]
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Match 200025042621122 has ended. Processing final data...
-[INFO] Scraping at +0s (Match ended: True)
-self.loss = self.current_stake
-[INFO] Finished processing match 200025042621116. Moving to the next match...
-Shared Loss: [10]
-[INFO] Already logged in.
-[INFO] Searching for '1X2' market...
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-[INFO] Verification attempt 1 and count (1 elapsed)
-[INFO] Team names verified on live page
-[INFO] Waiting for game to start with refreshing...
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsed
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-self.loss = self.current_stake
-[INFO] Finished processing match 200025042621122. Moving to the next match...
-Shared Loss: [10]
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Verification attempt 1 and count (1 elapsed)
-[INFO] Match 200025042621117 has ended. Processing final data...
-[INFO] Scraping at +0s (Match ended: True)
-[INFO] Searching for '1X2' market...
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-[INFO] Team names verified on live page
-[INFO] Waiting for game to start with refreshing...
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsed
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Verification attempt 1 and count (1 elapsed)
-self.loss = self.current_stake
-[INFO] Finished processing match 200025042621117. Moving to the next match...
-Shared Loss: [10]
-[INFO] Already logged in.
-[INFO] Team names verified on live page
-[INFO] Waiting for game to start with refreshing...
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsed
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-[INFO] Match 200025042621119 has ended. Processing final data...
-[INFO] Scraping at +0s (Match ended: True)
-[INFO] Searching for '1X2' market...
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-[INFO] Time filter set to 1 h
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-[INFO] Match 200025042621120 has ended. Processing final data...
-[INFO] Scraping at +0s (Match ended: True)
-[INFO] Searching for '1X2' market...
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-self.loss = self.current_stake
-[INFO] Finished processing match 200025042621119. Moving to the next match...
-Shared Loss: [10]
-[INFO] Already logged in.
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-[INFO] Verification attempt 1 and count (1 elapsed)
-self.loss = self.current_stake[INFO] Team names verified on live page
-
-[INFO] Waiting for game to start with refreshing...[INFO] Finished processing match 200025042621120. Moving to the next match...
-
-[INFO] wait_for_game_start attempt 1, 4 seconds elapsedShared Loss: [10]
-
-[INFO] Already logged in.
-[INFO] Virtual game has started!
-[INFO] Logged in and match clicked.
-[INFO] Time filter set to 1 h
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Match 200025042621118 has ended. Processing final data...
-[INFO] Scraping at +0s (Match ended: True)
-[INFO] Searching for '1X2' market...
-[ERROR] Failed to extract 1X2 market: Message: no such element: Unable to locate element: {"method":"xpath","selector":"//span[text()='1X2']"}
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D92AF16D]
-	(No symbol) [0x00007FF7D92AF41C]
-	(No symbol) [0x00007FF7D9302237]
-	(No symbol) [0x00007FF7D92D716F]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[INFO] New probability columns detected: {'match_score_away', 'match_score_home'}
-[INFO] New odds columns detected: {'match_score_away', 'match_score_home'}
-Total score: 0 , Home score: 0 , Away Score: 0
-match time: 0 total score: 0 will be on match: False previous total score: 0 bet count: 0
-Lenght of stake: 0 and stakes are: [] 
-[BET] No valid odds to evaluate
-self.loss = self.current_stake
-[INFO] Finished processing match 200025042621118. Moving to the next match...
-Shared Loss: [10]
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h[INFO] Time filter set to 1 h
-
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Time filter set to 1 h
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Time filter set to 1 h
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Time filter set to 1 h
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Time filter set to 1 h
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Time filter set to 1 h
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h
-[INFO] Time filter set to 1 h
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Time filter set to 1 h
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[ERROR] Failed to click match: Message: stale element reference: stale element not found
-  (Session info: chrome=135.0.7049.115); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#stale-element-reference-exception
-Stacktrace:
-	GetHandleVerifier [0x00007FF7D948EFA5+77893]
-	GetHandleVerifier [0x00007FF7D948F000+77984]
-	(No symbol) [0x00007FF7D92591BA]
-	(No symbol) [0x00007FF7D926F524]
-	(No symbol) [0x00007FF7D926DFF3]
-	(No symbol) [0x00007FF7D9261819]
-	(No symbol) [0x00007FF7D9261993]
-	(No symbol) [0x00007FF7D925F69F]
-	(No symbol) [0x00007FF7D9263EA1]
-	(No symbol) [0x00007FF7D93002B8]
-	(No symbol) [0x00007FF7D92D712A]
-	(No symbol) [0x00007FF7D92FF07F]
-	(No symbol) [0x00007FF7D92D6F03]
-	(No symbol) [0x00007FF7D92A0328]
-	(No symbol) [0x00007FF7D92A1093]
-	GetHandleVerifier [0x00007FF7D9747B6D+2931725]
-	GetHandleVerifier [0x00007FF7D9742132+2908626]
-	GetHandleVerifier [0x00007FF7D97600F3+3031443]
-	GetHandleVerifier [0x00007FF7D94A91EA+184970]
-	GetHandleVerifier [0x00007FF7D94B086F+215311]
-	GetHandleVerifier [0x00007FF7D9496EC4+110436]
-	GetHandleVerifier [0x00007FF7D9497072+110866]
-	GetHandleVerifier [0x00007FF7D947D479+5401]
-	BaseThreadInitThunk [0x00007FFEF38F257D+29]
-	RtlUserThreadStart [0x00007FFEF55AAA48+40]
-
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[INFO] Loaded URL: https://www.sportybet.com/ng/sport/vFootball/upcoming?time=0
-[INFO] Logged in, scraping matches now...
-[INFO] Time filter set to 1 h
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[ERROR] Failed to set time filter to 1 h: 
-[ERROR] Failed to set time filter to 1 h: 
-[ERROR] Failed to extract matches:
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[ERROR] Failed to extract matches:
-[INFO] Claiming match: EVE vs CRY | 2025-04-26 23:16
-[ERROR] Failed to extract matches:
-[INFO] Claiming match: FUL vs AST | 2025-04-26 23:16
-[ERROR] Failed to click match: HTTPConnectionPool(host='localhost', port=53524): Max retries exceeded with url: /session/e049d6698517b52c5dfcd30e6b29b211/execute/sync (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000012E8E44B1D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[ERROR] Failed to click match: HTTPConnectionPool(host='localhost', port=53516): Max retries exceeded with url: /session/0dc7dc24da5e90c854ca9ce2f45576c9/execute/sync (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000012E8E4B5970>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[ERROR] Failed to click match: HTTPConnectionPool(host='localhost', port=53522): Max retries exceeded with url: /session/e3817ef19e8d751dc6567940d9bf3dd3/execute/sync (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000012E8E448E60>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
-[WARNING] No valid match found, trying again
-[INFO] Already logged in.
-[ERROR] Failed to load URL: HTTPConnectionPool(host='localhost', port=53524): Max retries exceeded with url: /session/e049d6698517b52c5dfcd30e6b29b211/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000012E8E4B45F0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
-[INFO] Logged in, scraping matches now...
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] '1 h' filter not found among slider items.
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[ERROR] Failed to load URL: HTTPConnectionPool(host='localhost', port=53516): Max retries exceeded with url: /session/0dc7dc24da5e90c854ca9ce2f45576c9/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000012E8E4494F0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
-[INFO] Logged in, scraping matches now...
-[ERROR] Failed to load URL: HTTPConnectionPool(host='localhost', port=53522): Max retries exceeded with url: /session/e3817ef19e8d751dc6567940d9bf3dd3/url (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000012E8E503200>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
-[INFO] Logged in, scraping matches now...
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[ERROR] Failed to extract matches:
-[INFO] Claiming match: BHA vs IPS | 2025-04-26 23:16
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[WARNING] Skipped a match due to error: 
-[ERROR] Failed to set time filter to 1 h: 
+[INFO] Found match ID: 200025042821936
+[INFO] Waiting 1719.6 seconds until 120s before match start
