@@ -13,7 +13,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from UI_webscraping.General_Scraping.scrape_data import MarketScraper as BaseMarketScraper
 from Database.Get_data.Zsport_markets import SPORT_MARKETS
 from selenium.webdriver.common.keys import Keys
-from UI_webscraping.General_Scraping.FindMatch import global_claimed_matches
+import math
+from scipy.optimize import fsolve
 
 ########################################################################################
 # Custom class to write to both file and terminal
@@ -107,6 +108,9 @@ class CustomMarketScraper(BaseMarketScraper):
         self.left_stake = None
         self.right_stake = None
         self.is_arbitrage_bet_completed = False
+        self.arbitrage_began_at = None
+        self.keep_whats_popped = None
+        self.repeat = False
 
     def get_match_time_in_minutes(self):
         """
@@ -174,44 +178,6 @@ class CustomMarketScraper(BaseMarketScraper):
             print(f"[ERROR] Could not determine virtual match time: {str(e)}")
             return 0
         
-    def distribute_loss(self):
-        global sharedLoss
-        Loss = []
-        remaining_loss = sum(sharedLoss)
-        
-        # Calculate how many full 12-unit chunks we can distribute
-        max_elements = min(10, remaining_loss // 10) if remaining_loss >= 10 else 0
-        
-        # Distribute the maximum possible equal amounts (≥12)
-        if max_elements > 0:
-            base_amount = remaining_loss // max_elements
-            remainder = remaining_loss % max_elements
-            
-            # Distribute base amounts
-            Loss = [base_amount] * max_elements
-            
-            # Distribute remainder
-            for i in range(remainder):
-                Loss[i] += 1
-        else:
-            # Handle cases where loss is less than 12*10=120
-            if remaining_loss > 0:
-                Loss.append(remaining_loss)
-        
-        # Ensure no element is 0 and handle the 10-element max constraint
-        Loss = [x for x in sharedLoss if x > 0]
-        
-        # If we have more than 10 elements (only possible when loss > 120)
-        if len(Loss) > 10:
-            # Re-distribute to exactly 10 elements with higher values
-            base_amount = remaining_loss // 10
-            remainder = remaining_loss % 10
-            Loss = [base_amount] * 10
-            for i in range(remainder):
-                Loss[i] += 1
-        sharedLoss = Loss
-        print(f"Shared Loss: {sharedLoss}")
-        
     def run(self, sport_name: str):
         # Create folders and paths
         print("This is the run method called")
@@ -224,14 +190,29 @@ class CustomMarketScraper(BaseMarketScraper):
 
         while True:
             global Total_profit, sharedLoss
+            # Ensure Total_profit is updated correctly
             Total_profit += self.per_profit_value
             self.account_balance = self.original_account_balance + Total_profit
-            if self.loss > 0:
-                sharedLoss.append(self.loss)  # Add to the global list
-                self.distribute_loss()  # Redistribute
-            if len(sharedLoss) > 0:
-                self.external_loss = sharedLoss.pop()
 
+            if self.loss > 0:
+                total_loss = int(round(self.loss))
+                for i in range(len(sharedLoss)):
+                    if sharedLoss[i] < 100 and len(sharedLoss) <= 10:
+                        remaining = 100 - sharedLoss[i]
+                        total_loss -= remaining
+                        sharedLoss[i] += int(round(remaining))
+                    elif len(sharedLoss) >= 10:
+                        sharedLoss[i] += int(round(total_loss / 10))
+                if(len(sharedLoss) >= 10):
+                    total_loss = 0
+                sharedLoss.append(int(round(total_loss)))
+            
+            print(f"Shared loss is: {sharedLoss}")
+                
+
+            if len(sharedLoss) > 0:
+                self.external_loss = sharedLoss.pop()  # No float issue here since pop() returns existing value
+                
             self.reset(self.account_balance, self.divide)
             # Match setup - get new match info
             try:
@@ -374,13 +355,10 @@ class CustomMarketScraper(BaseMarketScraper):
                 self.home_score = home_score
                 self.away_score = away_score
                 print(f"Total score: {total_score} , Home score: {self.home_score} , Away Score: {self.away_score}")
-                self.match_time = self.get_virtual_match_time_in_minutes()
+                self.match_time = self.get_match_time_in_minutes()
                 # Then your existing betting logic:
                 # # and (home_score >= 2 and away_score >= 2)
                 # (((self.match_time >= 60 and total_score < 3) or self.will_bet_on_this_match) and (total_score > self.previous_total_score or not self.will_bet_on_this_match) and self.bet_count < 2)
-                if (total_score > self.previous_total_score):
-                        self.driver.refresh()
-                        time.sleep(2)
 
                 if self.will_bet_on_this_match:
                     self.there_is_arbitrage = self.is_arbitrage()
@@ -389,7 +367,46 @@ class CustomMarketScraper(BaseMarketScraper):
                     print("Arbitrage is already completed")
                     continue
 
-                if total_score > self.previous_total_score or not self.will_bet_on_this_match or self.there_is_arbitrage:
+                mini_odd = 1.3
+                # Conditions for odds validity
+                if(self.current_home_odd is None or self.current_away_odd is None or self.current_draw_odd is None):
+                    self.driver.refresh()
+                    time.sleep(4)
+                    continue
+
+                are_odds_valid = (
+                    (self.current_home_odd >= mini_odd 
+                    and self.current_away_odd >= mini_odd 
+                    and self.current_draw_odd >= mini_odd)  or self.will_bet_on_this_match
+                )
+
+
+                should_bet = (
+                    ((self.match_time >= 1 and total_score == 0) 
+                    or self.will_bet_on_this_match) and (are_odds_valid)
+                )
+
+                # if self.match_time >= 46 and not should_bet:
+                #     print("Go find another match: breaking now")
+                #     break
+
+                if(self.is_arbitrage_bet_completed):
+                    print("E don finish him arbitrage break")
+                    break
+                
+
+                conditions_for_betting = (
+                    (total_score > self.previous_total_score) or
+                    (self.last_bet_was_on == "Home" and self.home_score <= self.away_score) or
+                    (self.last_bet_was_on == "Away" and self.home_score >= self.away_score) or
+                    (self.last_bet_was_on == "Draw" and self.home_score != self.away_score)
+                )
+
+                if (should_bet and (conditions_for_betting or not self.will_bet_on_this_match)) or self.there_is_arbitrage:
+
+                    if(not self.will_bet_on_this_match):
+                        self.driver.refresh()
+                        time.sleep(3)
                     print(f"match time: {self.match_time} total score: {total_score} will be on match: {self.will_bet_on_this_match} previous total score: {self.previous_total_score} bet count: {self.bet_count}")
                     print(f"Lenght of stake: {len(self.list_of_stakes)} and stakes are: {self.list_of_stakes} ")
                     self.evaluate_and_place_bet()
@@ -408,166 +425,229 @@ class CustomMarketScraper(BaseMarketScraper):
                 #     break
 
             # checking if bet won:
-            if ((self.last_bet_was_on == "Home" and self.home_score > self.away_score) or (self.last_bet_was_on == "Away" and self.away_score > self.home_score) or (self.last_bet_was_on == "Draw" and self.away_score == self.home_score)) and (not self.there_is_arbitrage or self.is_arbitrage_bet_completed):
+            if ((self.last_bet_was_on == "Home" and self.home_score > self.away_score) or (self.last_bet_was_on == "Away" and self.away_score > self.home_score) or (self.last_bet_was_on == "Draw" and self.away_score == self.home_score)) or (self.is_arbitrage_bet_completed):
                 print(f"It won the match {self.live_url}")
-                profit = (sum(self.list_of_stakes) - (self.list_of_stakes[-1] * self.current_odd))
+                if not self.is_arbitrage_bet_completed:
+                    profit = ((self.list_of_stakes[-1] * self.current_odd) - sum(self.list_of_stakes))
+                else:
+                    profit = 0
                 self.profit_made += profit
                 print(f"Profit is {profit} and Total profit is {self.profit_made} for this thread")
+                self.profit_made = 0
                 self.list_of_stakes = []
                 self.list_of_odds = []
                 self.external_loss = 0
             else:
-                self.loss = self.current_stake + self.external_loss
-                print("self.loss = self.current_stake")
+                if(self.will_bet_on_this_match):
+                    self.loss = self.current_stake + self.external_loss
+                    print(f"self.loss = self.current_stake:  {self.loss}")
+                else:
+                    print(f"There was no bet on this match:")
 
             print(f"[INFO] Finished processing match {match_id}. Moving to the next match...")
 
 
-    def compute_stakes_iterative(self, remaining_stake, left_odds, left_stakes, current_left_odd, 
-                                right_odds, right_stakes, current_right_odd, tolerance=1e-6, max_iter=100):
-        """
-        Generalized method to compute stake1 and stake2 for any two opposing bets.
-        """
-        # Start with an initial guess (split remaining_stake equally)
-        stake1 = remaining_stake / 2
-        stake2 = remaining_stake / 2
+    def equation(self, stake2, a, b, c, d, left_current, right_current, remaining_stake):
+        left = (((a + (left_current * (remaining_stake - stake2))) / (b + (remaining_stake - stake2))) * (remaining_stake - stake2))
+        right = ((c + (right_current * stake2)) / (d + stake2)) * stake2
+        return left - right
+    
+    def solve_for_stake2(self, c, right_current, d, total_stake, weighted_odd):
+        A = right_current
+        B = total_stake * weighted_odd
 
-        for _ in range(max_iter):
-            # Compute left_odd and right_odd with current stakes
-            left_odd = (sum(odd * stake for odd, stake in zip(left_odds, left_stakes)) + current_left_odd) / (sum(left_stakes) + stake1)
-            right_odd = (sum(odd * stake for odd, stake in zip(right_odds, right_stakes)) + current_right_odd) / (sum(right_stakes) + stake2)
-            self.left_odd = left_odd
-            self.right_odd = right_odd
+        # Quadratic coefficients: a*stake2² + b*stake2 + e = 0
+        a = A
+        b = c - B
+        e = -B * d
 
-            # Update stakes to satisfy stake1 * left_odd = stake2 * right_odd
-            new_stake1 = (remaining_stake * right_odd) / (left_odd + right_odd)
-            new_stake2 = remaining_stake - new_stake1
+        discriminant = b**2 - 4 * a * e
 
-            # Check for convergence
-            if abs(new_stake1 - stake1) < tolerance and abs(new_stake2 - stake2) < tolerance:
-                print(f"stakes are: {new_stake1} and {new_stake2} and they give {new_stake1*left_odd} == {new_stake2 * right_odd} ")
-                return new_stake1, new_stake2
+        if discriminant < 0:
+            raise ValueError("No real solution (discriminant < 0)")
 
-            stake1, stake2 = new_stake1, new_stake2
+        sqrt_discriminant = math.sqrt(discriminant)
 
-        print(f"Just returning best estimate stakes are: {new_stake1} and {new_stake2} and they give {new_stake1*left_odd} == {new_stake2 * right_odd} ")
-        return stake1, stake2  # Return best estimate after max_iter
+        stake2_1 = (-b + sqrt_discriminant) / (2 * a)
+        stake2_2 = (-b - sqrt_discriminant) / (2 * a)
+
+        print(f"solution 1: {stake2_1} and solution 2: {stake2_2}")
+        # Return the positive solution (since stake cannot be negative)
+
+        return max(stake2_1, stake2_2)
 
     def is_arbitrage(self):
-        """
-        Checks for arbitrage opportunities based on the last bet placed.
-        """
-        if self.last_bet_was_on == "Home":
-            stake = sum(self.home_stakes)
-            odd1 = sum(odd * stake for odd, stake in zip(self.home_odds, self.home_stakes)) / stake
-            expected_odd2 = 1 - (1/odd1)
-            remaining_stake = (stake * odd1) / expected_odd2  # Fixed: using total stake instead of stake1
-
-            # stake1, stake2 = self.compute_stakes_iterative(
-            #     remaining_stake=remaining_stake,
-            #     left_odds=self.draw_odds,
-            #     left_stakes=self.draw_stakes,
-            #     current_left_odd=self.current_draw_odd,
-            #     right_odds=self.away_odds,
-            #     right_stakes=self.away_stakes,
-            #     current_right_odd=self.current_away_odd
-            # )
-
-            a = (sum(odd * stake for odd, stake in zip(self.draw_odds, self.draw_stakes)) + self.current_draw_odd)
-            b = sum(self.draw_stakes)
-
-            c = (sum(odd * stake for odd, stake in zip(self.away_odds, self.away_stakes)) + self.current_away_odd)
-            d = sum(self.away_stakes)
-
-            (c / (d + stake2)) * stake2 =  (a / (b  + stake1)) * stake1
-            stake1 + stake2 = remaining_stake
-
-            
-            self.left_odd =  a / (b  + stake1)
-            self.right_odd =  c / (d + stake2)
-
-
-            self.left_bet = "Draw"
-            self.right_bet = "Away"
-
-        elif self.last_bet_was_on == "Away":
-            stake = sum(self.away_stakes)
-            odd1 = sum(odd * stake for odd, stake in zip(self.away_odds, self.away_stakes)) / stake
-            expected_odd2 = 1 - (1/odd1)
-            remaining_stake = (stake * odd1) / expected_odd2
-
-            stake1, stake2 = self.compute_stakes_iterative(
-                remaining_stake=remaining_stake,
-                left_odds=self.home_odds,
-                left_stakes=self.home_stakes,
-                current_left_odd=self.current_home_odd,
-                right_odds=self.draw_odds,
-                right_stakes=self.draw_stakes,
-                current_right_odd=self.current_draw_odd
-            )
-
-            self.left_odd = (sum(odd * stake for odd, stake in zip(self.home_odds, self.home_stakes)) + self.current_home_odd) / (sum(self.home_stakes) + stake1)
-            self.right_odd = (sum(odd * stake for odd, stake in zip(self.draw_odds, self.draw_stakes)) + self.current_draw_odd) / (sum(self.draw_stakes) + stake2)
-            self.left_bet = "Home"
-            self.right_bet = "Draw"
-
-        elif self.last_bet_was_on == "Draw":
-            stake = sum(self.draw_stakes)
-            odd1 = sum(odd * stake for odd, stake in zip(self.draw_odds, self.draw_stakes)) / stake
-            expected_odd2 = 1 - (1/odd1)
-            remaining_stake = (stake * odd1) / expected_odd2
-
-            stake1, stake2 = self.compute_stakes_iterative(
-                remaining_stake=remaining_stake,
-                left_odds=self.home_odds,
-                left_stakes=self.home_stakes,
-                current_left_odd=self.current_home_odd,
-                right_odds=self.away_odds,
-                right_stakes=self.away_stakes,
-                current_right_odd=self.current_away_odd
-            )
-
-            self.left_odd = (sum(odd * stake for odd, stake in zip(self.home_odds, self.home_stakes)) + self.current_home_odd) / (sum(self.home_stakes) + stake1)
-            self.right_odd = (sum(odd * stake for odd, stake in zip(self.away_odds, self.away_stakes)) + self.current_away_odd) / (sum(self.away_stakes) + stake2)
-            self.left_bet = "Home"
-            self.right_bet = "Away"
+        """Checks for arbitrage opportunities based on last bet"""
+        print("\n" + "="*50)
+        print("Checking for arbitrage opportunity...")
         
-        if odd1 == 0:
-            print("Error: Last odd cannot be 0")
+        # Determine which market we're working with
+        required_profit = 0.9
+        if not self.there_is_arbitrage:
+            last_bet = self.last_bet_was_on
+            self.left_bet = None
+            self.right_bet = None
+        else:
+            last_bet = self.arbitrage_began_at
+        
+
+        if last_bet == "Home":
+            print("Last bet was on Home")
+            stakes = self.home_stakes
+            odds = self.home_odds
+            left_params = (self.draw_odds, self.draw_stakes, self.current_draw_odd)
+            right_params = (self.away_odds, self.away_stakes, self.current_away_odd)
+            left_bet, right_bet = "Draw", "Away"
+        elif last_bet == "Away":
+            print("Last bet was on Away")
+            stakes = self.away_stakes
+            odds = self.away_odds
+            left_params = (self.home_odds, self.home_stakes, self.current_home_odd)
+            right_params = (self.draw_odds, self.draw_stakes, self.current_draw_odd)
+            left_bet, right_bet = "Home", "Draw"
+        elif last_bet == "Draw":
+            print("Last bet was on Draw")
+            stakes = self.draw_stakes
+            odds = self.draw_odds
+            left_params = (self.home_odds, self.home_stakes, self.current_home_odd)
+            right_params = (self.away_odds, self.away_stakes, self.current_away_odd)
+            left_bet, right_bet = "Home", "Away"
+        else:
+            print("No last bet detected")
             return False
 
-        print(f"Last bet was {self.last_bet_was_on}: {odd1:.2f} | Left odd: {self.left_odd:.2f} | Right odd: {self.right_odd:.2f}")
+        # Calculate initial values
+        # I added self.per_profit_value so that it can try to make that profit
+        addition = min(self.per_profit_value, int(round(0.2 * sum(stakes))))
+        if self.match_time >= 60 and not self.there_is_arbitrage:
+            print("Don't find profit, just give me back my money")
+            addition = 0
+            required_profit = 1
+        addition = 0
+
+        total_stake = sum(stakes) + addition
+        weighted_odd = sum(o*s for o, s in zip(odds, stakes)) / (total_stake)
+        minimum_second_odd = 1/ (1 - (1/weighted_odd))
+        remaining_stake = (total_stake) / (minimum_second_odd - 1)
+        print(f"remaining stake shared to other side: {remaining_stake} with minimum odd: {minimum_second_odd} and addition of {addition}")
+
+
+        # Calculate parameters for the quadratic equation
+        left_odds, left_stakes, left_current = left_params
+        right_odds, right_stakes, right_current = right_params
+
+        if(self.left_bet is None and self.right_bet is not None):
+            print("give left stakes in original value")
+            left_stakes = left_stakes[:-1]
+
+        remaining_stake -= (sum(left_stakes) + sum(right_stakes))
+        
+        print(f"\nInitial calculations:")
+        print(f"Total stake: {total_stake-addition} + but with self.per_profit_value: {total_stake} ")
+        print(f"Weighted odd: {weighted_odd}")
+        print(f"Remaining stake: {remaining_stake}")
+        
+        a = sum(o*s for o, s in zip(left_odds, left_stakes))
+        b = sum(left_stakes)
+        
+        c = sum(o*s for o, s in zip(right_odds, right_stakes))
+        d = sum(right_stakes)
+
+        print(f"\nQuadratic equation parameters:")
+        print(f"a (left numerator): {a}")
+        print(f"b (left denominator): {b}")
+        print(f"c (right numerator): {c}")
+        print(f"d (right denominator): {d}")
+ 
+
+        # # Solve for stake2
+        # initial_guess = 1.0
+        # stake2 = fsolve(lambda stake2: self.equation(stake2, a, b, c, d, left_current, right_current, remaining_stake), initial_guess)
+        # stake2 = stake2[0]
+
+        stake2 = self.solve_for_stake2(c, right_current, d, total_stake, weighted_odd)
+        stake1 = remaining_stake - stake2
+        print(f"Solved stake2: {stake2} and stake1: {stake1}")
+
+        if stake2 is None:
+            print("\nNo valid stake2 solution found")
+            return False
+
+        print(f"\nCalculated stakes:")
+        print(f"Stake1 (left): {stake1}")
+        print(f"Stake2 (right): {stake2}")
+
+
+        # Set results
+        if self.left_bet is None and self.right_bet is not None:
+            if self.last_bet_was_on == "Home":
+                stake1 = self.home_stakes[-1]
+            elif self.last_bet_was_on == "Draw":
+                stake1 = self.draw_stakes[-1]
+            elif self.last_bet_was_on == "Away":
+                stake1 = self.away_stakes[-1]
+            print(f"It has to still keep it stake as before {stake1}")
+
+        else:
+            self.left_bet = left_bet
+            self.right_bet = right_bet
+
+        if (b) == 0:
+            self.left_odd = left_current
+            print(f"Here we got left-odd {self.left_odd}")
+        else:
+            self.left_odd = (a + (left_current * stake1)) / (b + stake1)
+        if(d) ==  0:
+            self.right_odd = right_current
+            print(f"Here we got right-odd {self.right_odd}")
+        else:
+            self.right_odd = (c + (right_current * stake2)) / (d + stake2)
+    
+        print(f"\nLast bet was {self.last_bet_was_on}: with average odd {weighted_odd}")
+        print(f"Left odd average: {self.left_odd} ({left_bet})")
+        print(f"Right odd average: {self.right_odd} ({right_bet})")
         
         # Calculate arbitrage percentage
-        percentage_profit = (1/odd1) + (1/self.left_odd) + (1/self.right_odd)
-        profit_percentage = (1 - percentage_profit) * 100
+        percentage_profit = (1/weighted_odd) + (1/self.left_odd) + (1/self.right_odd)
+        profit_percentage = (1 - percentage_profit)
         
-        # Define acceptable profit threshold (5% in this case)
-        required_profit = 0.8  # 5% profit
+        print(f"\nArbitrage calculations:")
+        print(f"Sum of reciprocals: {percentage_profit}")
+        print(f"Profit percentage: {profit_percentage *  100}%")
+        print(f"Required profit threshold: {(1-required_profit)*100}%")
+
         
         if percentage_profit < required_profit:
-            print(f"Arbitrage opportunity found: {profit_percentage:.2f}% profit")
+
+            # if(stake1 < 0) or (stake2) < 0:
+            #     print(f"Either stake 1 or 2 is lesser than 0: stake1: {stake1} vs stake2: {stake2}")
+            #     return False
             
-            # Calculate stakes for arbitrage
-            total_investment = sum(self.home_stakes + self.away_stakes + self.draw_stakes)
+            print(f"\nARBITRAGE OPPORTUNITY FOUND: {profit_percentage * 100}% profit")
+            self.arbitrage_began_at = last_bet
+            # Calculate stakes for arbitrage   
+            self.left_stake = stake1
+            self.right_stake = stake2
+            if(self.left_stake < 10):
+                self.left_stake = 10
+            if(self.right_stake < 10):
+                self.right_stake  = 10
             
-            if self.left_bet and self.right_bet:
-                # Calculate stakes to ensure equal payout regardless of outcome
-                left_payout = total_investment / (percentage_profit * self.left_odd)
-                right_payout = total_investment / (percentage_profit * self.right_odd)
-                
-                self.left_stake = left_payout / self.left_odd
-                self.right_stake = right_payout / self.right_odd
-                
-                print(f"Bet {self.left_stake:.2f} on {self.left_bet} and {self.right_stake:.2f} on {self.right_bet}")
+            print(f"\nRecommended bets:")
+            print(f"Bet {self.left_stake} on {self.left_bet} (odd {self.left_odd})")
+            print(f"Bet {self.right_stake} on {self.right_bet} (odd {self.right_odd})")
             
             return True
         else:
-            print(f"No arbitrage (profit: {profit_percentage:.2f}%)")
+            print("\nNo arbitrage opportunity")
+            print(f"Profit percentage {profit_percentage * 100}% doesn't meet required threshold")
             return False
 
 
     def calculate_stake(self, target_team):
+        if self.repeat:
+            return
+        
         if target_team == "Home":
             self.current_odd = self.current_home_odd
         elif target_team == "Away":
@@ -609,12 +689,30 @@ class CustomMarketScraper(BaseMarketScraper):
                  loss / (self.current_odd - 1),
                 10
             )
+
+
         else:
             print(f"Something is fucking wrong")
 
         if(self.there_is_arbitrage):  
             self.current_stake = self.left_stake if self.left_bet is not None else self.right_stake
+
+            # ###############################################
+            # if self.current_stake < 0:
+            #     if self.left_bet is not None and self.right_bet is not None:
+            #         self.left_bet = None
+            #         print("It skipped left bet because it is lesser that 0 stake")
+            #     elif self.left_bet is None and self.left_bet is not None:
+            #         self.left_bet = None
+            #         self.is_arbitrage_bet_completed = True
+            #         print("Arbitrage is completed without betting left_bet bet")
+            # #######################################################################
+
+
+            self.current_stake = max(self.current_stake, 10)
             print(f"It has assigned arbitrage staked of {self.current_stake}")
+
+
 
             
         
@@ -629,7 +727,7 @@ class CustomMarketScraper(BaseMarketScraper):
         if self.current_home_odd is None or self.current_away_odd is None or self.current_home_odd == "N/A" or self.current_away_odd == "N/A":
             print("[BET] No valid odds to evaluate")
             return
-            
+        self.repeat = False
         print(f"[BET] Current odds - Home: {self.current_home_odd}, Draw: {self.current_draw_odd} Away: {self.current_away_odd}")
         if not self.there_is_arbitrage:
             if self.home_score == self.away_score:
@@ -645,11 +743,26 @@ class CustomMarketScraper(BaseMarketScraper):
             if self.last_bet_was_on == target_team:
                 print(f"It is the same last match : {self.last_bet_was_on}")
                 return
+
+                if (target_team == "Home" and self.current_odd <= max(self.home_odds)) or (target_team == "Away" and self.current_odd <= max(self.away_odds)) or (target_team == "Draw" and self.current_odd <= max(self.draw_odds)):
+                    print(f"It is the same last match : {self.last_bet_was_on}")
+                    return
+                else:
+                    print(f"Odd has increased even when it is the same last match : {self.last_bet_was_on}")
+                    self.repeat = True
+                    self.current_stake = self.list_of_stakes[-1]
+               
         else:
+
             if self.left_bet is not None:
                 target_team = self.left_bet
+                if self.left_stake <= 0:
+                    self.left_bet = None
             else:
                 target_team = self.right_bet
+                if self.right_stake <= 0:
+                    self.right_bet = None
+                    self.is_arbitrage_bet_completed = True
 
 
 
@@ -658,7 +771,6 @@ class CustomMarketScraper(BaseMarketScraper):
 
         # if(self.current_odd < 1.3):
         #     return
-        
         self.calculate_stake(target_team)
         print(f"Now current stake is {self.current_stake}")
         
@@ -673,6 +785,107 @@ class CustomMarketScraper(BaseMarketScraper):
             print("[BET] Failed to click on the odd")
         
     
+
+    def handle_bet_slip(self,target_team):
+        """
+        Handle the bet slip - either accept changes or cancel based on odds comparison.
+        
+        Args:
+            current_odd (float): The current odd being bet on
+            team (str): 'home' or 'away'
+            history (list): List of previous odds for this team
+        """
+        try:
+            self.enter_stake(self.current_stake)
+            # Wait for bet slip to appear
+            max_attempts = 5
+            attempt = 0
+            
+            while attempt < max_attempts:
+                attempt += 1
+                self.click_on_bet_and_accept()
+                self.click_on_bet_and_accept()
+                
+                # Get the current odd from the bet slip to verify it hasn't changed
+                try:
+                    slip_odd_element = self.driver.find_element(
+                            By.XPATH,
+                            "//div[contains(@class, 'm-item-odds')]//span[contains(@class, 'm-text-main')]"
+                        )
+                    slip_odd = float(slip_odd_element.text.strip())
+                    print(f"[BET] Bet slip odd: {slip_odd}")
+
+                    if slip_odd < self.current_odd and self.repeat:
+                        print("odd reduced for repeat")
+                        return
+
+                    if slip_odd < self.current_odd:
+                        print("Got to this point")
+                        self.current_odd = slip_odd
+                        if not self.is_arbitrage() and self.there_is_arbitrage:
+                            print(f"No more arbitrage since slip odd changed to {slip_odd}")
+                            self.there_is_arbitrage = False
+                            return
+                        
+                        self.calculate_stake(target_team)
+                        return self.handle_bet_slip(target_team, slip_odd)
+
+                    # Verify the odd is still good
+                    if not self.click_confirm_button():
+                        continue
+            
+                    # Check if bet was successful
+                    if self.check_bet_success():
+                        # Append the new stake to list (whether it's arbitrage or normal bet)
+                        self.will_bet_on_this_match = True
+                        self.list_of_stakes.append(int(round(self.current_stake)))
+                        self.list_of_odds.append(slip_odd)
+                        print(f"successfully bet {self.list_of_stakes[-1]} on {target_team}")
+                        self.last_bet_was_on = target_team
+                        self.skip = False
+                        self.previous_total_score = self.home_score + self.away_score
+                        self.bet_count += 1
+                        if self.left_bet is None and self.there_is_arbitrage:
+                            self.right_bet = None
+                            self.is_arbitrage_bet_completed = True
+                            print("Arbitrage is completed")
+                        elif self.there_is_arbitrage:
+                            print(f"Finish betting on left bet {self.left_bet} with odd {slip_odd}")
+
+                        self.left_bet = None
+                        if target_team == "Home":
+                            self.home_stakes.append(self.list_of_stakes[-1])
+                            self.home_odds.append(slip_odd)
+                        elif target_team == "Away":
+                            self.away_stakes.append(self.list_of_stakes[-1])
+                            self.away_odds.append(slip_odd)
+                        elif target_team == "Draw":
+                            self.draw_stakes.append(self.list_of_stakes[-1])
+                            self.draw_odds.append(slip_odd)
+
+                    else:
+                        self.expected_profit = 0
+
+                        if(self.left_bet is not None and self.right_bet is not None):
+                            print("Just a common man")
+                            self.arbitrage_began_at = None
+
+                    self.cancel_bet_slip()
+                    
+                    return
+
+                except Exception as e:
+                    print(f"[BET ERROR] Could not verify bet slip odd: ")
+            
+            # If we get here, we should cancel the bet
+            print("Maximum attempt reached to bet")
+            self.cancel_bet_slip()
+            
+        except Exception as e:
+            print(f"[BET ERROR] Error handling bet slip: ")
+            self.cancel_bet_slip()
+
+
     def click_on_odd(self, team):
         """
         Click on the odd for the specified team (home, away, or draw).
@@ -884,94 +1097,6 @@ class CustomMarketScraper(BaseMarketScraper):
             print(f"[BET ERROR] Failed to click Confirm button: ")
             return False 
     
-    def handle_bet_slip(self,target_team):
-        """
-        Handle the bet slip - either accept changes or cancel based on odds comparison.
-        
-        Args:
-            current_odd (float): The current odd being bet on
-            team (str): 'home' or 'away'
-            history (list): List of previous odds for this team
-        """
-        try:
-            self.enter_stake(self.current_stake)
-            # Wait for bet slip to appear
-            max_attempts = 5
-            attempt = 0
-            
-            while attempt < max_attempts:
-                attempt += 1
-                self.click_on_bet_and_accept()
-                self.click_on_bet_and_accept()
-                
-                # Get the current odd from the bet slip to verify it hasn't changed
-                try:
-                    slip_odd_element = self.driver.find_element(
-                            By.XPATH,
-                            "//div[contains(@class, 'm-item-odds')]//span[contains(@class, 'm-text-main')]"
-                        )
-                    slip_odd = float(slip_odd_element.text.strip())
-                    print(f"[BET] Bet slip odd: {slip_odd}")
-
-                    if slip_odd < self.current_odd:
-                        print("Got to this point")
-                        if not self.is_arbitrage() and self.there_is_arbitrage:
-                            print(f"No more arbitrage since slip odd changed to {slip_odd}")
-                            self.there_is_arbitrage = False
-                            return
-                        
-                        self.calculate_stake(target_team)
-                        return self.handle_bet_slip(target_team, slip_odd)
-
-                    # Verify the odd is still good
-                    if not self.click_confirm_button():
-                        continue
-            
-                    # Check if bet was successful
-                    if self.check_bet_success():
-                        # Append the new stake to list (whether it's arbitrage or normal bet)
-                        self.will_bet_on_this_match = True
-                        self.list_of_stakes.append(int(round(self.current_stake)))
-                        self.list_of_odds.append(slip_odd)
-                        print(f"successfully bet {self.list_of_stakes[-1]} on {target_team}")
-                        self.last_bet_was_on = target_team
-                        self.skip = False
-                        self.previous_total_score = self.home_score + self.away_score
-                        self.bet_count += 1
-                        if self.left_bet is None and self.there_is_arbitrage:
-                            self.right_bet = None
-                            self.is_arbitrage_bet_completed = True
-                            print("Arbitrage is completed")
-                        elif self.there_is_arbitrage:
-                            print(f"Finish betting on left bet {self.left_bet}")
-
-                        self.left_bet = None
-                        if target_team == "Home":
-                            self.home_stakes.append(self.list_of_stakes[-1])
-                            self.home_odds.append(slip_odd)
-                        elif target_team == "Away":
-                            self.away_stakes.append(self.list_of_stakes[-1])
-                            self.away_odds.append(slip_odd)
-                        elif target_team == "Draw":
-                            self.draw_stakes.append(self.list_of_stakes[-1])
-                            self.draw_odds.append(slip_odd)
-
-                    else:
-                        self.expected_profit = 0
-                    self.cancel_bet_slip()
-                    
-                    return
-
-                except Exception as e:
-                    print(f"[BET ERROR] Could not verify bet slip odd: ")
-            
-            # If we get here, we should cancel the bet
-            print("Maximum attempt reached to bet")
-            self.cancel_bet_slip()
-            
-        except Exception as e:
-            print(f"[BET ERROR] Error handling bet slip: ")
-            self.cancel_bet_slip()
     
     def cancel_bet_slip(self):
         """
@@ -1004,11 +1129,11 @@ class CustomMarketScraper(BaseMarketScraper):
             print(f"[BET ERROR] Failed to find delete buttons: ")
 
 def main():
-    sport = "vFootball"
+    sport = "football"
     url = f"https://www.sportybet.com/ng/sport/{sport}/upcoming?time=0"
     markets = ["1X2"]
     account_balance = 20000
-    divide = account_balance / 10
+    divide = account_balance / 100
     num_threads = 10  # Number of concurrent browsers/scrapers
     scraper = CustomMarketScraper(url, markets,account_balance, divide)
     

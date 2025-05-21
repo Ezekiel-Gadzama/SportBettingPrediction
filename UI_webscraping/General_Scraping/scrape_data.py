@@ -10,6 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from UI_webscraping.General_Scraping.FindMatch import FindMatch
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
+import hashlib
 
 class MarketScraper(FindMatch):
     def __init__(self, url, markets_to_scrape):
@@ -18,6 +19,7 @@ class MarketScraper(FindMatch):
         self.scraped_odd = {}
         self.markets_to_scrape = markets_to_scrape
         self.lock = threading.Lock()  # for thread-safe WebDriver access
+        self.thread_index = 0
 
     def wait_for_market(self, market_name):
         """Wait for a specific market section to appear (e.g., 'Winner')."""
@@ -38,6 +40,8 @@ class MarketScraper(FindMatch):
             elif sport_name == "football":
                 return self.extract_football_scores(current_time)
             elif sport_name == "vFootball":
+                return self.extract_football_scores(current_time)
+            elif sport_name == "eFootball":
                 return self.extract_football_scores(current_time)
             # Add more sports as needed
             else:
@@ -140,7 +144,7 @@ class MarketScraper(FindMatch):
             scores["match_score_away"] = int(away_score_element.text.strip())
             
         except Exception as e:
-            print(f"[ERROR] extract_football_scores: {str(e)}")
+            print(f"[ERROR] extract_football_scores: ")
         
         return scores
 
@@ -157,6 +161,8 @@ class MarketScraper(FindMatch):
                     By.XPATH, "./ancestor::div[contains(@class, 'm-table__wrapper')]"
                 )
                 outcome_rows = wrapper.find_elements(By.CLASS_NAME, "m-outcome")
+
+
 
             market_odds = []
             raw_odds = []  # To store the raw odds before conversion
@@ -208,7 +214,7 @@ class MarketScraper(FindMatch):
                     print(f"  {label}: {prob}")  # For "N/A" values
 
         except Exception as e:
-            print(f"[ERROR] Failed to extract {market_name} market: {str(e)}")
+            print(f"[ERROR] Failed to extract {market_name} market: ")
 
 
     def extract_data(self, market_list, sport_name, current_time):
@@ -244,7 +250,7 @@ class MarketScraper(FindMatch):
         return False
     
     def is_match_ended(self):
-        """Check if match has ended - works for both real and virtual football"""
+        """Check if match has ended - works for real football, virtual football, and eFootball"""
         try:
             # First try virtual football format
             try:
@@ -264,27 +270,39 @@ class MarketScraper(FindMatch):
                     pass
                 
             except:
-                pass  # Not virtual football, try real football format
+                pass  # Not virtual football, try other formats
             
-            # Real football format check
+            # Real football and eFootball format check
             try:
                 status_div = self.driver.find_element(By.CLASS_NAME, "sr-lmt-plus-scb__status")
-                ended_div = status_div.find_element(By.CLASS_NAME, "srm-is-uppercase")
-                if "ended" in ended_div.text.strip().lower():
-                    print('real football match ended')
-                    return True
-                else:
-                    return False
+                
+                # Check for eFootball/real football ended status
+                ended_divs = status_div.find_elements(By.XPATH, "./div")
+                if ended_divs:
+                    # First check the first div (contains "Ended" in eFootball)
+                    if "ended" in ended_divs[0].text.strip().lower():
+                        print('eFootball/real football match ended')
+                        return True
+                    
+                    # Also check all divs in case the structure varies
+                    for div in ended_divs:
+                        if "ended" in div.text.strip().lower():
+                            print('eFootball/real football match ended (alternative check)')
+                            return True
             except:
                 pass
                 
-            # # Additional check for "Ended" in any visible text
-            # page_text = self.driver.page_source.upper()
-            # if "ENDED" in page_text or "MATCH ENDED" in page_text:
-            #     return True
+            # Additional check for HT/FT indicator in eFootball/real football
+            try:
+                result_period = self.driver.find_element(By.CLASS_NAME, "sr-lmt-plus-scb__result-period")
+                if "FT" in result_period.text.strip().upper():
+                    print('Match ended (FT indicator found)')
+                    return True
+            except:
+                pass
                 
         except Exception as e:
-            print(f"[ERROR] is_match_ended failed: {str(e)}")
+            print(f"[ERROR] is_match_ended failed: {e}")
         
         return False
     
@@ -340,11 +358,184 @@ class MarketScraper(FindMatch):
             writer.writerow(complete_row)
 
 
+    def generate_team_id(self, team_name, digits=15):
+        """Generate a consistent numeric-only ID with a default of 15 digits.
+        
+        Args:
+            team_name (str): Name of the team.
+            digits (int): Desired length of the numeric ID (default: 15).
+        
+        Returns:
+            str: A fixed-length numeric ID (padded with leading zeros if needed).
+        """
+        normalized_name = team_name.strip().lower().encode('utf-8')
+        hash_obj = hashlib.sha256(normalized_name)
+        hex_digest = hash_obj.hexdigest()  # 64-character hex string
+        
+        # Take the first N hex chars (15 chars = 60 bits, enough for 15-digit decimal)
+        hex_subset = hex_digest[:digits]
+        
+        # Convert hex to integer, then to a zero-padded string
+        numeric_id = str(int(hex_subset, 16)).zfill(digits)  # Key fix: use base=16
+        
+        # Ensure exact length (trim rightmost digits if over, though unlikely)
+        return numeric_id[-digits:] if len(numeric_id) > digits else numeric_id
+    
+    
+    def get_football_match_time_in_seconds(self):
+        """
+        Extracts and returns the current match time in minutes from the match status element.
+        Returns 0 if the time cannot be determined or if the match hasn't started.
+        """
+        try:
+            # Find the match status container
+            status_container = self.driver.find_element(
+                By.CLASS_NAME, "sr-lmt-plus-scb__status"
+            )
+            
+            # Find the clock element
+            clock_element = status_container.find_element(
+                By.CLASS_NAME, "sr-lmt-plus-scb__clock"
+            )
+            time_text = clock_element.text.strip()
+            
+            # Handle different time formats (e.g., "84:37" or "45:00+2:00")
+            if ':' in time_text:
+                # Split minutes and seconds
+                minutes, seconds = time_text.split(':', 1)
+                minutes = int(minutes)
+                
+                # # Handle injury time (e.g., "45:00+2:00")
+                # if '+' in seconds:
+                #     seconds, injury_time = seconds.split('+', 1)
+                #     injury_minutes = injury_time.split(':', 1)[0] if ':' in injury_time else injury_time
+                #     return int(minutes) + int(injury_minutes)
+                
+                return int(minutes * 60) + seconds
+            
+            return 0  # Default if time format is unexpected
+        
+        except Exception as e:
+            print(f"[ERROR] Could not determine match time: ")
+            return 0
+        
+    def get_vFootball_match_time_in_seconds(self):
+        """
+        Extracts and returns the current match time in seconds from the match status element.
+        Handles formats like "1st | 01:16" or "2nd | 45:00+2:00".
+        Returns 0 if the time cannot be determined or if the match hasn't started.
+        """
+        try:
+            # Find the time element in the new structure
+            time_element = self.driver.find_element(By.CLASS_NAME, "time")
+            time_text = time_element.text.strip()
+            
+            # Extract the period and time (e.g., "1st | 01:16" -> "01:16")
+            if '|' in time_text:
+                period, match_time = [part.strip() for part in time_text.split('|')]
+            else:
+                match_time = time_text
+            
+            # Handle different time formats (e.g., "01:16" or "45:00+2:00")
+            if ':' in match_time:
+                # Split minutes and seconds
+                minutes_part = match_time.split(':', 1)[0]
+                minutes = int(minutes_part) if minutes_part.isdigit() else 0
+                
+                # Handle injury time if present (e.g., "45:00+2:00")
+                if '+' in match_time:
+                    regular_time, injury_time = match_time.split('+', 1)
+                    minutes, seconds = regular_time.split(':', 1)
+                    injury_minutes = injury_time.split(':', 1)[0] if ':' in injury_time else injury_time
+                    total_minutes = int(minutes) + int(injury_minutes)
+                    return total_minutes * 60  # Return in seconds
+                else:
+                    # Normal time format (MM:SS)
+                    minutes, seconds = match_time.split(':', 1)
+                    return (int(minutes) * 60) + int(seconds)
+            
+            return 0  # Default if time format is unexpected
+        
+        except Exception as e:
+            print(f"[ERROR] Could not determine match time:")
+            return 0
+        
+    def get_efootball_match_time_in_seconds(self):
+        """
+        Extracts and returns the current match time in seconds from the eFootball match status element.
+        Handles formats like "1st | 16:00".
+        Returns 0 if the time cannot be determined or if the match hasn't started.
+        """
+        try:
+            # Find the status element that contains the match time
+            status_element = self.driver.find_element(By.CLASS_NAME, "sr-lmt-plus-scb__status")
+            
+            # Get all the child divs within the status element
+            status_parts = status_element.find_elements(By.XPATH, "./div")
+            
+            # The time is in the third div (index 2) based on the HTML structure
+            if len(status_parts) >= 3:
+                time_text = status_parts[2].text.strip()  # e.g., "16:00"
+                
+                # Extract period from the first div (e.g., "1st")
+                period = status_parts[0].text.strip().lower() if len(status_parts) > 0 else ""
+                
+                # Handle time format (MM:SS)
+                if ':' in time_text:
+                    minutes, seconds = time_text.split(':', 1)
+                    total_seconds = (int(minutes) * 60) + int(seconds)
+                    
+                    # Adjust for period (1st half starts at 0, 2nd half at 45*60)
+                    if '2nd' in period:
+                        total_seconds += 45 * 60  # Add 45 minutes for second half
+                    elif '3rd' in period:  # Some eFootball matches might have extra periods
+                        total_seconds += 90 * 60
+                    elif '4th' in period:
+                        total_seconds += 105 * 60
+                    
+                    return total_seconds
+                
+            return 0  # Default if time format is unexpected
+        
+        except Exception as e:
+            print(f"[ERROR] Could not determine eFootball match time: {e}")
+            return 0
+        
+    def click_match_tracker(self):
+        """
+        Clicks the 'Match Tracker' tab in the match interface.
+        Uses multiple locator strategies for reliability.
+        """
+        try:
+            # Wait for the Match Tracker tab to be clickable
+            match_tracker_tab = WebDriverWait(self.driver, 10).until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//li[@data-cms-key='match_tracker' and contains(@class, 'm-nav-item')]")
+                )
+            )
+            match_tracker_tab.click()
+            print("[INFO] Successfully clicked on Match Tracker")
+            return True
+        except Exception as e:
+            print(f"[ERROR] Could not click Match Tracker:")
+            return False
+        
+    def extract_player_name(self,full_team_name):
+        """
+        Extracts player name from strings like "Netherlands (Thomas)" -> returns "Thomas"
+        If no parentheses found, returns the original string
+        """
+        if '(' in full_team_name and ')' in full_team_name:
+            start = full_team_name.find('(') + 1
+            end = full_team_name.find(')')
+            return full_team_name[start:end]
+        return full_team_name
+
     def run(self, sport_name: str):
         # Create folders and paths
         folder = os.path.join("Database", "Data")
         os.makedirs(folder, exist_ok=True)
-        long_path = os.path.join(folder, f"{sport_name.lower().replace(' ', '_')}_long_format.csv")
+        long_path = os.path.join(folder, f"{sport_name.lower().replace(' ', '_')}_long_format_{self.thread_index}.csv")
         print(f"[INFO] Long format CSV path: {long_path}")
         print("Current working directory:", os.getcwd())
         print(f"Writing to file: {os.path.abspath(long_path)}")
@@ -356,14 +547,40 @@ class MarketScraper(FindMatch):
             print("[INFO] Logged in and match clicked.")
             match_id = self.extract_match_id_from_url(self.driver.current_url)
 
-            # Base row with match information - now includes match_finished
+            # Generate team IDs
+            team_a_id = self.generate_team_id(match_info["home_player"])
+            team_b_id = self.generate_team_id(match_info["away_player"])
+            self.click_match_tracker()
+
+            # Base row with match information - now includes team IDs
             base_row = {
                 "Match ID": match_id,
                 "Team A": match_info["home_player"],
                 "Team B": match_info["away_player"],
+                "Team A ID": team_a_id,
+                "Team B ID": team_b_id,
                 "Start Time": match_info["start_time"],
                 "match_finished": False
             }
+
+            if(sport_name == "eFootball"):
+                team_a_player_id = self.generate_team_id(self.extract_player_name(match_info["home_player"]))
+                team_b_player_id = self.generate_team_id(self.extract_player_name(match_info["away_player"]))
+                print("sport is eFootball")
+
+                # Base row with match information - now includes team IDs
+                base_row = {
+                    "Match ID": match_id,
+                    "Team A": match_info["home_player"],
+                    "Team B": match_info["away_player"],
+                    "Team A ID": team_a_id,
+                    "Team B ID": team_b_id,
+                    "Team A Player ID": team_a_player_id,
+                    "Team B Player ID": team_b_player_id,
+                    "Start Time": match_info["start_time"],
+                    "match_finished": False
+                }
+
 
             start_time = time.time()
             collected_data = {}
@@ -376,8 +593,12 @@ class MarketScraper(FindMatch):
             match_ended = False
 
             fieldnames = list(base_row.keys()) + ["Timestamp"]
-
-            while not match_ended or not self.is_match_ended():
+            match_time = 0
+            while (not match_ended or not self.is_match_ended()):
+                if (match_time <= 0):
+                    match_time = self.get_efootball_match_time_in_seconds()
+                    if match_time <= 0 : continue
+                
                 loop_start = time.time()
                 current_time = int(loop_start - start_time)
 

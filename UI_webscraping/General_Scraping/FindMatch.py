@@ -35,48 +35,90 @@ class FindMatch(SportyBetLoginBot):
     def extract_matches(self):
         try:
             wait = WebDriverWait(self.driver, 20)
-            wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "match-row")))
+            # Wait for the main container to load
+            wait.until(EC.presence_of_element_located((By.CLASS_NAME, "import-match")))
 
-            match_elements = self.driver.find_elements(By.CLASS_NAME, "match-row")
+            # Get all league containers (match-league-wrap)
+            league_containers = self.driver.find_elements(By.CLASS_NAME, "match-league-wrap")
 
-            for match in match_elements:
-                try:
-                    time_text = match.find_element(By.CLASS_NAME, "clock-time").text.strip()    
-                    match_hour_minute = datetime.strptime(time_text, "%H:%M").time()
+            for league in league_containers:
+                # Find all match tables inside each league
+                match_tables = league.find_elements(By.CLASS_NAME, "match-table")
 
-                    # Get current date in Nigeria
-                    nigeria_now = datetime.now(NIGERIA_TZ)
-                    match_datetime = datetime.combine(nigeria_now.date(), match_hour_minute, tzinfo=NIGERIA_TZ)
-                    
-                    # Handle past match times that are actually scheduled for the next day
-                    if match_datetime < nigeria_now:
-                        match_datetime += timedelta(days=1)
+                for table in match_tables:
+                    # Find all match rows inside each table
+                    match_rows = table.find_elements(By.CLASS_NAME, "match-row")
 
-                    home_player = match.find_element(By.CLASS_NAME, "home-team").text.strip()
-                    away_player = match.find_element(By.CLASS_NAME, "away-team").text.strip()
-                    
-                    # Create a unique match identifier using team names and start time
-                    match_identifier = f"{home_player} vs {away_player} | {match_datetime.strftime('%Y-%m-%d %H:%M')}"
+                    for match in match_rows:
+                        try:
+                            # Skip if it's a date row (e.g., "30/04 Wednesday")
+                            if "date-row" in match.get_attribute("class"):
+                                continue
 
-                    odds = match.find_elements(By.CLASS_NAME, "m-outcome-odds")
-                    home_odd = odds[0].text.strip() if len(odds) > 0 else "N/A"
-                    away_odd = odds[1].text.strip() if len(odds) > 1 else "N/A"
+                            time_text = match.find_element(By.CLASS_NAME, "clock-time").text.strip()
+                            match_hour_minute = datetime.strptime(time_text, "%H:%M").time()
 
-                    match_info = {
-                        "home_player": home_player,
-                        "away_player": away_player,
-                        "start_time": match_datetime,
-                        "home_odd": home_odd,
-                        "away_odd": away_odd,
-                        "element": match,
-                        "match_identifier": match_identifier  # Added unique identifier
-                    }
+                            # Get current date in Nigeria
+                            nigeria_now = datetime.now(NIGERIA_TZ)
+                            match_datetime = datetime.combine(nigeria_now.date(), match_hour_minute, tzinfo=NIGERIA_TZ)
 
-                    self.matches.append(match_info)
-                except Exception as inner_e:
-                    print(f"[WARNING] Skipped a match due to error: ")
+                            # Handle past match times (next day)
+                            if match_datetime < nigeria_now:
+                                match_datetime += timedelta(days=1)
+
+                            home_player = match.find_element(By.CLASS_NAME, "home-team").text.strip()
+                            away_player = match.find_element(By.CLASS_NAME, "away-team").text.strip()
+
+                            # Unique match identifier
+                            match_identifier = f"{home_player} vs {away_player} | {match_datetime.strftime('%Y-%m-%d %H:%M')}"
+
+                            # Get odds (home, draw, away)
+                            odds = match.find_elements(By.CLASS_NAME, "m-outcome-odds")
+                            home_odd = odds[0].text.strip() if len(odds) > 0 else "N/A"
+                            draw_odd = odds[1].text.strip() if len(odds) > 1 else "N/A"
+                            away_odd = odds[2].text.strip() if len(odds) > 2 else "N/A"
+
+                            # Get over 2.5 odds (from the second market)
+                            market_cells = match.find_elements(By.CLASS_NAME, "market-cell")
+                            over_2_5_odd = 0
+                            
+                            if len(market_cells) > 0:
+                                over_markets = market_cells[0].find_elements(By.CLASS_NAME, "m-market")
+                                if len(over_markets) > 1:
+                                    # Check if this is actually the over/under market (specifier = 2.5)
+                                    specifier_element = over_markets[1].find_element(By.CLASS_NAME, "af-select-input")
+                                    if specifier_element and "2.5" in specifier_element.text.strip():
+                                        over_odds = over_markets[1].find_elements(By.CLASS_NAME, "m-outcome-odds")
+                                        if len(over_odds) >= 2:
+                                            try:
+                                                over_2_5_odd = float(over_odds[0].text.strip()) 
+                                            except (ValueError, IndexError):
+                                                over_2_5_odd = 0
+
+                            # Only add match if over 2.5 odds >= 2
+                            if over_2_5_odd >= 2 and over_2_5_odd <= 2.4:
+                                match_info = {
+                                    "home_player": home_player,
+                                    "away_player": away_player,
+                                    "start_time": match_datetime,
+                                    "home_odd": home_odd,
+                                    "draw_odd": draw_odd,
+                                    "away_odd": away_odd,
+                                    "over_2_5_odd": over_2_5_odd,
+                                    "element": match,
+                                    "match_identifier": match_identifier,
+                                }
+
+                                self.matches.append(match_info)
+                        except Exception as inner_e:
+                            print(f"[WARNING] Skipped a match due to error: {inner_e}")
+
+            # Sort matches by start time
+            self.matches.sort(key=lambda x: x["start_time"])
+
         except Exception as e:
-            print(f"[ERROR] Failed to extract matches:")
+            print(f"[ERROR] Failed to extract matches: {e}")
+
 
     def extract_match_id_from_url(self, url):
         """Extract numeric match ID from URL"""
@@ -173,7 +215,7 @@ class FindMatch(SportyBetLoginBot):
                         return True
 
             except Exception as e:
-                print(f"[WARNING] Verification attempt failed: {str(e)}")
+                print(f"[WARNING] Verification attempt failed: ")
             
             time.sleep(refresh_interval)
 
@@ -283,12 +325,14 @@ class FindMatch(SportyBetLoginBot):
             time.sleep(wait_seconds)
 
     def run_FindMatch(self):
+        self.matches = []
         self.login()
         print("[INFO] Logged in, scraping matches now...")
         time.sleep(10)  # Let the page load
 
         self.set_time_filter_to_1h()
         self.extract_matches()
+        print(f"lenght of matches: {len(self.matches)}")
         match_info = self.click_earliest_match()
         
         if not match_info:
@@ -315,5 +359,4 @@ class FindMatch(SportyBetLoginBot):
             with global_matches_lock:
                 global_claimed_matches.discard(match_info["match_identifier"])
             return self.run_FindMatch()
-        
         return match_info
