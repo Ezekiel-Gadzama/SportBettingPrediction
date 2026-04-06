@@ -15,6 +15,50 @@ class SportyBetLoginBot:
         self.url = url
         self.logged_in = False
 
+    @staticmethod
+    def get_credentials_from_env() -> tuple[str, str]:
+        env_path = Path(__file__).resolve().parents[2] / ".env"
+        load_dotenv(dotenv_path=env_path)
+        phone = os.getenv("SPORTY_PHONE")
+        password = os.getenv("SPORTY_PASSWORD")
+        if not phone or not password:
+            raise ValueError("Phone number or password not found in .env file.")
+        return phone, password
+
+    def is_header_login_form_visible(self) -> bool:
+        """
+        True when the top bar shows phone/password login (session expired / logged out).
+        Matches SportyBet header: div.m-login-bar with visible phone input.
+        """
+        if not self.driver:
+            return False
+        try:
+            for el in self.driver.find_elements(
+                By.CSS_SELECTOR, ".m-login-bar input[name='phone']"
+            ):
+                try:
+                    if el.is_displayed():
+                        return True
+                except Exception:
+                    continue
+            return False
+        except Exception:
+            return False
+
+    def relogin_via_header(self) -> bool:
+        """
+        If the header login form is visible, submit credentials from .env.
+        Returns True if a login attempt was made.
+        """
+        if not self.is_header_login_form_visible():
+            return False
+        phone, password = self.get_credentials_from_env()
+        self.enter_credentials(phone, password)
+        self.click_login()
+        time.sleep(5)
+        self.logged_in = True
+        return True
+
     def open_browser(self):
         try:
             self.driver = webdriver.Chrome()
@@ -67,14 +111,7 @@ class SportyBetLoginBot:
 
     def login(self):
         try:
-            
-            # Build absolute path to the .env file
-            env_path = Path(__file__).resolve().parents[2] / ".env"
-            load_dotenv(dotenv_path=env_path)
-            phone = os.getenv("SPORTY_PHONE")
-            password = os.getenv("SPORTY_PASSWORD")
-            if not phone or not password:
-                raise ValueError("Phone number or password not found in .env file.")
+            phone, password = self.get_credentials_from_env()
             print("[INFO] Environment variables loaded.")
 
             if not self.logged_in:
@@ -88,6 +125,6 @@ class SportyBetLoginBot:
             # Optional: Wait before closing (to confirm login success)
             time.sleep(5)
             self.logged_in = True
-            
+
         except Exception as e:
             print(f"[ERROR] An error occurred during login: {e}")

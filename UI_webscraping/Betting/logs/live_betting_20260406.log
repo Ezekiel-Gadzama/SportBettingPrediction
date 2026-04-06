@@ -1,0 +1,83 @@
+2026-04-06 11:19:09 [DEBUG] Log file: c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\logs\live_betting_20260406.log
+2026-04-06 11:19:09 [INFO] Starting live betting bot | config={'amount_to_use': 100, 'max_simultaneous_matches': 10, 'min_minute_exclusive': 88.0, 'max_minute_exclusive': 92.0, 'minimum_odd': 1.07, 'maximum_odd': 1.35, 'max_abs_goal_diff_for_1x2': 1, 'max_total_goals': 4, 'exclude_srl': True, 'excluded_competitions': ['Premier League (England)', 'La Liga (Spain)', 'UEFA Champions League', 'FA Cup (England)', 'FIFA World Cup Qualifiers', 'NWSL (USA)', "Women's Super League (UK)", "UEFA Women's Champions League", "Women's EURO 2025", 'simulated reality'], 'league_cache_path': 'c:\\Users\\ezeki\\PycharmProjects\\SportBettingPrediction\\UI_webscraping\\Betting\\league_filter_cache.json', 'deepseek_enabled': True, 'deepseek_base_url': None, 'deepseek_model': 'deepseek-chat', 'deepseek_timeout_s': 35.0, 'only_bet_draws': True, 'only_bet_zero_zero_score': False, 'result_wait_seconds': 500.0, 'cache_ttl_seconds': 1200.0, 'bet_history_pages': 5, 'bet_history_team_match_ratio': 0.85, 'poll_sleep_seconds': 8.0, 'live_url': 'https://www.sportybet.com/ng/sport/football/live_list/'}
+2026-04-06 11:19:26 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-06 11:19:26 [DEBUG] Football sport already active in overview.
+2026-04-06 11:19:27 [DEBUG] Balance from header: 4982.62
+2026-04-06 11:19:27 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 100.00
+  minimum_odd              = 1.07
+  maximum_odd              = 1.35
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  max_total_goals        = 4  (skip if H+A > this)
+  exclude_srl           = True  (skip if team contains 'SRL')
+  excluded_competitions  = 10  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 100.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 100.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 10)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 4982.62
+[STATUS] ------------------------------------------------------------------
+2026-04-06 11:19:29 [DEBUG] Skip Girona FC SRL vs Villarreal SRL: excluded competition league='Simulated Reality League LaLiga SRL' (matched='simulated reality')
+2026-04-06 11:19:29 [DEBUG] Skip Juventus SRL vs Genoa SRL: excluded competition league='Simulated Reality League Serie A SRL' (matched='simulated reality')
+2026-04-06 11:19:29 [DEBUG] Skip Lecce SRL vs Atalanta SRL: excluded competition league='Simulated Reality League Serie A SRL' (matched='simulated reality')
+2026-04-06 11:19:29 [DEBUG] Skip Napoli SRL vs Milan SRL: excluded competition league='Simulated Reality League Serie A SRL' (matched='simulated reality')
+2026-04-06 11:19:29 [DEBUG] Skip Udinese SRL vs Como 1907 Srl: excluded competition league='Simulated Reality League Serie A SRL' (matched='simulated reality')
+2026-04-06 11:19:29 [DEBUG] Skip Kocaelispor Srl vs Istanbul BB SRL: excluded competition league='Simulated Reality League Turkey Super Lig SRL' (matched='simulated reality')
+2026-04-06 11:19:29 [INFO] Live rows=12 eligible=0 pending=0/10
+2026-04-06 11:19:29 [INFO] [League filter] skipped_by_league: Simulated Reality League Serie A SRL=4 | Simulated Reality League LaLiga SRL=1 | Simulated Reality League Turkey Super Lig SRL=1
+2026-04-06 11:19:37 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-06 11:19:38 [DEBUG] Football sport already active in overview.
+2026-04-06 11:19:39 [DEBUG] Balance from header: 4982.62
+2026-04-06 11:19:39 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 100.00
+  minimum_odd              = 1.07
+  maximum_odd              = 1.35
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  max_total_goals        = 4  (skip if H+A > this)
+  exclude_srl           = True  (skip if team contains 'SRL')
+  excluded_competitions  = 10  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 100.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 100.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 10)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 4982.62
+[STATUS] ------------------------------------------------------------------
+2026-04-06 11:19:41 [DEBUG] Skip Girona FC SRL vs Villarreal SRL: excluded competition league='Simulated Reality League LaLiga SRL' (matched='simulated reality')
+2026-04-06 11:19:41 [DEBUG] Skip Juventus SRL vs Genoa SRL: excluded competition league='Simulated Reality League Serie A SRL' (matched='simulated reality')
+2026-04-06 11:19:41 [DEBUG] Skip Lecce SRL vs Atalanta SRL: excluded competition league='Simulated Reality League Serie A SRL' (matched='simulated reality')
+2026-04-06 11:19:41 [DEBUG] Skip Napoli SRL vs Milan SRL: excluded competition league='Simulated Reality League Serie A SRL' (matched='simulated reality')
+2026-04-06 11:19:41 [DEBUG] Skip Udinese SRL vs Como 1907 Srl: excluded competition league='Simulated Reality League Serie A SRL' (matched='simulated reality')
+2026-04-06 11:19:41 [DEBUG] Skip Kocaelispor Srl vs Istanbul BB SRL: excluded competition league='Simulated Reality League Turkey Super Lig SRL' (matched='simulated reality')
+2026-04-06 11:19:41 [INFO] Live rows=12 eligible=0 pending=0/10
+2026-04-06 11:19:41 [INFO] [League filter] skipped_by_league: Simulated Reality League Serie A SRL=4 | Simulated Reality League LaLiga SRL=1 | Simulated Reality League Turkey Super Lig SRL=1
+2026-04-06 11:19:45 [INFO] Interrupted by user
