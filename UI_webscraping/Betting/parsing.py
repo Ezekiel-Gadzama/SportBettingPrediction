@@ -16,6 +16,7 @@ class LiveListRow:
     time_raw: str
     home_goals: int
     away_goals: int
+    game_id: str | None = None  # H1 / H2 / HT (from live list)
     league: str | None = None
     element: Any = None  # WebElement: match row to scroll/click (must be a field, not class attr)
     odd_home: float | None = None

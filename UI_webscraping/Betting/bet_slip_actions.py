@@ -26,9 +26,9 @@ if TYPE_CHECKING:
 PlaceBetFlowResult = Literal["placed", "abort_range", "failed"]
 
 # After stake entry: pause once, then up to N trials spaced by this interval while clicking Accept/Place until Confirm shows.
-POST_STAKE_SETTLE_SECONDS = 1.0
+POST_STAKE_SETTLE_SECONDS = 0.35
 BETSLIP_ACTION_MAX_TRIALS = 5
-BETSLIP_TRIAL_INTERVAL_SECONDS = 1.0
+BETSLIP_TRIAL_INTERVAL_SECONDS = 0.45
 
 
 def odd_in_range(
@@ -59,7 +59,7 @@ def find_market_header(driver: WebDriver, market_name: str = "1X2", timeout: int
     last_exc: Exception | None = None
     for xp in (primary, fallback):
         try:
-            return WebDriverWait(driver, timeout).until(
+            return WebDriverWait(driver, min(timeout, 5)).until(
                 EC.visibility_of_element_located((By.XPATH, xp))
             )
         except Exception as e:
@@ -70,16 +70,21 @@ def find_market_header(driver: WebDriver, market_name: str = "1X2", timeout: int
 
 
 def wait_for_match_detail_1x2(
-    driver: WebDriver, logger: logging.Logger | None = None, timeout: int = 12
+    driver: WebDriver,
+    logger: logging.Logger | None = None,
+    timeout: int = 12,
+    *,
+    market_name: str = "1X2",
 ) -> bool:
-    """After opening a fixture from the live list, wait until the match 1X2 block is visible."""
+    """After opening a fixture from the live list, wait until the target market header is visible."""
     log = logger or logging.getLogger(__name__)
     try:
-        find_market_header(driver, "1X2", timeout=timeout)
+        find_market_header(driver, market_name, timeout=timeout)
         return True
     except Exception as e:
         log.warning(
-            "[Match page] 1X2 header not visible after %ss (%s).",
+            "[Match page] %s header not visible after %ss (%s).",
+            market_name,
             timeout,
             type(e).__name__,
         )
@@ -198,10 +203,13 @@ def _payment_confirm_button(driver: WebDriver) -> WebElement | None:
 
 
 def _try_click_element(driver: WebDriver, el: WebElement) -> None:
-    driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
     try:
         el.click()
     except Exception:
+        try:
+            driver.execute_script("arguments[0].scrollIntoView({block:'center'});", el)
+        except Exception:
+            pass
         driver.execute_script("arguments[0].click();", el)
 
 
@@ -234,13 +242,16 @@ def click_place_bet_with_accept_flow(
     else if Accept Changes — validate slip odd then click; else if Place Bet — validate odd if readable
     then click (native + JS fallback). Success means Confirm is visible — caller then runs confirm click.
     """
-    _ = total_wait  # retained for API compatibility with older callers
+    start = time.monotonic()
     log = logger or logging.getLogger(__name__)
     pause = human_pause or random_human_pause
 
     time.sleep(POST_STAKE_SETTLE_SECONDS)
 
     for trial in range(BETSLIP_ACTION_MAX_TRIALS):
+        if time.monotonic() - start > float(total_wait):
+            log.warning("[Betslip] Action loop timed out after %.1fs.", total_wait)
+            return "failed"
         if _payment_confirm_button(driver) is not None:
             log.info(
                 "[Betslip] Payment Confirm visible (trial %s/%s).",
@@ -323,11 +334,16 @@ def click_place_bet_with_accept_flow(
     return "failed"
 
 
-def get_1x2_wrapper_and_cells(driver: WebDriver, logger: logging.Logger | None = None):
-    """Locate 1X2 market table; returns (wrapper, outcome_cells) or None on failure."""
+def get_1x2_wrapper_and_cells(
+    driver: WebDriver,
+    logger: logging.Logger | None = None,
+    *,
+    market_name: str = "1X2",
+):
+    """Locate market table by header title; returns (wrapper, outcome_cells) or None on failure."""
     log = logger or logging.getLogger(__name__)
     try:
-        market_header = find_market_header(driver, "1X2")
+        market_header = find_market_header(driver, market_name)
         wrapper = market_header.find_element(
             By.XPATH,
             ".//ancestor::div[contains(@class, 'm-table__wrapper')]",
@@ -339,21 +355,24 @@ def get_1x2_wrapper_and_cells(driver: WebDriver, logger: logging.Logger | None =
             ".//div[contains(@class,'m-table-row') and contains(@class,'m-outcome')]",
         )
         if not outcome_rows:
-            log.error("[1X2 market] No m-outcome row under 1X2 wrapper.")
+            log.error("[%s market] No m-outcome row under wrapper.", market_name)
             return None
         outcome_cells = outcome_rows[0].find_elements(
             By.CSS_SELECTOR, "div.m-table-cell--responsive"
         )
         if len(outcome_cells) < 3:
             log.error(
-                "[1X2 market] Expected three outcomes for 1X2; the market may be closed or the page layout changed."
+                "[%s market] Expected three outcomes; the market may be closed or the page layout changed.",
+                market_name,
             )
             return None
         return wrapper, outcome_cells
     except Exception:
         log.error(
-            "[1X2 market] Failed to load the 1X2 market on this match page "
+            "[%s market] Failed to load this market on the match page "
             "(timeout, or layout not as expected)."
+            ,
+            market_name,
         )
         log.debug("get_1x2_wrapper_and_cells detail", exc_info=True)
         return None
@@ -366,6 +385,7 @@ def read_1x2_selection_odd(
     home_name: str | None = None,
     away_name: str | None = None,
     logger: logging.Logger | None = None,
+    market_name: str = "1X2",
 ) -> float | None:
     """
     Read the displayed decimal odd for home/draw/away without clicking.
@@ -373,13 +393,13 @@ def read_1x2_selection_odd(
     """
     log = logger or logging.getLogger(__name__)
     try:
-        setup = get_1x2_wrapper_and_cells(driver, log)
+        setup = get_1x2_wrapper_and_cells(driver, log, market_name=market_name)
         if not setup:
             return None
         _, outcome_cells = setup
         target = pick_1x2_target_cell(outcome_cells, selection, home_name, away_name)
         if target is None:
-            log.error("[1X2 odd read] Could not map selection to an outcome column.")
+            log.error("[%s odd read] Could not map selection to an outcome column.", market_name)
             return None
         odd_spans = target.find_elements(
             By.XPATH,
@@ -389,19 +409,21 @@ def read_1x2_selection_odd(
             odd_spans = target.find_elements(By.XPATH, ".//span[contains(@class, 'm-table-cell-item')]")
         if not odd_spans:
             log.error(
-                "[1X2 odd read] No price shown for this selection (suspended or market closed)."
+                "[%s odd read] No price shown for this selection (suspended or market closed).",
+                market_name,
             )
             return None
         raw = odd_spans[0].text.strip()
         val = _parse_decimal_odd_text(raw)
         if val is None:
             log.error(
-                "[1X2 odd read] Could not parse a numeric odd from the page (got %r).",
+                "[%s odd read] Could not parse a numeric odd from the page (got %r).",
+                market_name,
                 raw[:24] if raw else "",
             )
         return val
     except Exception:
-        log.error("[1X2 odd read] Unexpected error while reading the price.")
+        log.error("[%s odd read] Unexpected error while reading the price.", market_name)
         log.debug("read_1x2_selection_odd detail", exc_info=True)
         return None
 
@@ -413,6 +435,7 @@ def click_1x2_outcome(
     home_name: str | None = None,
     away_name: str | None = None,
     logger: logging.Logger | None = None,
+    market_name: str = "1X2",
 ) -> bool:
     """
     selection: 'home' | 'draw' | 'away'
@@ -424,13 +447,13 @@ def click_1x2_outcome(
         log.error("[1X2 click] Invalid selection %r (expected home, draw, or away).", selection)
         return False
     try:
-        setup = get_1x2_wrapper_and_cells(driver, log)
+        setup = get_1x2_wrapper_and_cells(driver, log, market_name=market_name)
         if not setup:
             return False
         _, outcome_cells = setup
         target = pick_1x2_target_cell(outcome_cells, sel, home_name, away_name)
         if target is None:
-            log.error("[1X2 click] Could not find the outcome cell to click.")
+            log.error("[%s click] Could not find the outcome cell to click.", market_name)
             return False
 
         odd_spans = target.find_elements(
@@ -438,17 +461,18 @@ def click_1x2_outcome(
             ".//span[contains(@class, 'm-table-cell-item') and contains(text(), '.')]",
         )
         if not odd_spans:
-            log.error("[1X2 click] No clickable price for this outcome (market may be closed).")
+            log.error("[%s click] No clickable price for this outcome (market may be closed).", market_name)
             return False
         odd_el = odd_spans[0]
         driver.execute_script("arguments[0].scrollIntoView({block:'center'});", odd_el)
         time.sleep(0.2)
         odd_el.click()
-        log.info("Clicked 1X2 %s (odd text=%s)", sel, odd_el.text.strip())
+        log.info("Clicked %s %s (odd text=%s)", market_name, sel, odd_el.text.strip())
         return True
     except Exception:
         log.error(
-            "[1X2 click] Failed to select the outcome on the bet slip (page not ready or market unavailable)."
+            "[%s click] Failed to select the outcome on the bet slip (page not ready or market unavailable).",
+            market_name,
         )
         log.debug("click_1x2_outcome detail", exc_info=True)
         return False
@@ -457,10 +481,10 @@ def click_1x2_outcome(
 def enter_stake_amount(driver: WebDriver, amount: float, logger: logging.Logger | None = None) -> bool:
     log = logger or logging.getLogger(__name__)
     try:
-        betslip = WebDriverWait(driver, 15).until(
+        betslip = WebDriverWait(driver, 5).until(
             EC.presence_of_element_located((By.CLASS_NAME, "m-betslips"))
         )
-        stake_input = WebDriverWait(betslip, 15).until(
+        stake_input = WebDriverWait(betslip, 5).until(
             EC.presence_of_element_located(
                 (
                     By.XPATH,
@@ -505,7 +529,7 @@ def click_place_bet(driver: WebDriver, logger: logging.Logger | None = None) -> 
 def click_confirm_if_present(driver: WebDriver, logger: logging.Logger | None = None, wait: int = 15) -> bool:
     log = logger or logging.getLogger(__name__)
     try:
-        btn = WebDriverWait(driver, wait).until(
+        btn = WebDriverWait(driver, min(wait, 5)).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-op='desktop-betslip-confirm-button']"))
         )
         driver.execute_script("arguments[0].scrollIntoView({block:'center'});", btn)
@@ -522,7 +546,7 @@ def wait_success_dialog(
 ) -> bool:
     log = logger or logging.getLogger(__name__)
     try:
-        WebDriverWait(driver, timeout).until(
+        WebDriverWait(driver, min(timeout, 5)).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "div[data-op='desktop-betslip-success-dialog']"))
         )
         log.info("Success dialog visible")

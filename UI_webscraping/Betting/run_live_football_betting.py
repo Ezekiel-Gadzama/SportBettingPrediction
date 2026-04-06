@@ -14,14 +14,18 @@ from UI_webscraping.Betting.live_betting_bot import LiveBettingBot, LiveBettingC
 
 def main():
     cfg = LiveBettingConfig(
-        amount_to_use=100,
-        max_simultaneous_matches=10,
-        min_minute_exclusive=88.0,
-        max_minute_exclusive=92.0,
+        amount_to_use=20000,
+        max_simultaneous_matches=5,
+        ft_min_minute_exclusive=86.0,
+        ft_max_minute_exclusive=92.0,
+        bet_fulltime=True,
+        bet_halftime=False,
+        ht_min_minute_exclusive=37,
+        ht_max_minute_exclusive=46.0,
         minimum_odd=1.07,
         maximum_odd=1.35,
-        max_total_goals=4,
-        exclude_srl=True,
+        ft_max_total_goals=4,
+        ht_max_total_goals=2,
         excluded_competitions=[
             "Premier League (England)",
             "La Liga (Spain)",
@@ -29,9 +33,12 @@ def main():
             "FA Cup (England)",
             "FIFA World Cup Qualifiers",
             "NWSL (USA)",
+            "Serie A (Italy)",
+            "Ligue 1 (France)",
             "Women's Super League (UK)",
             "UEFA Women's Champions League",
             "Women's EURO 2025",
+            "Bundesliga (Germany)"
             "simulated reality"
         ],
         deepseek_enabled=True,
@@ -41,7 +48,7 @@ def main():
         only_bet_zero_zero_score=False,
         result_wait_seconds=500.0,
         cache_ttl_seconds=1200.0,
-        bet_history_pages=5,
+        bet_history_pages=1,
         poll_sleep_seconds=8.0,
         live_url="https://www.sportybet.com/ng/sport/football/live_list/",
     )

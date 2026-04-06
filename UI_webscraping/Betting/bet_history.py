@@ -117,7 +117,7 @@ def search_bet_history(
         driver.get(url)
         time.sleep(settle_delay_s)
         try:
-            WebDriverWait(driver, 20).until(
+            WebDriverWait(driver, 5).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, ".m-order-list, .m-order-wrapper"))
             )
         except Exception:
@@ -134,7 +134,7 @@ def search_bet_history(
 def read_header_balance(driver: WebDriver, logger: logging.Logger | None = None) -> float | None:
     log = logger or logging.getLogger(__name__)
     try:
-        el = WebDriverWait(driver, 8).until(EC.presence_of_element_located((By.ID, "j_balance")))
+        el = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "j_balance")))
         txt = el.text.strip()
         m = re.search(r"([\d,]+\.?\d*)", txt.replace(",", ""))
         if m:

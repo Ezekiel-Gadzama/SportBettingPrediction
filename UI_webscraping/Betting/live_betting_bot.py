@@ -39,18 +39,23 @@ DEFAULT_LIVE_URL = "https://www.sportybet.com/ng/sport/football/live_list/"
 class LiveBettingConfig:
     amount_to_use: float = 3000.0
     max_simultaneous_matches: int = 30
-    min_minute_exclusive: float = 88.0
-    max_minute_exclusive: float = 91.0
+    # Full-time betting window (minutes)
+    bet_fulltime: bool = True
+    ft_min_minute_exclusive: float = 88.0
+    ft_max_minute_exclusive: float = 91.0
+    # Half-time betting (1st half) — only when game_id == H1
+    bet_halftime: bool = False
+    ht_min_minute_exclusive: float = 44.0
+    ht_max_minute_exclusive: float = 46.0
     # If set, only bet when the chosen 1X2 odd is >= this (e.g. 1.25). If None, no minimum.
     minimum_odd: float | None = None
     # If set, reject odds above this (live prices can spike). If None, no upper cap.
     maximum_odd: float | None = None
     # Skip matches where |home_goals - away_goals| > this (1X2 is often removed when leading by 2+).
     max_abs_goal_diff_for_1x2: int = 1
-    # Skip matches where (home_goals + away_goals) > this (high-scoring games often have removed/unstable 1X2).
-    max_total_goals: int = 4
-    # Exclude simulated fixtures (often labeled "SRL").
-    exclude_srl: bool = True
+    # Skip matches where (home_goals + away_goals) > this.
+    ft_max_total_goals: int = 4
+    ht_max_total_goals: int = 2
     # Exclude competitions (league names) that often have volatile stoppage-time goals.
     # Mapping is done via DeepSeek and cached to disk (normalized league -> matched excluded name or "NONE").
     excluded_competitions: list[str] = field(
@@ -218,7 +223,7 @@ class LiveBettingBot(SportyBetLoginBot):
     def ensure_football_sport_selected(self) -> None:
         """On football/live_list, ensure overview sport 'Football' is selected."""
         try:
-            overview = WebDriverWait(self.driver, 20).until(
+            overview = WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "div.m-overview"))
             )
             items = overview.find_elements(By.CSS_SELECTOR, "div.sport-name-item")
@@ -257,7 +262,7 @@ class LiveBettingBot(SportyBetLoginBot):
             "div.m-table-row.m-content-row.match-row",
         )
         try:
-            WebDriverWait(self.driver, 25).until(
+            WebDriverWait(self.driver, 5).until(
                 EC.presence_of_element_located(
                     (By.CSS_SELECTOR, "div.m-table.match-table.live-table, div.m-overview")
                 )
@@ -395,6 +400,7 @@ class LiveBettingBot(SportyBetLoginBot):
                             time_raw=time_raw,
                             home_goals=hg,
                             away_goals=ag,
+                            game_id=game_id,
                             element=mr,
                             odd_home=odd_home,
                             odd_draw=odd_draw,
@@ -492,24 +498,33 @@ class LiveBettingBot(SportyBetLoginBot):
                         matched,
                     )
                     continue
-            if self.cfg.exclude_srl:
-                h = (r.home or "").lower()
-                a = (r.away or "").lower()
-                if "srl" in h or "srl" in a:
-                    self.log.debug(
-                        "Skip %s vs %s: SRL simulated fixture (exclude_srl=True)",
-                        r.home,
-                        r.away,
-                    )
-                    continue
             if r.minute is None:
                 continue
-            if not minute_in_bet_window(
-                r.minute,
-                min_exclusive=self.cfg.min_minute_exclusive,
-                max_exclusive=self.cfg.max_minute_exclusive,
+            # Decide whether this row is a Half-time (H1) bet or Full-time bet candidate
+            bet_market = "1X2"
+            bet_tag = "FT"
+            bet_max_total_goals = int(self.cfg.ft_max_total_goals)
+            if (
+                self.cfg.bet_halftime
+                and (r.game_id or "").strip().upper() == "H1"
+                and minute_in_bet_window(
+                    r.minute,
+                    min_exclusive=self.cfg.ht_min_minute_exclusive,
+                    max_exclusive=self.cfg.ht_max_minute_exclusive,
+                )
             ):
-                continue
+                bet_market = "1st Half - 1X2"
+                bet_tag = "HT"
+                bet_max_total_goals = int(self.cfg.ht_max_total_goals)
+            else:
+                if not self.cfg.bet_fulltime:
+                    continue
+                if not minute_in_bet_window(
+                    r.minute,
+                    min_exclusive=self.cfg.ft_min_minute_exclusive,
+                    max_exclusive=self.cfg.ft_max_minute_exclusive,
+                ):
+                    continue
             gap = abs(int(r.home_goals) - int(r.away_goals))
             if gap > int(self.cfg.max_abs_goal_diff_for_1x2):
                 self.log.debug(
@@ -523,15 +538,16 @@ class LiveBettingBot(SportyBetLoginBot):
                 )
                 continue
             tg = int(r.home_goals) + int(r.away_goals)
-            if tg > int(self.cfg.max_total_goals):
+            if tg > int(bet_max_total_goals):
                 self.log.debug(
-                    "Skip %s vs %s: total_goals=%d (score %d-%d) > max_total_goals=%d",
+                    "Skip %s vs %s: total_goals=%d (score %d-%d) > %s_max_total_goals=%d",
                     r.home,
                     r.away,
                     tg,
                     r.home_goals,
                     r.away_goals,
-                    self.cfg.max_total_goals,
+                    bet_tag,
+                    bet_max_total_goals,
                 )
                 continue
             sel = pick_1x2_selection(
@@ -542,23 +558,14 @@ class LiveBettingBot(SportyBetLoginBot):
             )
             if sel is None:
                 continue
-            if self._match_cache_blocked(r.match_key):
+            bet_key = f"{r.match_key}|{bet_tag}"
+            if self._match_cache_blocked(bet_key):
                 self.log.debug("Cached (skip retry): %s vs %s", r.home, r.away)
                 continue
-            if self.cfg.minimum_odd is not None or self.cfg.maximum_odd is not None:
-                lo = r.odd_for_1x2_selection(sel)
-                if lo is not None and not slip.odd_in_range(
-                    lo, self.cfg.minimum_odd, self.cfg.maximum_odd
-                ):
-                    self.log.debug(
-                        "Skip %s vs %s: list 1X2 odd %.2f outside [min=%s max=%s]",
-                        r.home,
-                        r.away,
-                        lo,
-                        self.cfg.minimum_odd if self.cfg.minimum_odd is not None else "—",
-                        self.cfg.maximum_odd if self.cfg.maximum_odd is not None else "—",
-                    )
-                    continue
+            # attach per-row bet metadata via element attribute (keeps LiveListRow minimal)
+            setattr(r, "_bet_market_name", bet_market)
+            setattr(r, "_bet_tag", bet_tag)
+            setattr(r, "_bet_cache_key", bet_key)
             out.append(r)
         # Prefer lower minute first (closer to end / window)
         out.sort(key=lambda x: x.minute or 0)
@@ -606,16 +613,18 @@ class LiveBettingBot(SportyBetLoginBot):
                 self.estimated_balance,
                 self.cfg.max_simultaneous_matches,
             )
-            ok = self._place_bet_sequence(row, sel, stake_amt)
+            bet_market = getattr(row, "_bet_market_name", "1X2")
+            bet_key = getattr(row, "_bet_cache_key", row.match_key)
+            ok = self._place_bet_sequence(row, sel, stake_amt, bet_market, bet_key)
             if ok:
                 placed += 1
-                self._cache_add(row.match_key)
+                self._cache_add(bet_key)
             random_human_pause(0.3, 2.0)
         return placed
 
-    def _fail_bet_flow(self, row: LiveListRow, public_reason: str) -> bool:
+    def _fail_bet_flow(self, row: LiveListRow, public_reason: str, *, cache_key: str) -> bool:
         """Log, add to skip cache, clear slip, return to live. Always returns False."""
-        self._skipped_cache_add(row.match_key, public_reason)
+        self._skipped_cache_add(cache_key, public_reason)
         try:
             slip.cancel_all_betslips(self.driver, self.log)
         except Exception:
@@ -681,29 +690,56 @@ class LiveBettingBot(SportyBetLoginBot):
         Returns 'ok' | 'abort' | 'retry'.
         'abort' = odd out of range on slip (Accept Changes / Place Bet) — do not toggle-retry.
         """
-        random_human_pause()
+        def _fast_pause():
+            # Keep some jitter, but much shorter than navigation delays.
+            random_human_pause(0.12, 0.55)
+
+        _fast_pause()
         if not slip.enter_stake_amount(self.driver, stake_amt, self.log):
-            return "retry"
-        random_human_pause()
+            # Sometimes the match page gets stale/laggy; refresh once and retry.
+            try:
+                self.log.warning("[Recovery] Stake entry failed — refreshing match page once.")
+                self.driver.refresh()
+                time.sleep(1.2)
+                market_name = getattr(row, "_bet_market_name", "1X2")
+                slip.wait_for_match_detail_1x2(
+                    self.driver, self.log, timeout=12, market_name=market_name
+                )
+                slip.click_1x2_outcome(
+                    self.driver,
+                    selection,
+                    home_name=row.home,
+                    away_name=row.away,
+                    logger=self.log,
+                    market_name=market_name,
+                )
+                _fast_pause()
+                if not slip.enter_stake_amount(self.driver, stake_amt, self.log):
+                    return "retry"
+            except Exception:
+                self.log.debug("[Recovery] stake refresh retry", exc_info=True)
+                return "retry"
+
+        _fast_pause()
         pf = slip.click_place_bet_with_accept_flow(
             self.driver,
             self.log,
             minimum_odd=self.cfg.minimum_odd,
             maximum_odd=self.cfg.maximum_odd,
-            human_pause=random_human_pause,
+            human_pause=_fast_pause,
         )
         if pf == "abort_range":
             return "abort"
         if pf != "placed":
             return "retry"
-        random_human_pause()
-        if not slip.click_confirm_if_present(self.driver, self.log, wait=35):
+        _fast_pause()
+        if not slip.click_confirm_if_present(self.driver, self.log, wait=5):
             self.log.error(
                 "[Confirm] Payment confirmation did not appear — will retry if attempts left."
             )
             return "retry"
-        random_human_pause()
-        if not slip.wait_success_dialog(self.driver, self.log, timeout=90):
+        _fast_pause()
+        if not slip.wait_success_dialog(self.driver, self.log, timeout=5):
             return "retry"
         return "ok"
 
@@ -732,7 +768,14 @@ class LiveBettingBot(SportyBetLoginBot):
         )
         self.go_live()
 
-    def _place_bet_sequence(self, row: LiveListRow, selection: str, stake_amt: float) -> bool:
+    def _place_bet_sequence(
+        self,
+        row: LiveListRow,
+        selection: str,
+        stake_amt: float,
+        market_name: str,
+        cache_key: str,
+    ) -> bool:
         try:
             self._scroll_live_list_for_lazy_rows()
             random_human_pause()
@@ -750,64 +793,57 @@ class LiveBettingBot(SportyBetLoginBot):
                 return self._fail_bet_flow(
                     row,
                     "Could not find live list row to open match (re-query failed).",
+                    cache_key=cache_key,
                 )
 
             self._click_open_match(click_el)
             random_human_pause()
 
-            if not slip.wait_for_match_detail_1x2(self.driver, self.log, timeout=12):
+            if not slip.wait_for_match_detail_1x2(
+                self.driver, self.log, timeout=12, market_name=market_name
+            ):
                 return self._fail_bet_flow(
                     row,
-                    "Match page did not load (1X2 header not visible).",
+                    f"Match page did not load ({market_name} header not visible).",
+                    cache_key=cache_key,
                 )
             random_human_pause()
 
-            list_odd = row.odd_for_1x2_selection(selection)
-            use_list_price = list_odd is not None and slip.odd_in_range(
-                list_odd, self.cfg.minimum_odd, self.cfg.maximum_odd
+            odd_val = slip.read_1x2_selection_odd(
+                self.driver,
+                selection,
+                home_name=row.home,
+                away_name=row.away,
+                logger=self.log,
+                market_name=market_name,
             )
-            if use_list_price:
-                odd_val = list_odd
-                self.log.info(
-                    "[Price] Using live-list 1X2 odd %.2f for %s (selection=%s) — range OK.",
-                    odd_val,
-                    f"{row.home} vs {row.away}",
-                    selection,
+            if odd_val is None:
+                return self._fail_bet_flow(
+                    row,
+                    f"Could not read odd for {row.home} vs {row.away} (market closed / suspended / page issue).",
+                    cache_key=cache_key,
                 )
-            else:
-                odd_val = slip.read_1x2_selection_odd(
-                    self.driver,
-                    selection,
-                    home_name=row.home,
-                    away_name=row.away,
-                    logger=self.log,
-                )
-                if odd_val is None:
-                    return self._fail_bet_flow(
-                        row,
-                        f"Could not read odd for {row.home} vs {row.away} (market closed / suspended / page issue).",
-                    )
 
-                if not slip.odd_in_range(
-                    odd_val, self.cfg.minimum_odd, self.cfg.maximum_odd
-                ):
-                    self.log.warning(
-                        "[Odd range] %.2f not in [min=%s max=%s] — skipping this fixture.",
-                        odd_val,
-                        self.cfg.minimum_odd if self.cfg.minimum_odd is not None else "—",
-                        self.cfg.maximum_odd if self.cfg.maximum_odd is not None else "—",
-                    )
-                    return self._fail_bet_flow(
-                        row,
-                        f"Odd {odd_val:.2f} outside allowed range for {row.home} vs {row.away}.",
-                    )
-
-                self.log.info(
-                    "[Odd range] OK on match page: %.2f for %s vs %s",
+            if not slip.odd_in_range(odd_val, self.cfg.minimum_odd, self.cfg.maximum_odd):
+                self.log.warning(
+                    "[Odd range] %.2f not in [min=%s max=%s] — skipping this fixture.",
                     odd_val,
-                    row.home,
-                    row.away,
+                    self.cfg.minimum_odd if self.cfg.minimum_odd is not None else "—",
+                    self.cfg.maximum_odd if self.cfg.maximum_odd is not None else "—",
                 )
+                return self._fail_bet_flow(
+                    row,
+                    f"Odd {odd_val:.2f} outside allowed range for {row.home} vs {row.away}.",
+                    cache_key=cache_key,
+                )
+
+            self.log.info(
+                "[Odd range] OK on match page: %.2f for %s vs %s (%s)",
+                odd_val,
+                row.home,
+                row.away,
+                market_name,
+            )
 
             random_human_pause()
             if not slip.click_1x2_outcome(
@@ -816,10 +852,12 @@ class LiveBettingBot(SportyBetLoginBot):
                 home_name=row.home,
                 away_name=row.away,
                 logger=self.log,
+                market_name=market_name,
             ):
                 return self._fail_bet_flow(
                     row,
                     f"Could not click 1X2 selection for {row.home} vs {row.away}.",
+                    cache_key=cache_key,
                 )
             random_human_pause()
 
@@ -828,6 +866,7 @@ class LiveBettingBot(SportyBetLoginBot):
                 return self._fail_bet_flow(
                     row,
                     "Odd outside allowed range after price change on bet slip.",
+                    cache_key=cache_key,
                 )
             if st == "ok":
                 self._finalize_successful_bet(row, selection, stake_amt)
@@ -843,10 +882,12 @@ class LiveBettingBot(SportyBetLoginBot):
                 home_name=row.home,
                 away_name=row.away,
                 logger=self.log,
+                market_name=market_name,
             ):
                 return self._fail_bet_flow(
                     row,
                     f"Could not deselect 1X2 for {row.home} vs {row.away}.",
+                    cache_key=cache_key,
                 )
             random_human_pause()
             if not slip.click_1x2_outcome(
@@ -855,10 +896,12 @@ class LiveBettingBot(SportyBetLoginBot):
                 home_name=row.home,
                 away_name=row.away,
                 logger=self.log,
+                market_name=market_name,
             ):
                 return self._fail_bet_flow(
                     row,
                     f"Could not reselect 1X2 for {row.home} vs {row.away}.",
+                    cache_key=cache_key,
                 )
             random_human_pause()
 
@@ -867,11 +910,13 @@ class LiveBettingBot(SportyBetLoginBot):
                 return self._fail_bet_flow(
                     row,
                     "Odd outside allowed range after price change on bet slip (retry).",
+                    cache_key=cache_key,
                 )
             if st2 != "ok":
                 return self._fail_bet_flow(
                     row,
                     f"Bet failed after retry (stake/place/confirm/success) for {row.home} vs {row.away}.",
+                    cache_key=cache_key,
                 )
             self._finalize_successful_bet(row, selection, stake_amt)
             return True
@@ -887,7 +932,7 @@ class LiveBettingBot(SportyBetLoginBot):
             except Exception:
                 pass
             self._skipped_cache_add(
-                row.match_key,
+                cache_key,
                 f"Unexpected error during bet flow ({row.home} vs {row.away}).",
             )
             self.go_live()
@@ -1007,6 +1052,10 @@ class LiveBettingBot(SportyBetLoginBot):
             [
                 "[STATUS] ------------------------------------------------------------------",
                 f"  initial_capital          = {self.initial_amount_to_use:.2f}",
+                f"  ft_window               = ({self.cfg.ft_min_minute_exclusive:.1f}, {self.cfg.ft_max_minute_exclusive:.1f})",
+                f"  bet_fulltime            = {self.cfg.bet_fulltime}",
+                f"  bet_halftime            = {self.cfg.bet_halftime}",
+                f"  ht_window               = ({self.cfg.ht_min_minute_exclusive:.1f}, {self.cfg.ht_max_minute_exclusive:.1f})  (H1 only)",
                 f"  minimum_odd              = {self.cfg.minimum_odd:.2f}"
                 if self.cfg.minimum_odd is not None
                 else "  minimum_odd              = (none — no lower bound)",
@@ -1014,8 +1063,8 @@ class LiveBettingBot(SportyBetLoginBot):
                 if self.cfg.maximum_odd is not None
                 else "  maximum_odd              = (none — no upper bound)",
                 f"  max_abs_goal_diff_1x2  = {self.cfg.max_abs_goal_diff_for_1x2}  (skip if |H-A| > this)",
-                f"  max_total_goals        = {self.cfg.max_total_goals}  (skip if H+A > this)",
-                f"  exclude_srl           = {self.cfg.exclude_srl}  (skip if team contains 'SRL')",
+                f"  ft_max_total_goals     = {self.cfg.ft_max_total_goals}  (skip if H+A > this)",
+                f"  ht_max_total_goals     = {self.cfg.ht_max_total_goals}  (skip if H+A > this)",
                 f"  excluded_competitions  = {len(self.cfg.excluded_competitions)}  (DeepSeek mapping cached)",
                 f"  deepseek_enabled       = {self.cfg.deepseek_enabled}  (model {self.cfg.deepseek_model})",
                 f"  bet_history_match_ratio = {self.cfg.bet_history_team_match_ratio:.2f}  (fuzzy name match in history)",

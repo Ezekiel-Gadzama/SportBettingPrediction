@@ -75,7 +75,7 @@ class SportyBetLoginBot:
 
     def enter_credentials(self, phone_number, password):
         try:
-            wait = WebDriverWait(self.driver, 15)
+            wait = WebDriverWait(self.driver, 5)
 
             # Wait for and enter phone number
             phone_input = wait.until(EC.presence_of_element_located((By.NAME, "phone")))
@@ -94,7 +94,7 @@ class SportyBetLoginBot:
 
     def click_login(self):
         try:
-            wait = WebDriverWait(self.driver, 15)
+            wait = WebDriverWait(self.driver, 5)
 
             # Wait for login button and click
             login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "m-btn-login")))
