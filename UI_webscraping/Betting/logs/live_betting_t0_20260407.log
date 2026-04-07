@@ -1,0 +1,37 @@
+2026-04-07 16:16:51 [DEBUG] Log file: c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\logs\live_betting_t0_20260407.log
+2026-04-07 16:16:51 [INFO] [League mapping] Exclude list changed (sig 5c03bfcf61d5fffe -> 8d80d7a5cafb762f). Remapping cached leagues on startup.
+2026-04-07 16:16:51 [INFO] [League mapping] DeepSeek request: model=deepseek-chat base_url=https://api.deepseek.com leagues=168 excluded_list=17
+2026-04-07 16:17:27 [WARNING] [League mapping] Startup remap failed; will use existing cache until new leagues appear.
+2026-04-07 16:17:27 [DEBUG] startup remap detail
+Traceback (most recent call last):
+  File "c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\league_filter.py", line 210, in load
+    mapped = deepseek_map_leagues(
+        leagues_to_remap,
+    ...<4 lines>...
+        logger=log,
+    )
+  File "c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\league_filter.py", line 142, in deepseek_map_leagues
+    raw = resp.read().decode("utf-8", errors="replace")
+          ~~~~~~~~~^^
+  File "C:\Python313\Lib\http\client.py", line 473, in read
+    return self._read_chunked(amt)
+           ~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Python313\Lib\http\client.py", line 597, in _read_chunked
+    while (chunk_left := self._get_chunk_left()) is not None:
+                         ~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Python313\Lib\http\client.py", line 579, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+  File "C:\Python313\Lib\http\client.py", line 539, in _read_next_chunk_size
+    line = self.fp.readline(_MAXLINE + 1)
+  File "C:\Python313\Lib\socket.py", line 719, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+  File "C:\Python313\Lib\ssl.py", line 1304, in recv_into
+    return self.read(nbytes, buffer)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\ssl.py", line 1138, in read
+    return self._sslobj.read(len, buffer)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+2026-04-07 16:17:40 [INFO] [League mapping] Exclude list changed (sig 5c03bfcf61d5fffe -> 8d80d7a5cafb762f). Remapping cached leagues on startup.
+2026-04-07 16:17:40 [INFO] [League mapping] DeepSeek request: model=deepseek-chat base_url=https://api.deepseek.com leagues=168 excluded_list=17

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -55,6 +56,16 @@ def _extract_json_object(text: str) -> str | None:
     if a >= 0 and b > a:
         return s[a : b + 1]
     return None
+
+
+def _exclude_signature(excluded_competitions: list[str]) -> str:
+    """
+    Stable signature for an exclude list, used to detect changes across runs.
+    """
+    normed = [_norm(x) for x in (excluded_competitions or []) if _norm(x)]
+    normed = sorted(set(normed))
+    payload = json.dumps(normed, ensure_ascii=False, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
 def deepseek_map_leagues(
@@ -174,7 +185,45 @@ class LeagueFilter:
                 with open(self.cache_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     if isinstance(data, dict):
-                        self._cache = {str(k): str(v) for k, v in data.items()}
+                        # Backwards compatible: allow a "__meta__" section.
+                        meta = data.get("__meta__") if isinstance(data.get("__meta__"), dict) else {}
+                        self._cache = {
+                            str(k): str(v)
+                            for k, v in data.items()
+                            if k != "__meta__"
+                        }
+                        # If excluded list changed, remap all cached leagues on startup.
+                        prev_sig = str(meta.get("exclude_sig") or "")
+                        cur_sig = _exclude_signature(self.exclude_list)
+                        if prev_sig and prev_sig != cur_sig:
+                            log = self.logger or logging.getLogger(__name__)
+                            log.info(
+                                "[League mapping] Exclude list changed (sig %s -> %s). Remapping cached leagues on startup.",
+                                prev_sig,
+                                cur_sig,
+                            )
+                            # Force-update: map all cached league names again with the new exclude list.
+                            try:
+                                leagues_to_remap = list(self._cache.keys())
+                                if leagues_to_remap and self.deepseek_enabled:
+                                    # Use the normalized strings as inputs; DeepSeek can map these too.
+                                    mapped = deepseek_map_leagues(
+                                        leagues_to_remap,
+                                        self.exclude_list,
+                                        base_url=self.deepseek_base_url,
+                                        model=self.deepseek_model,
+                                        timeout_s=self.deepseek_timeout_s,
+                                        logger=log,
+                                    )
+                                    for k, v in mapped.items():
+                                        self._cache[_norm(k)] = v
+                            except Exception:
+                                log.warning(
+                                    "[League mapping] Startup remap failed; will use existing cache until new leagues appear."
+                                )
+                                log.debug("startup remap detail", exc_info=True)
+                        # Ensure meta is updated on next save.
+                        self._cache["__meta_exclude_sig__"] = cur_sig
         except Exception:
             # Corrupt cache: start fresh
             self._cache = {}
@@ -182,10 +231,16 @@ class LeagueFilter:
     def save(self) -> None:
         if self._cache is None:
             return
+        # Extract and persist meta, then write mappings.
+        meta = {
+            "exclude_sig": _exclude_signature(self.exclude_list),
+        }
+        data = {k: v for k, v in self._cache.items() if k != "__meta_exclude_sig__"}
+        data["__meta__"] = meta
         os.makedirs(os.path.dirname(self.cache_path), exist_ok=True)
         tmp = self.cache_path + ".tmp"
         with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(self._cache, f, ensure_ascii=False, indent=2)
+            json.dump(data, f, ensure_ascii=False, indent=2)
         os.replace(tmp, self.cache_path)
 
     def update_mappings(self, leagues: Iterable[str]) -> int:
@@ -205,6 +260,8 @@ class LeagueFilter:
                 continue
             nx = _norm(x)
             if not nx:
+                continue
+            if nx == "__meta__":
                 continue
             if nx in self._cache:
                 continue
@@ -256,6 +313,8 @@ class LeagueFilter:
             self.load()
         league_n = _norm(league_name)
         if not league_n:
+            return False, "NONE"
+        if league_n == "__meta__":
             return False, "NONE"
         hit = self._cache.get(league_n) if self._cache is not None else None
         if hit is not None:

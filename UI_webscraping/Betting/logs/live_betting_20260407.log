@@ -1,0 +1,773 @@
+2026-04-07 00:18:46 [DEBUG] Log file: c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\logs\live_betting_20260407.log
+2026-04-07 00:18:46 [INFO] Starting live betting bot | config={'amount_to_use': 10000, 'max_simultaneous_matches': 3, 'incremental': True, 'average_odd': 1.17, 'incremental_threads': 4, 'bet_fulltime': True, 'ft_min_minute_exclusive': 1, 'ft_max_minute_exclusive': 92.0, 'bet_halftime': True, 'ht_min_minute_exclusive': 1, 'ht_max_minute_exclusive': 39, 'minimum_odd': 1.07, 'maximum_odd': 10, 'max_abs_goal_diff_for_1x2': 1, 'ft_max_total_goals': 4, 'ht_max_total_goals': 2, 'excluded_competitions': ['Premier League (England)', 'La Liga (Spain)', 'UEFA Champions League', 'FA Cup (England)', 'FIFA World Cup Qualifiers', 'NWSL (USA)', 'Serie A (Italy)', 'Ligue 1 (France)', "Women's Super League (UK)", "UEFA Women's Champions League", "Women's EURO 2025", 'Bundesliga (Germany)simulated reality'], 'league_cache_path': 'c:\\Users\\ezeki\\PycharmProjects\\SportBettingPrediction\\UI_webscraping\\Betting\\league_filter_cache.json', 'deepseek_enabled': True, 'deepseek_base_url': None, 'deepseek_model': 'deepseek-chat', 'deepseek_timeout_s': 35.0, 'only_bet_draws': True, 'only_bet_zero_zero_score': True, 'result_wait_seconds': 500.0, 'result_first_check_seconds': 45.0, 'cache_ttl_seconds': 1200.0, 'bet_history_pages': 1, 'bet_history_team_match_ratio': 0.85, 'poll_sleep_seconds': 8.0, 'live_url': 'https://www.sportybet.com/ng/sport/football/live_list/'}
+2026-04-07 00:19:03 [INFO] [Incremental] Starting 4 lane workers; all Selenium steps share one lock (no parallel browser use).
+2026-04-07 00:19:03 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:04 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:05 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:06 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:06 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:06 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:06 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:06 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:06 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:07 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:08 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:08 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:08 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:08 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:08 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:09 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:10 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:10 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:10 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:10 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:10 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:10 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:11 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:12 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:12 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:12 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:12 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:12 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:14 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:14 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:15 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:16 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:16 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:16 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:16 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:16 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:17 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:18 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:18 [WARNING] [Incremental] Bankroll 10000.00 is below required exposure 10000.02 for 3 trials at avg_odd=1.17 (min base stake=155.93). Strategy may overexpose.
+2026-04-07 00:19:18 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:19:19 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:19 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:19 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:19 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:19 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:19 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:20 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:21 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:21 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:21 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:21 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:21 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:22 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:23 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:24 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:24 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:24 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:24 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:24 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:24 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:25 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:27 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:27 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:27 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:27 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:27 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:27 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:28 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:29 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:29 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:29 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:29 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:29 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:30 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:31 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:31 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:31 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:31 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:31 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:32 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:32 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:33 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:33 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:19:34 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:34 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:34 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:34 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:35 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:35 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:36 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:37 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:37 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:37 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:37 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:37 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:38 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:39 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:39 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:39 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:39 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:39 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:39 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:40 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:41 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:42 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:42 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:42 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:42 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:42 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:42 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:43 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:44 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:44 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:44 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:44 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:45 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:45 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:46 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:47 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:47 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:47 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:47 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:47 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:48 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:48 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:19:49 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:50 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:50 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:50 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:50 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:50 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:50 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:51 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:52 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:52 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:52 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:52 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:52 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:53 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:54 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:55 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:55 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:55 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:55 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:55 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:56 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:57 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:19:58 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:58 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:58 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:19:58 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:19:58 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:19:58 [DEBUG] Football sport already active in overview.
+2026-04-07 00:19:59 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:00 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:00 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:00 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:00 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:20:00 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:01 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:02 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:03 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:03 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:03 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:03 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:20:03 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:03 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:20:03 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:04 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:05 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:05 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:05 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:05 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:20:06 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:06 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:07 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:08 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:08 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:08 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:08 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:20:08 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:09 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:10 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:11 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:11 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:11 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:11 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:20:11 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:11 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:12 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:13 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:13 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:13 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:13 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:20:13 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:14 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:15 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:16 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:16 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:16 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:16 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:20:16 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:17 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:18 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:18 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:20:19 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:19 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:19 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:19 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:20:19 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:19 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:20 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:21 [DEBUG] Skip CS Deportivo Pereira vs Alianza FC Valledupar: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:21 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:21 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:21 [INFO] Live rows=5 eligible=0 pending=0/4
+2026-04-07 00:20:21 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:22 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:23 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:23 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:24 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:24 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:24 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:24 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:24 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:25 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:25 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:26 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:26 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:26 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:27 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:27 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:28 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:29 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:29 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:29 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:29 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:29 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:30 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:31 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:31 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:31 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:31 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:31 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:32 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:32 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:33 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:33 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:20:33 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:34 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:34 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:34 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:34 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:35 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:36 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:36 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:36 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:36 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:36 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:37 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:38 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:39 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:39 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:39 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:39 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:39 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:39 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:40 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:41 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:41 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:41 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:41 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:41 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:42 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:42 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:43 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:44 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:44 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:44 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:44 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:44 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:45 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:46 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:46 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:47 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:47 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:47 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:47 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:48 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:48 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:20:49 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:49 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:49 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:49 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:49 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:49 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:50 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:51 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:51 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:52 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:52 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:52 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:52 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:53 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:54 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:54 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:54 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:54 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:54 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:55 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:55 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:56 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:56 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:57 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:57 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:57 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:20:57 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:20:58 [DEBUG] Football sport already active in overview.
+2026-04-07 00:20:59 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:20:59 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:20:59 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:59 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:20:59 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:00 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:00 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:01 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:01 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:02 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:02 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:02 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:02 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:03 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:03 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:21:04 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:04 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:05 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:05 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:05 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:05 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:05 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:06 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:07 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:07 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:07 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:07 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:07 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:08 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:09 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:09 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:10 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:10 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:10 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:10 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:10 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:11 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:11 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:12 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:12 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:12 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:13 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:13 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:14 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:14 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:15 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:15 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:15 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:15 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:15 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:16 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:17 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:17 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:17 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:17 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:18 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:18 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:18 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:21:19 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:19 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:20 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:20 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:20 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:20 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:20 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:21 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:22 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:22 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:22 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:22 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:23 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:23 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:24 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:25 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:25 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:25 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:25 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:25 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:26 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:27 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:27 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:27 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:27 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:27 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:28 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:29 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:30 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:31 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:33 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:33 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:33 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:33 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:33 [INFO] [STATUS] ------------------------------------------------------------------
+  initial_capital          = 10000.00
+  incremental             = True  (threads=4 avg_odd=1.170 max_trials=3 lanes[L0:next_trial=1 spent=0.00 | L1:next_trial=1 spent=0.00 | L2:next_trial=1 spent=0.00 | L3:next_trial=1 spent=0.00])
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 39.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 12  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 10000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 10000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 155.93  (= incremental sizing)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 21179.83
+[STATUS] ------------------------------------------------------------------
+2026-04-07 00:21:34 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:35 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:35 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:36 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:36 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:36 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:36 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:37 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:38 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:38 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:39 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:39 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:39 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:39 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:39 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:40 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:40 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:41 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:41 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:41 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:41 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:42 [DEBUG] Football sport already active in overview.
+2026-04-07 00:21:43 [DEBUG] Balance from header: 21179.83
+2026-04-07 00:21:43 [DEBUG] [Live list] skip HT break: CS Deportivo Pereira vs Alianza FC Valledupar | clock=45:00 game_id=HT
+2026-04-07 00:21:44 [DEBUG] Skip Club Fernando de La Mora vs Encarnacion FC: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:44 [DEBUG] Skip Sarmiento de Resistencia Reserves vs Independiente Tirol: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-07 00:21:44 [INFO] Live rows=4 eligible=0 pending=0/4
+2026-04-07 00:21:44 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 00:21:45 [INFO] Interrupted by user

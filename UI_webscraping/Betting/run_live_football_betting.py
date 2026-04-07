@@ -9,19 +9,22 @@ _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
-from UI_webscraping.Betting.live_betting_bot import LiveBettingBot, LiveBettingConfig
+from UI_webscraping.Betting.live_betting_bot import LiveBettingConfig, run_threaded_live_bots
 
 
 def main():
     cfg = LiveBettingConfig(
-        amount_to_use=20000,
-        max_simultaneous_matches=5,
-        ft_min_minute_exclusive=86.0,
+        amount_to_use=10000,
+        max_simultaneous_matches=3,
+        num_threads=4,
+        incremental=True,
+        average_odd=1.17,
+        ft_min_minute_exclusive=86,
         ft_max_minute_exclusive=92.0,
         bet_fulltime=True,
-        bet_halftime=False,
-        ht_min_minute_exclusive=37,
-        ht_max_minute_exclusive=46.0,
+        bet_halftime=True,
+        ht_min_minute_exclusive=38,
+        ht_max_minute_exclusive=40.0,
         minimum_odd=1.07,
         maximum_odd=1.35,
         ft_max_total_goals=4,
@@ -38,8 +41,12 @@ def main():
             "Women's Super League (UK)",
             "UEFA Women's Champions League",
             "Women's EURO 2025",
-            "Bundesliga (Germany)"
-            "simulated reality"
+            "Bundesliga (Germany)",
+            "simulated reality",
+            "india i-league",
+            "india mumbai premier league",
+            "india goa pro league",
+            "Any india football league"
         ],
         deepseek_enabled=True,
         deepseek_model="deepseek-chat",
@@ -52,8 +59,7 @@ def main():
         poll_sleep_seconds=8.0,
         live_url="https://www.sportybet.com/ng/sport/football/live_list/",
     )
-    bot = LiveBettingBot(cfg)
-    bot.run_forever()
+    run_threaded_live_bots(cfg)
 
 
 if __name__ == "__main__":

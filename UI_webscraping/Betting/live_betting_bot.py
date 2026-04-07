@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import dataclasses
 import logging
+import math
+import threading
 import time
 from dataclasses import dataclass, field
 
@@ -39,6 +41,11 @@ DEFAULT_LIVE_URL = "https://www.sportybet.com/ng/sport/football/live_list/"
 class LiveBettingConfig:
     amount_to_use: float = 3000.0
     max_simultaneous_matches: int = 30
+    # Incremental staking (one bet at a time). When enabled, max_simultaneous_matches
+    # becomes the maximum number of escalating trials within a "round".
+    incremental: bool = False
+    # Expected average odd used for stake sizing in incremental mode (must be > 1.0).
+    average_odd: float = 1.17
     # Full-time betting window (minutes)
     bet_fulltime: bool = True
     ft_min_minute_exclusive: float = 88.0
@@ -85,6 +92,16 @@ class LiveBettingConfig:
     bet_history_team_match_ratio: float = 0.85
     poll_sleep_seconds: float = 8.0
     live_url: str = DEFAULT_LIVE_URL
+    # Force a hard refresh (driver.get) periodically to reduce stale SPA state / session glitches.
+    hard_refresh_seconds: float = 600.0
+    # Shared-browser threading: when True, each thread's "betting turn" starts with a full
+    # driver.get(live_url) even if already on live list (helps recover from silent logout).
+    thread_turn_full_reload: bool = True
+    # Global throttle for thread-turn reload (shared-browser mode): only reload if the last
+    # reload was at least this many seconds ago.
+    thread_turn_reload_min_interval_seconds: float = 300.0
+    # Multi-threading: one browser (Selenium session) per thread; shared locks + caches below.
+    num_threads: int = 1
 
 
 @dataclass
@@ -98,6 +115,7 @@ class PendingBet:
     check_after: float
     selection: str
     history_retries: int = 0
+    inc_trial: int | None = None
 
 
 @dataclass
@@ -106,28 +124,103 @@ class BetCacheEntry:
     expires_at: float
 
 
+@dataclass
+class SharedBettingContext:
+    """
+    Shared across LiveBettingBot threads: one browser per thread, but
+    - only one thread at a time may scan live list + place bet + return to live list
+    - only one thread at a time may navigate bet history; results are cached for all threads
+    - bet/skip fixture caches are shared so threads do not repeat failed/successful fixtures
+    - balances are shared (same account) when using multiple threads
+    """
+
+    cfg: LiveBettingConfig
+    # Global UI lock: Selenium driver is NOT thread-safe. With a shared browser,
+    # *all* driver interactions must be serialized through this lock.
+    ui_lock: threading.Lock = field(default_factory=threading.Lock)
+    # One thread at a time may navigate bet history; results are cached for all threads.
+    result_check_lock: threading.Lock = field(default_factory=threading.Lock)
+    result_cache_lock: threading.Lock = field(default_factory=threading.Lock)
+    cache_lock: threading.Lock = field(default_factory=threading.Lock)
+    balance_lock: threading.Lock = field(default_factory=threading.Lock)
+    league_lock: threading.Lock = field(default_factory=threading.Lock)
+    driver_ready: threading.Event = field(default_factory=threading.Event)
+    driver: object | None = None
+
+    # Settled results keyed by bet_history.result_cache_key(home, away); omit "running" for cache longevity
+    result_cache: dict[str, bh.SettledBetInfo] = field(default_factory=dict)
+    _bet_cache: list[BetCacheEntry] = field(default_factory=list)
+    _skipped_cache: list[BetCacheEntry] = field(default_factory=list)
+
+    bots: list["LiveBettingBot"] = field(default_factory=list)
+
+    estimated_balance: float = field(init=False)
+    tracked_balance: float = field(init=False)
+    wins: int = 0
+    losses: int = 0
+    next_hard_refresh_at: float = field(default_factory=lambda: time.monotonic() + 600.0)
+    last_thread_turn_reload_at: float = field(default_factory=time.monotonic)
+
+    def __post_init__(self) -> None:
+        self.estimated_balance = float(self.cfg.amount_to_use)
+        self.tracked_balance = float(self.cfg.amount_to_use)
+        self.next_hard_refresh_at = time.monotonic() + float(self.cfg.hard_refresh_seconds)
+        self.last_thread_turn_reload_at = time.monotonic()
+
+    def register(self, bot: "LiveBettingBot") -> None:
+        self.bots.append(bot)
+
+    def collect_due_pending_triples(self, now: float) -> list[tuple[str, str, str]]:
+        """(home, away, cache_key) for all threads' pending bets that are due, deduped by key."""
+        seen: set[str] = set()
+        out: list[tuple[str, str, str]] = []
+        for bot in self.bots:
+            for p in bot.pending:
+                if p.check_after <= now:
+                    k = bh.result_cache_key(p.home, p.away)
+                    if k not in seen:
+                        seen.add(k)
+                        out.append((p.home, p.away, k))
+        return out
+
+
 class LiveBettingBot(SportyBetLoginBot):
     """
     Live football 1X2 betting loop using SportyBetLoginBot for auth and driver.
-    Single-threaded: one browser, one action sequence at a time.
+    Single-threaded by default; with SharedBettingContext + num_threads>1, one browser per thread
+    with coordinated locks for live-list betting and bet-history checks.
     """
 
-    def __init__(self, config: LiveBettingConfig | None = None):
+    def __init__(
+        self,
+        config: LiveBettingConfig | None = None,
+        *,
+        shared: SharedBettingContext | None = None,
+        thread_id: int = 0,
+        clear_log_on_start: bool = True,
+    ):
         cfg = config or LiveBettingConfig()
         super().__init__(cfg.live_url)
         self.cfg = cfg
+        self.shared = shared
+        self.thread_id = int(thread_id)
+        log_name = f"live_betting_t{self.thread_id}" if shared is not None else "live_betting"
         self.log = _bet_log.setup_betting_logger(
             os.path.join(os.path.dirname(__file__), "logs"),
-            name="live_betting",
-            clear_file_on_start=True,
+            name=log_name,
+            clear_file_on_start=clear_log_on_start and self.thread_id == 0,
         )
 
         # Initial capital (fixed) — used for profit % calculations in logs
         self.initial_amount_to_use: float = float(cfg.amount_to_use)
         # Stake sizing: always estimated_balance / max_simultaneous_matches (starts equal to initial)
-        self.estimated_balance: float = self.initial_amount_to_use
-        # Tracked "real" balance for logging only: starts at initial; +profit on win, net loss on loss
-        self.tracked_balance: float = self.initial_amount_to_use
+        # When `shared` is set, balances live on SharedBettingContext (same wallet).
+        if shared is None:
+            self.estimated_balance: float = self.initial_amount_to_use
+            self.tracked_balance: float = self.initial_amount_to_use
+        else:
+            self.estimated_balance = float(shared.estimated_balance)
+            self.tracked_balance = float(shared.tracked_balance)
         self.wins: int = 0
         self.losses: int = 0
         self.pending: list[PendingBet] = []
@@ -147,8 +240,163 @@ class LiveBettingBot(SportyBetLoginBot):
         self._league_filter.load()
         # Per-step counters (reset each try_place_bets call)
         self._league_filter_skipped_counts: dict[str, int] = {}
+        self._last_site_balance: float | None = None
+
+        # Incremental staking state (one bet at a time, escalating by trial on loss)
+        self._inc_round_base_stake: float | None = None
+        self._inc_round_spent: float = 0.0
+        self._inc_trial_next: int = 1
+
+        if shared is not None:
+            shared.register(self)
+        self._next_hard_refresh_at: float = time.monotonic() + float(self.cfg.hard_refresh_seconds)
+
+    def _effective_estimated_balance(self) -> float:
+        if self.shared is not None:
+            with self.shared.balance_lock:
+                return float(self.shared.estimated_balance)
+        return float(self.estimated_balance)
+
+    def _effective_tracked_balance(self) -> float:
+        if self.shared is not None:
+            with self.shared.balance_lock:
+                return float(self.shared.tracked_balance)
+        return float(self.tracked_balance)
+
+    # --- incremental staking ---
+
+    def _inc_max_trials(self) -> int:
+        return max(1, int(self.cfg.max_simultaneous_matches))
+
+    def _inc_avg_odd(self) -> float:
+        o = float(self.cfg.average_odd)
+        if o <= 1.0:
+            raise ValueError(f"average_odd must be > 1.0 (got {o})")
+        return o
+
+    @staticmethod
+    def _inc_total_exposure_factor(avg_odd: float, trials: int) -> float:
+        """
+        Total exposure (sum of stakes) for incremental trials when base_stake=1.
+        This lets us pick a safe base stake such that base * factor ~= bankroll.
+        """
+        o = float(avg_odd)
+        n = max(1, int(trials))
+        if o <= 1.0:
+            return float("inf")
+        profit_unit = o - 1.0  # with base=1, trial-1 profit target
+        spent = 0.0
+        for k in range(1, n + 1):
+            if k == 1:
+                stake_k = 1.0
+            else:
+                stake_k = (spent + profit_unit * k) / (o - 1.0)
+            spent += stake_k
+        return spent
+
+    def _inc_reset_round(self) -> None:
+        """Start a new round from trial 1 using current bankroll."""
+        self._inc_round_spent = 0.0
+        self._inc_trial_next = 1
+        self._inc_round_base_stake = None
+
+    def _inc_ensure_round_base(self) -> float:
+        if self._inc_round_base_stake is not None:
+            return float(self._inc_round_base_stake)
+        avg_odd = self._inc_avg_odd()
+        trials = self._inc_max_trials()
+        factor = self._inc_total_exposure_factor(avg_odd, trials)
+        bankroll = float(self._effective_estimated_balance())
+        if self._last_site_balance is not None:
+            bankroll = min(bankroll, float(math.floor(float(self._last_site_balance))))
+        if factor <= 0 or factor == float("inf"):
+            base = 10.0
+        else:
+            base = bankroll / factor
+        base = max(10.0, round(base, 2))
+        self._inc_round_base_stake = base
+        # If bankroll is too small for min stake * factor, surface it in logs.
+        if factor != float("inf") and base * factor > bankroll + 1e-6:
+            self.log.warning(
+                "[Incremental] Bankroll %.2f is below required exposure %.2f for %d trials at avg_odd=%.2f "
+                "(min base stake=%.2f). Strategy may overexpose.",
+                bankroll,
+                base * factor,
+                trials,
+                avg_odd,
+                base,
+            )
+        return float(self._inc_round_base_stake)
+
+    def _inc_next_stake_amount(self) -> float:
+        """
+        Stake sizing:
+        - trial 1: base stake
+        - trial k>1: stake_k = (spent_so_far + (profit_unit * k)) / (avg_odd - 1)
+          where profit_unit = base_stake * (avg_odd - 1)
+        This yields net profit = profit_unit * k if the k-th bet wins.
+        """
+        base = self._inc_ensure_round_base()
+        avg_odd = self._inc_avg_odd()
+        k = int(self._inc_trial_next)
+        if k <= 1:
+            return float(base)
+        profit_unit = base * (avg_odd - 1.0)
+        stake_k = (float(self._inc_round_spent) + profit_unit * k) / (avg_odd - 1.0)
+        return max(10.0, round(stake_k, 2))
+
+    def _inc_next_stake_amount_for_current_odd(self, current_odd: float) -> float | None:
+        """
+        Trial 2+ sizing using the *current* odd right before placing the bet.
+        Keeps the same profit target schedule (based on base stake + average_odd),
+        but uses (current_odd - 1) in the denominator so the win is more likely to
+        cover prior losses at the actual price.
+        """
+        try:
+            o = float(current_odd)
+        except Exception:
+            return None
+        if o <= 1.0:
+            return None
+        base = self._inc_ensure_round_base()
+        k = int(self._inc_trial_next)
+        if k <= 1:
+            return float(base)
+        # Profit target per trial is still anchored to the expected average odd.
+        avg_odd = self._inc_avg_odd()
+        profit_unit = base * (avg_odd - 1.0)
+        stake_k = (float(self._inc_round_spent) + profit_unit * k) / (o - 1.0)
+        return max(10.0, round(float(stake_k), 2))
 
     # --- navigation ---
+
+    def _maybe_hard_refresh(self) -> None:
+        """
+        Periodic full reload to combat stale SPA state and force session re-check.
+        In threaded mode this is coordinated by SharedBettingContext so only one thread does it.
+        """
+        interval = float(self.cfg.hard_refresh_seconds)
+        if interval <= 0:
+            return
+        now = time.monotonic()
+
+        if self.shared is not None:
+            # Only safe to call this while holding shared.ui_lock.
+            if now < float(self.shared.next_hard_refresh_at):
+                return
+            self.shared.next_hard_refresh_at = now + interval
+        else:
+            if now < float(self._next_hard_refresh_at):
+                return
+            self._next_hard_refresh_at = now + interval
+
+        live = (self.cfg.live_url or "").strip()
+        self.log.info("[Live list] Hard refresh now (interval %.0fs).", interval)
+        try:
+            self.load_url(live)
+            time.sleep(2.0)
+        except Exception:
+            self.log.debug("hard refresh detail", exc_info=True)
 
     def go_live(self) -> None:
         """
@@ -170,23 +418,60 @@ class LiveBettingBot(SportyBetLoginBot):
         self._scroll_live_list_for_lazy_rows()
         self._update_league_mapping_from_dom()
 
+    def _thread_turn_reload_live(self) -> None:
+        """Full reload of live list at start of a thread turn (shared-browser mode)."""
+        try:
+            if not bool(self.cfg.thread_turn_full_reload):
+                return
+        except Exception:
+            return
+        # Throttle reloads globally in shared-browser mode.
+        if self.shared is not None:
+            try:
+                min_interval = float(self.cfg.thread_turn_reload_min_interval_seconds)
+            except Exception:
+                min_interval = 300.0
+            if min_interval < 0:
+                min_interval = 0.0
+            now = time.monotonic()
+            last = float(self.shared.last_thread_turn_reload_at)
+            if now - last < min_interval:
+                return
+            self.shared.last_thread_turn_reload_at = now
+        live = (self.cfg.live_url or "").strip()
+        if not live:
+            return
+        self.log.info("[Live list] Thread-turn full reload.")
+        try:
+            self.load_url(live)
+            time.sleep(2.0)
+        except Exception:
+            self.log.debug("thread-turn reload detail", exc_info=True)
+
     def _update_league_mapping_from_dom(self) -> None:
         """Read all league rows currently on the page and ask DeepSeek to map unknown ones."""
-        try:
-            leagues = []
-            for el in self.driver.find_elements(
-                By.CSS_SELECTOR, "div.m-table-row.league-row .m-table-cell.league"
-            ):
-                try:
-                    txt = (el.text or "").strip()
-                    if txt:
-                        leagues.append(txt)
-                except Exception:
-                    continue
-            if leagues:
-                self._league_filter.update_mappings(leagues)
-        except Exception:
-            self.log.debug("_update_league_mapping_from_dom", exc_info=True)
+        def _run() -> None:
+            try:
+                leagues = []
+                for el in self.driver.find_elements(
+                    By.CSS_SELECTOR, "div.m-table-row.league-row .m-table-cell.league"
+                ):
+                    try:
+                        txt = (el.text or "").strip()
+                        if txt:
+                            leagues.append(txt)
+                    except Exception:
+                        continue
+                if leagues:
+                    self._league_filter.update_mappings(leagues)
+            except Exception:
+                self.log.debug("_update_league_mapping_from_dom", exc_info=True)
+
+        if self.shared is not None:
+            with self.shared.league_lock:
+                _run()
+        else:
+            _run()
 
     def _relogin_if_header_login_visible(self) -> None:
         """If the site shows the header login bar (session expired), sign in again from .env."""
@@ -448,15 +733,32 @@ class LiveBettingBot(SportyBetLoginBot):
 
     def _sweep_cache(self) -> None:
         now = time.time()
-        self._cache = [c for c in self._cache if c.expires_at > now]
-        self._skipped_cache = [c for c in self._skipped_cache if c.expires_at > now]
+        if self.shared is not None:
+            with self.shared.cache_lock:
+                self.shared._bet_cache = [c for c in self.shared._bet_cache if c.expires_at > now]
+                self.shared._skipped_cache = [
+                    c for c in self.shared._skipped_cache if c.expires_at > now
+                ]
+        else:
+            self._cache = [c for c in self._cache if c.expires_at > now]
+            self._skipped_cache = [c for c in self._skipped_cache if c.expires_at > now]
 
     def _cache_has(self, key: str) -> bool:
         now = time.time()
+        if self.shared is not None:
+            with self.shared.cache_lock:
+                return any(
+                    c.match_key == key and c.expires_at > now for c in self.shared._bet_cache
+                )
         return any(c.match_key == key and c.expires_at > now for c in self._cache)
 
     def _skipped_cache_has(self, key: str) -> bool:
         now = time.time()
+        if self.shared is not None:
+            with self.shared.cache_lock:
+                return any(
+                    c.match_key == key and c.expires_at > now for c in self.shared._skipped_cache
+                )
         return any(c.match_key == key and c.expires_at > now for c in self._skipped_cache)
 
     def _match_cache_blocked(self, key: str) -> bool:
@@ -464,19 +766,42 @@ class LiveBettingBot(SportyBetLoginBot):
         return self._cache_has(key) or self._skipped_cache_has(key)
 
     def _cache_add(self, key: str) -> None:
-        self._cache.append(BetCacheEntry(key, time.time() + self.cfg.cache_ttl_seconds))
+        ent = BetCacheEntry(key, time.time() + self.cfg.cache_ttl_seconds)
+        if self.shared is not None:
+            with self.shared.cache_lock:
+                self.shared._bet_cache.append(ent)
+        else:
+            self._cache.append(ent)
 
     def _skipped_cache_add(self, key: str, reason: str) -> None:
-        self._skipped_cache.append(BetCacheEntry(key, time.time() + self.cfg.cache_ttl_seconds))
+        ent = BetCacheEntry(key, time.time() + self.cfg.cache_ttl_seconds)
+        if self.shared is not None:
+            with self.shared.cache_lock:
+                self.shared._skipped_cache.append(ent)
+        else:
+            self._skipped_cache.append(ent)
         self.log.info(
             "[Skip cache] %s — will not retry this fixture until cache TTL (same as bet cache).",
             reason,
         )
 
     def stake_per_match(self) -> float:
-        """Always estimated_account_balance / max_simultaneous_matches (min stake 10)."""
-        n = max(1, self.cfg.max_simultaneous_matches)
-        return max(10.0, round(self.estimated_balance / n, 2))
+        """
+        Stake sizing:
+        - default: estimated_balance / max_simultaneous_matches (min stake 10)
+        - incremental: one bet at a time, escalating by trial on loss (uses average_odd)
+        """
+        if self.cfg.incremental:
+            stake = self._inc_next_stake_amount()
+        else:
+            n = max(1, self.cfg.max_simultaneous_matches)
+            stake = max(10.0, round(self._effective_estimated_balance() / n, 2))
+
+        # Always cap stake by available header balance (rounded down).
+        if self._last_site_balance is not None:
+            cap = float(math.floor(float(self._last_site_balance)))
+            stake = min(stake, cap)
+        return max(0.0, round(float(stake), 2))
 
     def eligible_rows(self, rows: list[LiveListRow]) -> list[LiveListRow]:
         out: list[LiveListRow] = []
@@ -587,9 +912,18 @@ class LiveBettingBot(SportyBetLoginBot):
             more = f" (+{len(top)-12} more)" if len(top) > 12 else ""
             self.log.info("[League filter] skipped_by_league: %s%s", summary, more)
 
+        # Incremental mode: only one bet at a time (must wait for result).
+        if self.cfg.incremental and self.pending:
+            self.log.info(
+                "[Incremental] Pending bet exists (%d). Waiting for result before placing next.",
+                len(self.pending),
+            )
+            return 0
+
         for row in candidates:
-            if len(self.pending) >= self.cfg.max_simultaneous_matches:
-                self.log.info("Max simultaneous matches reached; stop placing")
+            pending_cap = 1 if self.cfg.incremental else int(self.cfg.max_simultaneous_matches)
+            if len(self.pending) >= pending_cap:
+                self.log.info("Max pending bets reached; stop placing")
                 break
             sel = pick_1x2_selection(
                 row.home_goals,
@@ -599,7 +933,22 @@ class LiveBettingBot(SportyBetLoginBot):
             )
             if sel is None:
                 continue
+            # Incremental mode: enforce max trial count (same field used as max_trials).
+            if self.cfg.incremental and self._inc_trial_next > self._inc_max_trials():
+                self.log.warning(
+                    "[Incremental] Max trials exceeded (%d). Resetting round and not placing further bets this step.",
+                    self._inc_max_trials(),
+                )
+                self._inc_reset_round()
+                break
+
             stake_amt = self.stake_per_match()
+            if stake_amt < 10.0:
+                self.log.warning(
+                    "Insufficient balance for min stake (stake_cap=%.2f). Skipping bet placement this step.",
+                    stake_amt,
+                )
+                break
             self.log.info(
                 "Attempt bet %s vs %s @ %s' score=%s:%s selection=%s stake=%.2f "
                 "(estimated_bal %.2f / max_sim %d)",
@@ -610,7 +959,7 @@ class LiveBettingBot(SportyBetLoginBot):
                 row.away_goals,
                 sel,
                 stake_amt,
-                self.estimated_balance,
+                self._effective_estimated_balance(),
                 self.cfg.max_simultaneous_matches,
             )
             bet_market = getattr(row, "_bet_market_name", "1X2")
@@ -624,6 +973,21 @@ class LiveBettingBot(SportyBetLoginBot):
 
     def _fail_bet_flow(self, row: LiveListRow, public_reason: str, *, cache_key: str) -> bool:
         """Log, add to skip cache, clear slip, return to live. Always returns False."""
+        # If logged out, do not cache this fixture as "failed bet" (it was a session issue).
+        try:
+            if self.is_header_login_form_visible():
+                self.log.warning(
+                    "[Session] Header login visible during bet flow — treating as logout issue; not skip-caching this fixture."
+                )
+                try:
+                    self._relogin_if_header_login_visible()
+                except Exception:
+                    pass
+                self.go_live()
+                return False
+        except Exception:
+            pass
+
         self._skipped_cache_add(cache_key, public_reason)
         try:
             slip.cancel_all_betslips(self.driver, self.log)
@@ -759,8 +1123,12 @@ class LiveBettingBot(SportyBetLoginBot):
                 placed_at=now,
                 check_after=now + self.cfg.result_wait_seconds,
                 selection=selection,
+                inc_trial=(int(self._inc_trial_next) if self.cfg.incremental else None),
             )
         )
+        if self.cfg.incremental:
+            # Record actual stake used for this round (needed for next-trial sizing).
+            self._inc_round_spent += float(stake_amt)
         self.log.info(
             "Bet recorded pending check at +%ss | booking=%s",
             self.cfg.result_wait_seconds,
@@ -844,6 +1212,35 @@ class LiveBettingBot(SportyBetLoginBot):
                 row.away,
                 market_name,
             )
+
+            # Incremental: for trial 2+, recompute stake using the *current* odd on this match page.
+            if self.cfg.incremental and int(self._inc_trial_next) > 1:
+                new_stake = self._inc_next_stake_amount_for_current_odd(float(odd_val))
+                if new_stake is None:
+                    return self._fail_bet_flow(
+                        row,
+                        f"Cannot compute incremental stake for odd {odd_val:.2f}.",
+                        cache_key=cache_key,
+                    )
+                # Apply header balance cap (rounded down) to the newly computed stake.
+                if self._last_site_balance is not None:
+                    cap = float(math.floor(float(self._last_site_balance)))
+                    new_stake = min(float(new_stake), cap)
+                if float(new_stake) < 10.0:
+                    return self._fail_bet_flow(
+                        row,
+                        f"Insufficient balance for computed incremental stake (cap {new_stake:.2f}).",
+                        cache_key=cache_key,
+                    )
+                if abs(float(new_stake) - float(stake_amt)) > 0.009:
+                    self.log.info(
+                        "[Incremental] Trial %d stake recomputed using current odd %.2f: %.2f -> %.2f",
+                        int(self._inc_trial_next),
+                        float(odd_val),
+                        float(stake_amt),
+                        float(new_stake),
+                    )
+                stake_amt = float(new_stake)
 
             random_human_pause()
             if not slip.click_1x2_outcome(
@@ -938,6 +1335,66 @@ class LiveBettingBot(SportyBetLoginBot):
             self.go_live()
             return False
 
+    def _apply_settled_result(self, p: PendingBet, info: bh.SettledBetInfo) -> None:
+        """Apply won/lost to balances (shared wallet if multi-threaded)."""
+        if info.status == "won":
+            if info.stake is not None and info.total_return is not None:
+                pnl = info.total_return - info.stake
+                if self.shared is not None:
+                    with self.shared.balance_lock:
+                        self.shared.estimated_balance += pnl
+                        self.shared.tracked_balance += pnl
+                        self.shared.wins += 1
+                else:
+                    self.estimated_balance += pnl
+                    self.tracked_balance += pnl
+                self.wins += 1
+                if self.cfg.incremental:
+                    self._inc_reset_round()
+                self.log.info(
+                    "WON net_pnl=%.2f estimated_balance=%.2f tracked_balance=%.2f wins=%d losses=%d (thread=%s)",
+                    pnl,
+                    self._effective_estimated_balance(),
+                    self._effective_tracked_balance(),
+                    self.wins,
+                    self.losses,
+                    self.thread_id,
+                )
+            else:
+                self.log.warning("Won but could not parse stake/return from history row")
+        elif info.status == "lost":
+            if info.stake is not None and info.total_return is not None:
+                pnl = info.total_return - info.stake
+            elif info.stake is not None:
+                pnl = -float(info.stake)
+            else:
+                pnl = None
+            if pnl is not None:
+                if self.shared is not None:
+                    with self.shared.balance_lock:
+                        self.shared.tracked_balance += pnl
+                        if self.cfg.incremental:
+                            self.shared.estimated_balance += pnl
+                else:
+                    self.tracked_balance += pnl
+                    if self.cfg.incremental:
+                        self.estimated_balance += pnl
+            self.losses += 1
+            if self.shared is not None:
+                with self.shared.balance_lock:
+                    self.shared.losses += 1
+            if self.cfg.incremental:
+                self._inc_trial_next = int(self._inc_trial_next) + 1
+            self.log.info(
+                "LOST net_pnl=%s estimated_balance=%.2f tracked_balance=%.2f wins=%d losses=%d (thread=%s)",
+                f"{pnl:.2f}" if pnl is not None else "n/a",
+                self._effective_estimated_balance(),
+                self._effective_tracked_balance(),
+                self.wins,
+                self.losses,
+                self.thread_id,
+            )
+
     def process_due_pending(self) -> None:
         now = time.time()
         due = [p for p in self.pending if p.check_after <= now]
@@ -945,8 +1402,100 @@ class LiveBettingBot(SportyBetLoginBot):
             return
         p = due[0]
         self.pending.remove(p)
-        self.log.info("Checking result for %s vs %s (placed %.0fs ago)", p.home, p.away, now - p.placed_at)
+        key = bh.result_cache_key(p.home, p.away)
+        self.log.info(
+            "Checking result for %s vs %s (placed %.0fs ago) thread=%s",
+            p.home,
+            p.away,
+            now - p.placed_at,
+            self.thread_id,
+        )
 
+        # --- Multi-threaded (shared browser): caller must already hold shared.ui_lock ---
+        if self.shared is not None:
+            with self.shared.result_cache_lock:
+                cached = self.shared.result_cache.pop(key, None)
+            if cached is not None:
+                self.log.info(
+                    "[Result cache] Hit for %s vs %s (thread=%s)",
+                    p.home,
+                    p.away,
+                    self.thread_id,
+                )
+                self._apply_settled_result(p, cached)
+                bh.read_header_balance(self.driver, self.log)
+                self.go_live()
+                return
+
+            # Only one thread should navigate bet history; everyone else waits.
+            with self.shared.result_check_lock:
+                with self.shared.result_cache_lock:
+                    cached = self.shared.result_cache.pop(key, None)
+                if cached is not None:
+                    self.log.info(
+                        "[Result cache] Hit after wait for %s vs %s (thread=%s)",
+                        p.home,
+                        p.away,
+                        self.thread_id,
+                    )
+                    self._apply_settled_result(p, cached)
+                    bh.read_header_balance(self.driver, self.log)
+                    self.go_live()
+                    return
+
+                triples = self.shared.collect_due_pending_triples(now)
+                keys = {t[2] for t in triples}
+                if key not in keys:
+                    triples = list(triples) + [(p.home, p.away, key)]
+
+                try:
+                    results = bh.search_bet_history_for_pairs(
+                        self.driver,
+                        triples,
+                        max_pages=self.cfg.bet_history_pages,
+                        match_ratio=self.cfg.bet_history_team_match_ratio,
+                        logger=self.log,
+                    )
+                except Exception:
+                    self.log.error(
+                        "[Bet history] Could not load or scan bet history pages (network or page error). Will retry this bet later."
+                    )
+                    self.log.debug("search_bet_history_for_pairs detail", exc_info=True)
+                    p.check_after = now + 120
+                    self.pending.append(p)
+                    self.go_live()
+                    return
+
+                with self.shared.result_cache_lock:
+                    for k2, inf in results.items():
+                        if inf.status != "running":
+                            self.shared.result_cache[k2] = inf
+
+                info = results.get(key)
+                if info is None:
+                    self.log.warning("Bet not found in history; re-queue in 180s")
+                    p.check_after = now + 180
+                    p.history_retries += 1
+                    if p.history_retries < 15:
+                        self.pending.append(p)
+                    self.go_live()
+                    return
+
+                if info.status == "running":
+                    self.log.info("Still running — re-check in 120s")
+                    p.check_after = now + 120
+                    self.pending.append(p)
+                    self.go_live()
+                    return
+
+                with self.shared.result_cache_lock:
+                    self.shared.result_cache.pop(key, None)
+                self._apply_settled_result(p, info)
+                bh.read_header_balance(self.driver, self.log)
+                self.go_live()
+                return
+
+        # --- Single-threaded ---
         try:
             info = bh.search_bet_history(
                 self.driver,
@@ -982,40 +1531,7 @@ class LiveBettingBot(SportyBetLoginBot):
             self.go_live()
             return
 
-        if info.status == "won":
-            if info.stake is not None and info.total_return is not None:
-                pnl = info.total_return - info.stake
-                self.estimated_balance += pnl
-                self.tracked_balance += pnl
-                self.wins += 1
-                self.log.info(
-                    "WON net_pnl=%.2f estimated_balance=%.2f tracked_balance=%.2f wins=%d losses=%d",
-                    pnl,
-                    self.estimated_balance,
-                    self.tracked_balance,
-                    self.wins,
-                    self.losses,
-                )
-            else:
-                self.log.warning("Won but could not parse stake/return from history row")
-        elif info.status == "lost":
-            if info.stake is not None and info.total_return is not None:
-                pnl = info.total_return - info.stake
-            elif info.stake is not None:
-                pnl = -float(info.stake)
-            else:
-                pnl = None
-            if pnl is not None:
-                self.tracked_balance += pnl
-            self.losses += 1
-            self.log.info(
-                "LOST net_pnl=%s estimated_balance=%.2f (wins-only model) tracked_balance=%.2f wins=%d losses=%d",
-                f"{pnl:.2f}" if pnl is not None else "n/a",
-                self.estimated_balance,
-                self.tracked_balance,
-                self.wins,
-                self.losses,
-            )
+        self._apply_settled_result(p, info)
 
         bh.read_header_balance(self.driver, self.log)
         self.go_live()
@@ -1039,10 +1555,12 @@ class LiveBettingBot(SportyBetLoginBot):
         return f"{sign}{value:.2f}"
 
     def log_status(self, actual_balance: float | None = None) -> None:
-        pct_tr = self._profit_pct(self.tracked_balance)
-        pct_est = self._profit_pct(self.estimated_balance)
-        profit_amt_est = self.estimated_balance - self.initial_amount_to_use
-        profit_amt_tr = self.tracked_balance - self.initial_amount_to_use
+        est = self._effective_estimated_balance()
+        trk = self._effective_tracked_balance()
+        pct_tr = self._profit_pct(trk)
+        pct_est = self._profit_pct(est)
+        profit_amt_est = est - self.initial_amount_to_use
+        profit_amt_tr = trk - self.initial_amount_to_use
         wr = self._win_rate_pct()
         wr_s = f"{wr:.2f}%" if wr is not None else "n/a"
         settled = self.wins + self.losses
@@ -1051,7 +1569,15 @@ class LiveBettingBot(SportyBetLoginBot):
         block = "\n".join(
             [
                 "[STATUS] ------------------------------------------------------------------",
+                f"  thread_id                = {self.thread_id}"
+                + (
+                    f"  (pool wins/losses = {self.shared.wins}/{self.shared.losses})"
+                    if self.shared is not None
+                    else ""
+                ),
                 f"  initial_capital          = {self.initial_amount_to_use:.2f}",
+                f"  incremental             = {self.cfg.incremental}"
+                + (f"  (avg_odd={self.cfg.average_odd:.3f} max_trials={self._inc_max_trials()} next_trial={self._inc_trial_next} spent_round={self._inc_round_spent:.2f})" if self.cfg.incremental else ""),
                 f"  ft_window               = ({self.cfg.ft_min_minute_exclusive:.1f}, {self.cfg.ft_max_minute_exclusive:.1f})",
                 f"  bet_fulltime            = {self.cfg.bet_fulltime}",
                 f"  bet_halftime            = {self.cfg.bet_halftime}",
@@ -1069,15 +1595,20 @@ class LiveBettingBot(SportyBetLoginBot):
                 f"  deepseek_enabled       = {self.cfg.deepseek_enabled}  (model {self.cfg.deepseek_model})",
                 f"  bet_history_match_ratio = {self.cfg.bet_history_team_match_ratio:.2f}  (fuzzy name match in history)",
                 "  -- estimated (stake sizing: wins only; no deduction on loss) ------------",
-                f"  estimated_balance      = {self.estimated_balance:.2f}",
+                f"  estimated_balance      = {est:.2f}",
                 f"  total_profit_est       = {self._fmt_signed_money(profit_amt_est)}  (balance - initial)",
                 f"  profit_pct_est         = {self._fmt_signed_money(pct_est)}%",
                 "  -- tracked (logging balance: +win / -loss net) ---------------------------",
-                f"  tracked_balance        = {self.tracked_balance:.2f}",
+                f"  tracked_balance        = {trk:.2f}",
                 f"  total_profit_tracked   = {self._fmt_signed_money(profit_amt_tr)}  (balance - initial)",
                 f"  profit_pct_tracked     = {self._fmt_signed_money(pct_tr)}%",
                 "  -- next stake ------------------------------------------------------------",
-                f"  stake_next             = {self.stake_per_match():.2f}  (= estimated_balance / {self.cfg.max_simultaneous_matches})",
+                f"  stake_next             = {self.stake_per_match():.2f}"
+                + (
+                    "  (= incremental sizing)"
+                    if self.cfg.incremental
+                    else f"  (= estimated_balance / {self.cfg.max_simultaneous_matches})"
+                ),
                 "  -- settled record --------------------------------------------------------",
                 f"  wins                   = {self.wins}",
                 f"  losses                 = {self.losses}",
@@ -1092,25 +1623,94 @@ class LiveBettingBot(SportyBetLoginBot):
         self.log.info("%s", block)
 
     def step(self) -> None:
-        self._sweep_cache()
-        self.go_live()
-        bal = bh.read_header_balance(self.driver, self.log)
-        self.log_status(actual_balance=bal)
-
-        self.try_place_bets()
-        self.process_due_pending()
+        if self.shared is not None:
+            with self.shared.ui_lock:
+                # In shared-browser mode, all UI is serialized. Do result checks first so if
+                # a thread needs bet-history navigation, everybody else waits until it's done.
+                self.process_due_pending()
+                self._sweep_cache()
+                self._maybe_hard_refresh()
+                # Always start this thread's betting turn from a freshly loaded live list
+                # (better recovery if session expired or SPA got stale).
+                self._thread_turn_reload_live()
+                self.go_live()
+                bal = bh.read_header_balance(self.driver, self.log)
+                self._last_site_balance = bal
+                self.log_status(actual_balance=bal)
+                self.try_place_bets()
+        else:
+            # Single-threaded: OK to check results outside any global lock.
+            self.process_due_pending()
+            self._sweep_cache()
+            self._maybe_hard_refresh()
+            self.go_live()
+            bal = bh.read_header_balance(self.driver, self.log)
+            self._last_site_balance = bal
+            self.log_status(actual_balance=bal)
+            self.try_place_bets()
 
         time.sleep(self.cfg.poll_sleep_seconds)
 
     def run_forever(self) -> None:
-        self.log.info("Starting live betting bot | config=%s", dataclasses.asdict(self.cfg))
-        self.login()
-        time.sleep(4)
+        self.log.info(
+            "Starting live betting bot | thread=%s config=%s",
+            self.thread_id,
+            dataclasses.asdict(self.cfg),
+        )
+        # Shared-browser mode: login is bootstrapped once in run_threaded_live_bots().
+        if self.shared is None:
+            self.login()
+            time.sleep(4)
         try:
             while True:
                 self.step()
         except KeyboardInterrupt:
             self.log.info("Interrupted by user")
+
+
+def run_threaded_live_bots(cfg: LiveBettingConfig) -> None:
+    """
+    Run N parallel LiveBettingBot instances sharing ONE Chrome session.
+    Uses SharedBettingContext for: live-list+bet serialization, bet-history batch cache,
+    shared fixture bet/skip cache, shared wallet balances.
+    """
+    n = max(1, int(cfg.num_threads))
+    if n <= 1:
+        LiveBettingBot(cfg).run_forever()
+        return
+
+    shared = SharedBettingContext(cfg)
+    threads: list[threading.Thread] = []
+
+    # Bootstrap: create one bot to open the shared browser and login once.
+    bootstrap = LiveBettingBot(cfg, shared=shared, thread_id=0, clear_log_on_start=True)
+    with shared.ui_lock:
+        bootstrap.login()
+        shared.driver = bootstrap.driver
+        shared.driver_ready.set()
+
+    def worker(tid: int) -> None:
+        # Each worker has its own incremental state + pending list, but shares the driver.
+        bot = LiveBettingBot(
+            cfg,
+            shared=shared,
+            thread_id=tid,
+            clear_log_on_start=False,
+        )
+        shared.driver_ready.wait()
+        bot.driver = shared.driver  # type: ignore[assignment]
+        bot.logged_in = True
+        bot.run_forever()
+
+    for tid in range(n):
+        t = threading.Thread(target=worker, args=(tid,), name=f"live-bet-{tid}", daemon=True)
+        threads.append(t)
+        t.start()
+    try:
+        for t in threads:
+            t.join()
+    except KeyboardInterrupt:
+        pass
 
 
 def main():
@@ -1120,8 +1720,7 @@ def main():
         only_bet_draws=False,
         only_bet_zero_zero_score=False,
     )
-    bot = LiveBettingBot(cfg)
-    bot.run_forever()
+    run_threaded_live_bots(cfg)
 
 
 if __name__ == "__main__":
