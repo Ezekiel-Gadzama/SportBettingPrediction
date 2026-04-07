@@ -1,8 +1,8 @@
-2026-04-07 16:16:51 [DEBUG] Log file: c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\logs\live_betting_t0_20260407.log
-2026-04-07 16:16:51 [INFO] [League mapping] Exclude list changed (sig 5c03bfcf61d5fffe -> 8d80d7a5cafb762f). Remapping cached leagues on startup.
-2026-04-07 16:16:51 [INFO] [League mapping] DeepSeek request: model=deepseek-chat base_url=https://api.deepseek.com leagues=168 excluded_list=17
-2026-04-07 16:17:27 [WARNING] [League mapping] Startup remap failed; will use existing cache until new leagues appear.
-2026-04-07 16:17:27 [DEBUG] startup remap detail
+2026-04-07 16:42:57 [DEBUG] Log file: c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\logs\live_betting_t0_20260407.log
+2026-04-07 16:42:57 [INFO] [League mapping] Exclude list changed (sig 5c03bfcf61d5fffe -> 1aa92a02133a8490). Remapping cached leagues on startup.
+2026-04-07 16:42:57 [INFO] [League mapping] DeepSeek request: model=deepseek-chat base_url=https://api.deepseek.com leagues=165 excluded_list=17
+2026-04-07 16:43:33 [WARNING] [League mapping] Startup remap failed; will use existing cache until new leagues appear.
+2026-04-07 16:43:33 [DEBUG] startup remap detail
 Traceback (most recent call last):
   File "c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\league_filter.py", line 210, in load
     mapped = deepseek_map_leagues(
@@ -33,5 +33,3 @@ Traceback (most recent call last):
     return self._sslobj.read(len, buffer)
            ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
 TimeoutError: The read operation timed out
-2026-04-07 16:17:40 [INFO] [League mapping] Exclude list changed (sig 5c03bfcf61d5fffe -> 8d80d7a5cafb762f). Remapping cached leagues on startup.
-2026-04-07 16:17:40 [INFO] [League mapping] DeepSeek request: model=deepseek-chat base_url=https://api.deepseek.com leagues=168 excluded_list=17

@@ -92,6 +92,8 @@ class LiveBettingConfig:
     bet_history_team_match_ratio: float = 0.85
     poll_sleep_seconds: float = 8.0
     live_url: str = DEFAULT_LIVE_URL
+    sporty_phone: str | None = None
+    sporty_password: str | None = None
     # Force a hard refresh (driver.get) periodically to reduce stale SPA state / session glitches.
     hard_refresh_seconds: float = 600.0
     # Shared-browser threading: when True, each thread's "betting turn" starts with a full
@@ -200,7 +202,11 @@ class LiveBettingBot(SportyBetLoginBot):
         clear_log_on_start: bool = True,
     ):
         cfg = config or LiveBettingConfig()
-        super().__init__(cfg.live_url)
+        super().__init__(
+            cfg.live_url,
+            phone=cfg.sporty_phone,
+            password=cfg.sporty_password,
+        )
         self.cfg = cfg
         self.shared = shared
         self.thread_id = int(thread_id)
@@ -1652,10 +1658,15 @@ class LiveBettingBot(SportyBetLoginBot):
         time.sleep(self.cfg.poll_sleep_seconds)
 
     def run_forever(self) -> None:
+        cfgd = dataclasses.asdict(self.cfg)
+        if "sporty_phone" in cfgd and cfgd.get("sporty_phone"):
+            cfgd["sporty_phone"] = "***"
+        if "sporty_password" in cfgd and cfgd.get("sporty_password"):
+            cfgd["sporty_password"] = "***"
         self.log.info(
             "Starting live betting bot | thread=%s config=%s",
             self.thread_id,
-            dataclasses.asdict(self.cfg),
+            cfgd,
         )
         # Shared-browser mode: login is bootstrapped once in run_threaded_live_bots().
         if self.shared is None:

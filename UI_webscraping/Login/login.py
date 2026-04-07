@@ -10,10 +10,21 @@ from pathlib import Path
 
 
 class SportyBetLoginBot:
-    def __init__(self, url):
+    def __init__(self, url, *, phone: str | None = None, password: str | None = None):
         self.driver = None
         self.url = url
         self.logged_in = False
+        # Accept phone/password as strings; callers sometimes pass phone as int.
+        self._phone = (str(phone).strip() if phone is not None else "") or None
+        self._password = (str(password).strip() if password is not None else "") or None
+
+    def get_credentials(self) -> tuple[str, str]:
+        """
+        Prefer credentials passed in constructor; fall back to .env.
+        """
+        if self._phone and self._password:
+            return self._phone, self._password
+        return self.get_credentials_from_env()
 
     @staticmethod
     def get_credentials_from_env() -> tuple[str, str]:
@@ -52,7 +63,7 @@ class SportyBetLoginBot:
         """
         if not self.is_header_login_form_visible():
             return False
-        phone, password = self.get_credentials_from_env()
+        phone, password = self.get_credentials()
         self.enter_credentials(phone, password)
         self.click_login()
         time.sleep(5)
@@ -111,8 +122,11 @@ class SportyBetLoginBot:
 
     def login(self):
         try:
-            phone, password = self.get_credentials_from_env()
-            print("[INFO] Environment variables loaded.")
+            phone, password = self.get_credentials()
+            if self._phone and self._password:
+                print("[INFO] Credentials loaded from parameters.")
+            else:
+                print("[INFO] Credentials loaded from .env.")
 
             if not self.logged_in:
                 self.open_browser()
