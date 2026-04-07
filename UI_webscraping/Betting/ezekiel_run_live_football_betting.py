@@ -15,8 +15,8 @@ from UI_webscraping.Betting.live_betting_bot import LiveBettingConfig, run_threa
 def main():
     cfg = LiveBettingConfig(
         # If these are set (non-empty), they override SPORTY_PHONE/SPORTY_PASSWORD from .env
-        sporty_phone="8139223738",      # e.g. "08012345678"
-        sporty_password="Philanth123",   # e.g. "your_password"
+        sporty_phone=None,      # e.g. "08012345678"
+        sporty_password=None,   # e.g. "your_password"
         amount_to_use=10000,
         max_simultaneous_matches=3,
         num_threads=4,
