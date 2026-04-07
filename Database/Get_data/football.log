@@ -1,0 +1,67 @@
+
+----- start 2026-04-07 23:02:52 pid=48356 -----
+[INFO] Long format CSV path: Database\Data\football_long_format_0.csv
+[INFO] Long format CSV path: Database\Data\football_long_format_1.csvCurrent working directory: [INFO] Long format CSV path: Database\Data\football_long_format_2.csv[INFO] Long format CSV path: Database\Data\football_long_format_4.csv[INFO] Long format CSV path: Database\Data\football_long_format_3.csv
+
+C:\Users\ezeki\PycharmProjects\SportBettingPrediction[INFO] Long format CSV path: Database\Data\football_long_format_5.csv
+
+[INFO] Long format CSV path: Database\Data\football_long_format_6.csvCurrent working directory:[INFO] Long format CSV path: Database\Data\football_long_format_7.csvCurrent working directory:Current working directory: [INFO] Long format CSV path: Database\Data\football_long_format_9.csv
+Current working directory:
+
+ 
+[INFO] Long format CSV path: Database\Data\football_long_format_8.csvCurrent working directory:C:\Users\ezeki\PycharmProjects\SportBettingPredictionCurrent working directory:
+Current working directory:Writing to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_0.csv
+ Current working directory: 
+ C:\Users\ezeki\PycharmProjects\SportBettingPrediction C:\Users\ezeki\PycharmProjects\SportBettingPrediction  
+C:\Users\ezeki\PycharmProjects\SportBettingPrediction
+C:\Users\ezeki\PycharmProjects\SportBettingPredictionC:\Users\ezeki\PycharmProjects\SportBettingPredictionWriting to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_1.csvC:\Users\ezeki\PycharmProjects\SportBettingPrediction[INFO] Credentials loaded from .env.Writing to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_4.csv
+
+
+C:\Users\ezeki\PycharmProjects\SportBettingPrediction
+Writing to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_5.csvWriting to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_6.csv[INFO] Credentials loaded from .env.
+
+[INFO] Credentials loaded from .env.
+
+
+
+Current working directory:[INFO] Credentials loaded from .env.[INFO] Credentials loaded from .env.
+
+ Writing to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_7.csvWriting to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_3.csvC:\Users\ezeki\PycharmProjects\SportBettingPrediction
+Writing to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_9.csv
+
+
+Writing to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_2.csv
+
+[INFO] Credentials loaded from .env.Writing to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_8.csv
+
+
+[INFO] Credentials loaded from .env.
+
+[INFO] Credentials loaded from .env.
+[INFO] Credentials loaded from .env.
+[INFO] Credentials loaded from .env.
+
+----- start 2026-04-07 23:03:03 pid=40252 -----
+[INFO] Long format CSV path: Database\Data\football_long_format_0.csv
+Current working directory: C:\Users\ezeki\PycharmProjects\SportBettingPrediction
+Writing to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_0.csv
+[INFO] Credentials loaded from .env.
+[INFO] Browser opened successfully.
+[INFO] Loaded URL: https://www.sportybet.com/ng/sport/football/upcoming?time=0
+[INFO] Phone number entered.
+[INFO] Password entered.
+[INFO] Login button clicked.
+[INFO] Logged in, scraping matches now...
+
+----- start 2026-04-07 23:05:59 pid=47264 -----
+[INFO] Long format CSV path: Database\Data\football_long_format_0.csv
+Current working directory: C:\Users\ezeki\PycharmProjects\SportBettingPrediction
+Writing to file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\Database\Data\football_long_format_0.csv
+[INFO] Credentials loaded from .env.
+[INFO] Browser opened successfully.
+[INFO] Loaded URL: https://www.sportybet.com/ng/sport/football/upcoming?time=0
+[INFO] Phone number entered.
+[INFO] Password entered.
+[INFO] Login button clicked.
+[INFO] Logged in, scraping matches now...
+[INFO] Time filter set to 1 h

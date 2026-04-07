@@ -1,0 +1,20 @@
+﻿[
+    {
+        "name":  "philip_run_live_football_betting",
+        "script":  "UI_webscraping\\Betting\\philip_run_live_football_betting.py",
+        "pid":  46604,
+        "started_at":  "2026-04-07T23:05:56"
+    },
+    {
+        "name":  "football_scraper",
+        "script":  "Database\\Get_data\\football.py",
+        "pid":  47264,
+        "started_at":  "2026-04-07T23:05:56"
+    },
+    {
+        "name":  "ezekiel_run_live_football_betting",
+        "script":  "UI_webscraping\\Betting\\ezekiel_run_live_football_betting.py",
+        "pid":  28676,
+        "started_at":  "2026-04-07T23:05:56"
+    }
+]

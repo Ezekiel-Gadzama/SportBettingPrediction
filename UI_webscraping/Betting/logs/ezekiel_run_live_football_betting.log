@@ -1,0 +1,52 @@
+2026-04-07 23:05:59 [DEBUG] Log file: C:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\logs\ezekiel_run_live_football_betting.log
+2026-04-07 23:05:59 [INFO] Starting live betting bot | thread=0 config={'amount_to_use': 3000, 'max_simultaneous_matches': 30, 'incremental': False, 'average_odd': 1.17, 'bet_fulltime': True, 'ft_min_minute_exclusive': 86, 'ft_max_minute_exclusive': 92.0, 'bet_halftime': False, 'ht_min_minute_exclusive': 38, 'ht_max_minute_exclusive': 40.0, 'minimum_odd': 1.07, 'maximum_odd': 1.35, 'max_abs_goal_diff_for_1x2': 1, 'ft_max_total_goals': 4, 'ht_max_total_goals': 2, 'excluded_competitions': ['Premier League (England)', 'La Liga (Spain)', 'UEFA Champions League', 'FA Cup (England)', 'FIFA World Cup Qualifiers', 'NWSL (USA)', 'Serie A (Italy)', 'Ligue 1 (France)', "Women's Super League (UK)", "UEFA Women's Champions League", "Women's EURO 2025", 'Bundesliga (Germany)', 'simulated reality', 'india i-league', 'india mumbai premier league', 'india goa pro league', 'Any india football league'], 'league_cache_path': 'C:\\Users\\ezeki\\PycharmProjects\\SportBettingPrediction\\UI_webscraping\\Betting\\league_filter_cache.json', 'deepseek_enabled': True, 'deepseek_base_url': None, 'deepseek_model': 'deepseek-chat', 'deepseek_timeout_s': 35.0, 'only_bet_draws': True, 'only_bet_zero_zero_score': False, 'result_wait_seconds': 500.0, 'cache_ttl_seconds': 1200.0, 'bet_history_pages': 1, 'bet_history_team_match_ratio': 0.85, 'poll_sleep_seconds': 8.0, 'live_url': 'https://www.sportybet.com/ng/sport/football/live_list/', 'sporty_phone': '***', 'sporty_password': '***', 'hard_refresh_seconds': 600.0, 'thread_turn_full_reload': True, 'thread_turn_reload_min_interval_seconds': 300.0, 'num_threads': 1, 'log_base_name': 'ezekiel_run_live_football_betting', 'log_include_date': False}
+2026-04-07 23:06:25 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 23:06:25 [DEBUG] Football sport already active in overview.
+2026-04-07 23:06:26 [INFO] [League mapping] Found 11 new league names to map (cache miss).
+2026-04-07 23:06:26 [INFO] [League mapping] DeepSeek request: model=deepseek-chat base_url=https://api.deepseek.com leagues=11 excluded_list=17
+2026-04-07 23:06:32 [DEBUG] [League mapping] DeepSeek raw response (first 800 chars): '{"id":"c8ea014f-f9f7-4e70-962b-25d4f888ba4e","object":"chat.completion","created":1775592387,"model":"deepseek-chat","choices":[{"index":0,"message":{"role":"assistant","content":"```json\\n{\\n    \\"International Clubs UEFA Champions League\\": \\"UEFA Champions League\\",\\n    \\"Scotland Championship\\": \\"NONE\\",\\n    \\"Scotland League 1\\": \\"NONE\\",\\n    \\"Argentina Copa Argentina\\": \\"NONE\\",\\n    \\"Northern Ireland Premiership\\": \\"NONE\\",\\n    \\"Ecuador Copa Ecuador\\": \\"NONE\\",\\n    \\"Northern Ireland Intermediate League 1st Division\\": \\"NONE\\",\\n    \\"San Marino Campionato Sammarinese\\": \\"NONE\\",\\n    \\"Brazil U20 Goiano, 2 Divisao\\": \\"NONE\\",\\n    \\"Brazil U20 Gaucho, Serie A1\\": \\"NONE\\",\\n    \\"International Youth U21 Premier League International Cup\\": \\"NONE\\"\\n}\\n```"},"logprob'
+2026-04-07 23:06:32 [DEBUG] [League mapping] DeepSeek message content (first 800 chars): '```json\n{\n    "International Clubs UEFA Champions League": "UEFA Champions League",\n    "Scotland Championship": "NONE",\n    "Scotland League 1": "NONE",\n    "Argentina Copa Argentina": "NONE",\n    "Northern Ireland Premiership": "NONE",\n    "Ecuador Copa Ecuador": "NONE",\n    "Northern Ireland Intermediate League 1st Division": "NONE",\n    "San Marino Campionato Sammarinese": "NONE",\n    "Brazil U20 Goiano, 2 Divisao": "NONE",\n    "Brazil U20 Gaucho, Serie A1": "NONE",\n    "International Youth U21 Premier League International Cup": "NONE"\n}\n```'
+2026-04-07 23:06:32 [INFO] [League mapping] DeepSeek mapped 11 leagues.
+2026-04-07 23:06:32 [DEBUG] [League mapping] DeepSeek mapping result: {'International Clubs UEFA Champions League': 'UEFA Champions League', 'Scotland Championship': 'NONE', 'Scotland League 1': 'NONE', 'Argentina Copa Argentina': 'NONE', 'Northern Ireland Premiership': 'NONE', 'Ecuador Copa Ecuador': 'NONE', 'Northern Ireland Intermediate League 1st Division': 'NONE', 'San Marino Campionato Sammarinese': 'NONE', 'Brazil U20 Goiano, 2 Divisao': 'NONE', 'Brazil U20 Gaucho, Serie A1': 'NONE', 'International Youth U21 Premier League International Cup': 'NONE'}
+2026-04-07 23:06:32 [INFO] [League mapping] Cached 11 new league mappings via DeepSeek.
+2026-04-07 23:06:32 [DEBUG] Balance from header: 20689.1
+2026-04-07 23:06:32 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (86.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 1.35
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 100.00  (= estimated_balance / 30)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 20689.1
+[STATUS] ------------------------------------------------------------------
+2026-04-07 23:06:32 [INFO] [Cashout] Scan start (before betting).
+2026-04-07 23:06:33 [INFO] [Betslip tab] Clicked Cashout.
+2026-04-07 23:06:38 [INFO] [Cashout] No wanted selections; skipping scan.
+2026-04-07 23:06:40 [DEBUG] [Live list] skip HT break: Estudiantes Rio Cuarto vs San Martin de Tucuman | clock=45:00 game_id=HT
