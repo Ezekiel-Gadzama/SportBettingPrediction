@@ -16,6 +16,7 @@ def main():
         for i in range(num_threads):
             print(f"[MAIN] Starting scraper {i+1}")
             scraper = MarketScraper(url, markets)
+            scraper.thread_index = int(i)
             futures.append(executor.submit(scraper.run, sport)) # Changed this line
         
         # Wait for all threads to complete

@@ -10,13 +10,13 @@ def main():
     url = f"https://www.sportybet.com/ng/sport/{sport}/upcoming?time=0"
     markets = SPORT_MARKETS[sport]
     
-    num_threads = 1  # Number of concurrent browsers/scrapers
+    num_threads = 10  # Number of concurrent browsers/scrapers
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
         futures = []
         for i in range(num_threads):
             print(f"[MAIN] Starting scraper {i+1}")
             scraper = MarketScraper(url, markets)
-            scraper.thread_index = i
+            scraper.thread_index = int(i)
             futures.append(executor.submit(scraper.run, sport)) # Changed this line
         
         # Wait for all threads to complete
