@@ -8,6 +8,7 @@ def setup_betting_logger(
     name: str = "live_betting",
     *,
     clear_file_on_start: bool = True,
+    include_date: bool = True,
 ) -> logging.Logger:
     """
     Console + file log under UI_webscraping/Betting/logs by default.
@@ -27,7 +28,8 @@ def setup_betting_logger(
 
     base = log_dir or os.path.join(os.path.dirname(__file__), "logs")
     os.makedirs(base, exist_ok=True)
-    path = os.path.join(base, f"{name}_{datetime.now().strftime('%Y%m%d')}.log")
+    filename = f"{name}_{datetime.now().strftime('%Y%m%d')}.log" if include_date else f"{name}.log"
+    path = os.path.join(base, filename)
     file_mode = "w" if clear_file_on_start else "a"
     fh = logging.FileHandler(path, mode=file_mode, encoding="utf-8")
     fh.setLevel(logging.DEBUG)

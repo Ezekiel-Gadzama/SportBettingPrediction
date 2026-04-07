@@ -4,8 +4,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from UI_webscraping.General_Scraping.scrape_data import MarketScraper
 from Database.Get_data.Zsport_markets import SPORT_MARKETS
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from Database.Get_data.script_logging import tee_stdout_stderr_to_log
 
 def main():
+    tee_stdout_stderr_to_log(__file__)
     sport = "vFootball"
     url = f"https://www.sportybet.com/ng/sport/{sport}/upcoming?time=0"
     markets = SPORT_MARKETS[sport]

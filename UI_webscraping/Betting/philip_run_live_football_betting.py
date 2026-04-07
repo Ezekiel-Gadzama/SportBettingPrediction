@@ -4,6 +4,7 @@ Entry point: run from project root, e.g.
 """
 import os
 import sys
+from pathlib import Path
 
 _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if _ROOT not in sys.path:
@@ -13,6 +14,8 @@ from UI_webscraping.Betting.live_betting_bot import LiveBettingConfig, run_threa
 
 
 def main():
+    # Write logs to: UI_webscraping/Betting/logs/<this_script_name>.log
+    log_base = Path(__file__).stem
     cfg = LiveBettingConfig(
         # If these are set (non-empty), they override SPORTY_PHONE/SPORTY_PASSWORD from .env
         sporty_phone="8139223738",      # e.g. "08012345678"
@@ -22,6 +25,8 @@ def main():
         num_threads=1,
         incremental=False,
         average_odd=1.17,
+        log_base_name=log_base,
+        log_include_date=False,
         ft_min_minute_exclusive=86,
         ft_max_minute_exclusive=92.0,
         bet_fulltime=True,

@@ -104,6 +104,11 @@ class LiveBettingConfig:
     thread_turn_reload_min_interval_seconds: float = 300.0
     # Multi-threading: one browser (Selenium session) per thread; shared locks + caches below.
     num_threads: int = 1
+    # Logging: override the default base name (live_betting / live_betting_tN).
+    # If set, log files become "<log_base_name>.log" (or with _tN suffix when multi-threaded).
+    log_base_name: str | None = None
+    # If False, do not suffix log file with YYYYMMDD.
+    log_include_date: bool = True
 
 
 @dataclass
@@ -211,11 +216,16 @@ class LiveBettingBot(SportyBetLoginBot):
         self.cfg = cfg
         self.shared = shared
         self.thread_id = int(thread_id)
-        log_name = f"live_betting_t{self.thread_id}" if shared is not None else "live_betting"
+        base = (cfg.log_base_name or "").strip() or None
+        if base:
+            log_name = f"{base}_t{self.thread_id}" if shared is not None else base
+        else:
+            log_name = f"live_betting_t{self.thread_id}" if shared is not None else "live_betting"
         self.log = _bet_log.setup_betting_logger(
             os.path.join(os.path.dirname(__file__), "logs"),
             name=log_name,
             clear_file_on_start=clear_log_on_start and self.thread_id == 0,
+            include_date=bool(cfg.log_include_date),
         )
 
         # Initial capital (fixed) — used for profit % calculations in logs
