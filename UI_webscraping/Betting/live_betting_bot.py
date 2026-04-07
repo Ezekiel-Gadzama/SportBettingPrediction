@@ -160,6 +160,7 @@ class SharedBettingContext:
     tracked_balance: float = field(init=False)
     wins: int = 0
     losses: int = 0
+    cashout_settles: int = 0
     next_hard_refresh_at: float = field(default_factory=lambda: time.monotonic() + 600.0)
     last_thread_turn_reload_at: float = field(default_factory=time.monotonic)
 
@@ -229,6 +230,7 @@ class LiveBettingBot(SportyBetLoginBot):
             self.tracked_balance = float(shared.tracked_balance)
         self.wins: int = 0
         self.losses: int = 0
+        self.cashout_settles: int = 0
         self.pending: list[PendingBet] = []
         # Successful bet recently placed — do not open same fixture again until TTL
         self._cache: list[BetCacheEntry] = []
@@ -927,6 +929,36 @@ class LiveBettingBot(SportyBetLoginBot):
             return 0
 
         for row in candidates:
+            # Popups (e.g. "YOU WON") can appear anytime and block clicks.
+            try:
+                slip.dismiss_winning_popup(self.driver, self.log)
+            except Exception:
+                pass
+            # Always check Cashout before each bet attempt (so cashout is not only once per step).
+            try:
+                wanted: dict[str, str] = {}
+                if self.shared is not None:
+                    for b in self.shared.bots:
+                        for p in b.pending:
+                            k1 = bh.result_cache_key(p.home, p.away)
+                            k2 = bh.result_cache_key(p.away, p.home)
+                            wanted[k1] = p.selection
+                            wanted[k2] = p.selection
+                else:
+                    for p in self.pending:
+                        k1 = bh.result_cache_key(p.home, p.away)
+                        k2 = bh.result_cache_key(p.away, p.home)
+                        wanted[k1] = p.selection
+                        wanted[k2] = p.selection
+                slip.cashout_scan_and_execute(
+                    self.driver,
+                    wanted,
+                    logger=self.log,
+                    max_pages=5,
+                )
+            except Exception:
+                self.log.debug("cashout_scan_and_execute (per-bet) detail", exc_info=True)
+
             pending_cap = 1 if self.cfg.incremental else int(self.cfg.max_simultaneous_matches)
             if len(self.pending) >= pending_cap:
                 self.log.info("Max pending bets reached; stop placing")
@@ -1135,6 +1167,21 @@ class LiveBettingBot(SportyBetLoginBot):
         if self.cfg.incremental:
             # Record actual stake used for this round (needed for next-trial sizing).
             self._inc_round_spent += float(stake_amt)
+        try:
+            pool_pending = (
+                sum(len(b.pending) for b in self.shared.bots)
+                if self.shared is not None
+                else len(self.pending)
+            )
+            self.log.info(
+                "[Pending] Added %s vs %s selection=%s | pending_now=%d",
+                row.home,
+                row.away,
+                selection,
+                pool_pending,
+            )
+        except Exception:
+            pass
         self.log.info(
             "Bet recorded pending check at +%ss | booking=%s",
             self.cfg.result_wait_seconds,
@@ -1151,6 +1198,10 @@ class LiveBettingBot(SportyBetLoginBot):
         cache_key: str,
     ) -> bool:
         try:
+            try:
+                slip.dismiss_winning_popup(self.driver, self.log)
+            except Exception:
+                pass
             self._scroll_live_list_for_lazy_rows()
             random_human_pause()
             click_el = self._find_live_list_click_target(row.home, row.away)
@@ -1264,6 +1315,10 @@ class LiveBettingBot(SportyBetLoginBot):
                 )
             random_human_pause()
 
+            try:
+                slip.dismiss_winning_popup(self.driver, self.log)
+            except Exception:
+                pass
             st = self._submit_stake_place_confirm_success(row, selection, stake_amt)
             if st == "abort":
                 return self._fail_bet_flow(
@@ -1343,6 +1398,46 @@ class LiveBettingBot(SportyBetLoginBot):
 
     def _apply_settled_result(self, p: PendingBet, info: bh.SettledBetInfo) -> None:
         """Apply won/lost to balances (shared wallet if multi-threaded)."""
+        # SportyBet sometimes reports cashouts as "Won" but with total_return < stake.
+        # Treat that as a cashout settlement (not a win), and keep PnL based on return-stake.
+        is_cashout_settle = (
+            info.status == "won"
+            and info.stake is not None
+            and info.total_return is not None
+            and float(info.total_return) < float(info.stake)
+        )
+        if is_cashout_settle:
+            pnl = float(info.total_return) - float(info.stake)
+            # Apply to balances exactly as recorded (usually a smaller loss than full stake).
+            if self.shared is not None:
+                with self.shared.balance_lock:
+                    self.shared.estimated_balance += pnl
+                    self.shared.tracked_balance += pnl
+                    self.shared.losses += 1
+                    self.shared.cashout_settles += 1
+            else:
+                self.estimated_balance += pnl
+                self.tracked_balance += pnl
+            self.losses += 1
+            self.cashout_settles += 1
+            if self.cfg.incremental:
+                # Cashout means the bet did not win; advance to the next trial.
+                self._inc_trial_next = int(self._inc_trial_next) + 1
+            self.log.info(
+                "[Cashout settle] status=won-but-return<stake stake=%.2f return=%.2f pnl=%.2f "
+                "estimated_balance=%.2f tracked_balance=%.2f wins=%d losses=%d cashout_settles=%d (thread=%s)",
+                float(info.stake),
+                float(info.total_return),
+                pnl,
+                self._effective_estimated_balance(),
+                self._effective_tracked_balance(),
+                self.wins,
+                self.losses,
+                self.cashout_settles,
+                self.thread_id,
+            )
+            return
+
         if info.status == "won":
             if info.stake is not None and info.total_return is not None:
                 pnl = info.total_return - info.stake
@@ -1571,13 +1666,18 @@ class LiveBettingBot(SportyBetLoginBot):
         wr_s = f"{wr:.2f}%" if wr is not None else "n/a"
         settled = self.wins + self.losses
         site = actual_balance if actual_balance is not None else "n/a"
+        pending_pool = (
+            sum(len(b.pending) for b in self.shared.bots)
+            if self.shared is not None
+            else len(self.pending)
+        )
 
         block = "\n".join(
             [
                 "[STATUS] ------------------------------------------------------------------",
                 f"  thread_id                = {self.thread_id}"
                 + (
-                    f"  (pool wins/losses = {self.shared.wins}/{self.shared.losses})"
+                    f"  (pool wins/losses = {self.shared.wins}/{self.shared.losses} cashout_settles={self.shared.cashout_settles})"
                     if self.shared is not None
                     else ""
                 ),
@@ -1618,10 +1718,11 @@ class LiveBettingBot(SportyBetLoginBot):
                 "  -- settled record --------------------------------------------------------",
                 f"  wins                   = {self.wins}",
                 f"  losses                 = {self.losses}",
+                f"  cashout_settles         = {self.cashout_settles}  (won but return < stake)",
                 f"  settled_total          = {settled}",
                 f"  win_rate               = {wr_s}  (wins / settled)",
                 "  -- pending / site --------------------------------------------------------",
-                f"  pending_bets           = {len(self.pending)}",
+                f"  pending_bets           = {pending_pool}",
                 f"  site_balance           = {site}",
                 "[STATUS] ------------------------------------------------------------------",
             ]
@@ -1631,6 +1732,11 @@ class LiveBettingBot(SportyBetLoginBot):
     def step(self) -> None:
         if self.shared is not None:
             with self.shared.ui_lock:
+                # Close any blocking popup that can appear asynchronously.
+                try:
+                    slip.dismiss_winning_popup(self.driver, self.log)
+                except Exception:
+                    pass
                 # In shared-browser mode, all UI is serialized. Do result checks first so if
                 # a thread needs bet-history navigation, everybody else waits until it's done.
                 self.process_due_pending()
@@ -1643,9 +1749,46 @@ class LiveBettingBot(SportyBetLoginBot):
                 bal = bh.read_header_balance(self.driver, self.log)
                 self._last_site_balance = bal
                 self.log_status(actual_balance=bal)
+                # Cashout scan on live list (before placing new bets).
+                try:
+                    try:
+                        slip.dismiss_winning_popup(self.driver, self.log)
+                    except Exception:
+                        pass
+                    self.log.info("[Cashout] Scan start (before betting).")
+                    wanted: dict[str, str] = {}
+                    if self.shared is not None:
+                        for b in self.shared.bots:
+                            for p in b.pending:
+                                # Map both directions for robust matching.
+                                k1 = bh.result_cache_key(p.home, p.away)
+                                k2 = bh.result_cache_key(p.away, p.home)
+                                wanted[k1] = p.selection
+                                wanted[k2] = p.selection
+                    else:
+                        for p in self.pending:
+                            k1 = bh.result_cache_key(p.home, p.away)
+                            k2 = bh.result_cache_key(p.away, p.home)
+                            wanted[k1] = p.selection
+                            wanted[k2] = p.selection
+                    c = slip.cashout_scan_and_execute(
+                        self.driver,
+                        wanted,
+                        logger=self.log,
+                        max_pages=5,
+                    )
+                    if c:
+                        self.log.info("[Cashout] Completed: confirms=%d", c)
+                    time.sleep(0.25)
+                except Exception:
+                    self.log.debug("cashout_scan_and_execute detail", exc_info=True)
                 self.try_place_bets()
         else:
             # Single-threaded: OK to check results outside any global lock.
+            try:
+                slip.dismiss_winning_popup(self.driver, self.log)
+            except Exception:
+                pass
             self.process_due_pending()
             self._sweep_cache()
             self._maybe_hard_refresh()
@@ -1653,6 +1796,29 @@ class LiveBettingBot(SportyBetLoginBot):
             bal = bh.read_header_balance(self.driver, self.log)
             self._last_site_balance = bal
             self.log_status(actual_balance=bal)
+            try:
+                try:
+                    slip.dismiss_winning_popup(self.driver, self.log)
+                except Exception:
+                    pass
+                self.log.info("[Cashout] Scan start (before betting).")
+                wanted: dict[str, str] = {}
+                for p in self.pending:
+                    k1 = bh.result_cache_key(p.home, p.away)
+                    k2 = bh.result_cache_key(p.away, p.home)
+                    wanted[k1] = p.selection
+                    wanted[k2] = p.selection
+                c = slip.cashout_scan_and_execute(
+                    self.driver,
+                    wanted,
+                    logger=self.log,
+                    max_pages=5,
+                )
+                if c:
+                    self.log.info("[Cashout] Completed: confirms=%d", c)
+                time.sleep(0.25)
+            except Exception:
+                self.log.debug("cashout_scan_and_execute detail", exc_info=True)
             self.try_place_bets()
 
         time.sleep(self.cfg.poll_sleep_seconds)

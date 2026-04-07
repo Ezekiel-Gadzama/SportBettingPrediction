@@ -195,7 +195,8 @@ class LeagueFilter:
                         # If excluded list changed, remap all cached leagues on startup.
                         prev_sig = str(meta.get("exclude_sig") or "")
                         cur_sig = _exclude_signature(self.exclude_list)
-                        if prev_sig and prev_sig != cur_sig:
+                        changed = bool(prev_sig) and prev_sig != cur_sig
+                        if changed:
                             log = self.logger or logging.getLogger(__name__)
                             log.info(
                                 "[League mapping] Exclude list changed (sig %s -> %s). Remapping cached leagues on startup.",
@@ -222,8 +223,14 @@ class LeagueFilter:
                                     "[League mapping] Startup remap failed; will use existing cache until new leagues appear."
                                 )
                                 log.debug("startup remap detail", exc_info=True)
-                        # Ensure meta is updated on next save.
-                        self._cache["__meta_exclude_sig__"] = cur_sig
+                        # IMPORTANT: persist the new signature immediately so we don't keep re-attempting
+                        # the startup remap on every run if DeepSeek is down.
+                        if changed:
+                            try:
+                                self.save()
+                            except Exception:
+                                # If saving fails, we'll retry next run.
+                                pass
         except Exception:
             # Corrupt cache: start fresh
             self._cache = {}
@@ -235,7 +242,7 @@ class LeagueFilter:
         meta = {
             "exclude_sig": _exclude_signature(self.exclude_list),
         }
-        data = {k: v for k, v in self._cache.items() if k != "__meta_exclude_sig__"}
+        data = {k: v for k, v in self._cache.items()}
         data["__meta__"] = meta
         os.makedirs(os.path.dirname(self.cache_path), exist_ok=True)
         tmp = self.cache_path + ".tmp"

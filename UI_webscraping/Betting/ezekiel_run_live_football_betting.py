@@ -15,17 +15,17 @@ from UI_webscraping.Betting.live_betting_bot import LiveBettingConfig, run_threa
 def main():
     cfg = LiveBettingConfig(
         # If these are set (non-empty), they override SPORTY_PHONE/SPORTY_PASSWORD from .env
-        sporty_phone=None,      # e.g. "08012345678"
-        sporty_password=None,   # e.g. "your_password"
-        amount_to_use=10000,
-        max_simultaneous_matches=3,
-        num_threads=4,
-        incremental=True,
+        sporty_phone="9018882513",      # e.g. "08012345678"
+        sporty_password="Ezekiel23",   # e.g. "your_password"
+        amount_to_use=3000,
+        max_simultaneous_matches=30,
+        num_threads=1,
+        incremental=False,
         average_odd=1.17,
         ft_min_minute_exclusive=86,
         ft_max_minute_exclusive=92.0,
         bet_fulltime=True,
-        bet_halftime=True,
+        bet_halftime=False,
         ht_min_minute_exclusive=38,
         ht_max_minute_exclusive=40.0,
         minimum_odd=1.07,

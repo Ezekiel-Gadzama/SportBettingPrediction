@@ -1,35 +1,70 @@
-2026-04-07 16:42:57 [DEBUG] Log file: c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\logs\live_betting_t0_20260407.log
-2026-04-07 16:42:57 [INFO] [League mapping] Exclude list changed (sig 5c03bfcf61d5fffe -> 1aa92a02133a8490). Remapping cached leagues on startup.
-2026-04-07 16:42:57 [INFO] [League mapping] DeepSeek request: model=deepseek-chat base_url=https://api.deepseek.com leagues=165 excluded_list=17
-2026-04-07 16:43:33 [WARNING] [League mapping] Startup remap failed; will use existing cache until new leagues appear.
-2026-04-07 16:43:33 [DEBUG] startup remap detail
-Traceback (most recent call last):
-  File "c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\league_filter.py", line 210, in load
-    mapped = deepseek_map_leagues(
-        leagues_to_remap,
-    ...<4 lines>...
-        logger=log,
-    )
-  File "c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\league_filter.py", line 142, in deepseek_map_leagues
-    raw = resp.read().decode("utf-8", errors="replace")
-          ~~~~~~~~~^^
-  File "C:\Python313\Lib\http\client.py", line 473, in read
-    return self._read_chunked(amt)
-           ~~~~~~~~~~~~~~~~~~^^^^^
-  File "C:\Python313\Lib\http\client.py", line 597, in _read_chunked
-    while (chunk_left := self._get_chunk_left()) is not None:
-                         ~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Python313\Lib\http\client.py", line 579, in _get_chunk_left
-    chunk_left = self._read_next_chunk_size()
-  File "C:\Python313\Lib\http\client.py", line 539, in _read_next_chunk_size
-    line = self.fp.readline(_MAXLINE + 1)
-  File "C:\Python313\Lib\socket.py", line 719, in readinto
-    return self._sock.recv_into(b)
-           ~~~~~~~~~~~~~~~~~~~~^^^
-  File "C:\Python313\Lib\ssl.py", line 1304, in recv_into
-    return self.read(nbytes, buffer)
-           ~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "C:\Python313\Lib\ssl.py", line 1138, in read
-    return self._sslobj.read(len, buffer)
-           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
-TimeoutError: The read operation timed out
+2026-04-07 20:49:01 [DEBUG] Log file: c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\logs\live_betting_t0_20260407.log
+2026-04-07 20:49:15 [INFO] Starting live betting bot | thread=0 config={'amount_to_use': 500, 'max_simultaneous_matches': 30, 'incremental': False, 'average_odd': 1.17, 'bet_fulltime': True, 'ft_min_minute_exclusive': 1, 'ft_max_minute_exclusive': 92.0, 'bet_halftime': True, 'ht_min_minute_exclusive': 1, 'ht_max_minute_exclusive': 40.0, 'minimum_odd': 1.07, 'maximum_odd': 10, 'max_abs_goal_diff_for_1x2': 1, 'ft_max_total_goals': 4, 'ht_max_total_goals': 2, 'excluded_competitions': ['Premier League (England)', 'La Liga (Spain)', 'UEFA Champions League', 'FA Cup (England)', 'FIFA World Cup Qualifiers', 'NWSL (USA)', 'Serie A (Italy)', 'Ligue 1 (France)', "Women's Super League (UK)", "UEFA Women's Champions League", "Women's EURO 2025", 'Bundesliga (Germany)', 'simulated reality', 'india i-league', 'india mumbai premier league', 'india goa pro league', 'Any india football league'], 'league_cache_path': 'c:\\Users\\ezeki\\PycharmProjects\\SportBettingPrediction\\UI_webscraping\\Betting\\league_filter_cache.json', 'deepseek_enabled': True, 'deepseek_base_url': None, 'deepseek_model': 'deepseek-chat', 'deepseek_timeout_s': 35.0, 'only_bet_draws': False, 'only_bet_zero_zero_score': False, 'result_wait_seconds': 500.0, 'cache_ttl_seconds': 1200.0, 'bet_history_pages': 1, 'bet_history_team_match_ratio': 0.85, 'poll_sleep_seconds': 8.0, 'live_url': 'https://www.sportybet.com/ng/sport/football/live_list/', 'sporty_phone': '***', 'sporty_password': '***', 'hard_refresh_seconds': 600.0, 'thread_turn_full_reload': True, 'thread_turn_reload_min_interval_seconds': 300.0, 'num_threads': 3}
+2026-04-07 20:49:15 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-07 20:49:16 [DEBUG] Football sport already active in overview.
+2026-04-07 20:49:19 [DEBUG] Balance from header: 20549.75
+2026-04-07 20:49:19 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0)
+  initial_capital          = 500.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = True
+  ht_window               = (1.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 4  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 500.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 500.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 16.67  (= estimated_balance / 30)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 20549.75
+[STATUS] ------------------------------------------------------------------
+2026-04-07 20:49:19 [INFO] [Cashout] Scan start (before betting).
+2026-04-07 20:49:19 [INFO] [Betslip tab] Clicked Cashout.
+2026-04-07 20:49:24 [INFO] [Cashout] No wanted selections; skipping scan.
+2026-04-07 20:49:25 [DEBUG] [Live list] skip HT break: KFUM Oslo vs Sandefjord Fotball | clock=45:00 game_id=HT
+2026-04-07 20:49:25 [DEBUG] [Live list] skip HT break: Nordsjaelland vs Broendby IF | clock=45:00 game_id=HT
+2026-04-07 20:49:27 [DEBUG] [Live list] skip HT break: Kongsvinger IL Toppfotball vs Bryne FK | clock=45:00 game_id=HT
+2026-04-07 20:49:27 [DEBUG] [Live list] skip HT break: IK Oddevold vs Sandvikens IF | clock=45:00 game_id=HT
+2026-04-07 20:49:27 [DEBUG] [Live list] skip HT break: MKS Arka Gdynia vs Zaglebie Lubin | clock=45:00 game_id=HT
+2026-04-07 20:49:28 [DEBUG] [Live list] skip HT break: FC Dila Gori vs FC Gagra | clock=45:00 game_id=HT
+2026-04-07 20:49:28 [DEBUG] [Live list] skip HT break: FC Torpedo Kutaisi vs FC Dinamo Tbilisi | clock=45:00 game_id=HT
+2026-04-07 20:49:28 [DEBUG] [Live list] skip HT break: 1. FC Schweinfurt 05 vs Rot-Weiss Essen | clock=45:00 game_id=HT
+2026-04-07 20:49:28 [DEBUG] [Live list] skip HT break: Energie Cottbus vs TSV 1860 Munich | clock=45:00 game_id=HT
+2026-04-07 20:49:28 [DEBUG] [Live list] skip HT break: Jahn Regensburg vs Erzgebirge Aue | clock=45:00 game_id=HT
+2026-04-07 20:49:28 [DEBUG] [Live list] skip HT break: SV Waldhof Mannheim 07 vs TSG Hoffenheim II | clock=45:00 game_id=HT
+2026-04-07 20:49:28 [DEBUG] [Live list] skip HT break: Byaesen vs Rosenborg BK 2 | clock=45:00 game_id=HT
+2026-04-07 20:49:30 [DEBUG] [Live list] skip HT break: AS Douanes Nouakchott vs Nouakchott Academie | clock=45:00 game_id=HT
+2026-04-07 20:49:32 [DEBUG] Skip NK Istra 1961 vs HNK Hajduk Split: score 1-3 (gap 2 > max 1 for 1X2)
+2026-04-07 20:49:32 [DEBUG] Skip FC Wil 1900 vs Neuchatel Xamax: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 20:49:32 [DEBUG] Skip FC Vizela vs SL Benfica B: score 0-2 (gap 2 > max 1 for 1X2)
+2026-04-07 20:49:32 [DEBUG] Skip JK Narva Trans vs Tartu JK Tammeka: score 3-0 (gap 3 > max 1 for 1X2)
+2026-04-07 20:49:32 [DEBUG] Skip SK Herd vs Molde FK 2: total_goals=5 (score 3-2) > FT_max_total_goals=4
+2026-04-07 20:49:32 [DEBUG] Skip Viking FK 2 vs FK Haugesund 2: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-07 20:49:32 [INFO] Live rows=28 eligible=22 pending=0/30
+2026-04-07 20:49:32 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-07 20:49:37 [INFO] [Cashout] No wanted selections; skipping scan.
+2026-04-07 20:49:37 [INFO] Attempt bet Durban City FC 2024 vs Mamelodi Sundowns @ 16' score=0:1 selection=away stake=16.67 (estimated_bal 500.00 / max_sim 30)
+2026-04-07 20:49:50 [INFO] [Odd range] OK on match page: 1.07 for Durban City FC 2024 vs Mamelodi Sundowns (1st Half - 1X2)
+2026-04-07 20:49:53 [INFO] Clicked 1st Half - 1X2 away (odd text=1.07)
+2026-04-07 20:49:55 [INFO] Stake entered: requested=17 field=17
