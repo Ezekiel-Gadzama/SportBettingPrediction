@@ -31,6 +31,22 @@ def result_cache_key(home: str, away: str) -> str:
     return f"{h}|{a}"
 
 
+def result_cache_key_with_stake(home: str, away: str, stake: float | None) -> str:
+    """
+    Key used when multiple bets can exist for same teams.
+    SportyBet history entries include a Total Stake; use it to disambiguate.
+    """
+    base = result_cache_key(home, away)
+    if stake is None:
+        return base
+    try:
+        s = float(stake)
+    except Exception:
+        return base
+    # Stake is shown as 2dp in history; keep it stable.
+    return f"{base}|stake={s:.2f}"
+
+
 def _parse_money(text: str) -> float | None:
     if not text:
         return None
@@ -119,20 +135,20 @@ def find_bet_on_page(
 
 def find_bets_for_pairs_on_page(
     driver: WebDriver,
-    triples: list[tuple[str, str, str]],
+    triples: list[tuple[str, str, float | None, str]],
     *,
     match_ratio: float = 0.85,
     logger: logging.Logger | None = None,
 ) -> dict[str, SettledBetInfo]:
     """
-    triples: list of (home, away, cache_key) to look for on the *already loaded* page.
+    triples: list of (home, away, stake, cache_key) to look for on the *already loaded* page.
     Returns cache_key -> SettledBetInfo for matches found (at most one order per key).
     """
     log = logger or logging.getLogger(__name__)
     results: dict[str, SettledBetInfo] = {}
     if not triples:
         return results
-    wanted = {k for _, _, k in triples}
+    wanted = {k for _, _, _, k in triples}
     orders = driver.find_elements(By.CSS_SELECTOR, ".m-order-list")
     for order in orders:
         try:
@@ -141,7 +157,7 @@ def find_bets_for_pairs_on_page(
                 match_text = (vs_el.text or vs_el.get_attribute("innerText") or "").strip()
                 if not match_text:
                     continue
-                for home, away, key in triples:
+                for home, away, wanted_stake, key in triples:
                     if key in results:
                         continue
                     if not teams_match_fuzzy(
@@ -150,6 +166,13 @@ def find_bets_for_pairs_on_page(
                         continue
                     info = _parse_order_to_info(order, match_text, logger=log)
                     if info:
+                        # If stake is provided, require stake match (disambiguates repeated bets on same teams).
+                        if wanted_stake is not None and info.stake is not None:
+                            try:
+                                if abs(float(info.stake) - float(wanted_stake)) > 0.01:
+                                    continue
+                            except Exception:
+                                pass
                         results[key] = info
                 if wanted <= set(results.keys()):
                     return results
@@ -167,6 +190,7 @@ def search_bet_history(
     max_pages: int = 5,
     settle_delay_s: float = 2.0,
     match_ratio: float = 0.85,
+    wanted_stake: float | None = None,
     logger: logging.Logger | None = None,
 ) -> SettledBetInfo | None:
     log = logger or logging.getLogger(__name__)
@@ -186,13 +210,19 @@ def search_bet_history(
             driver, home, away, match_ratio=match_ratio, logger=logger
         )
         if hit:
+            if wanted_stake is not None and hit.stake is not None:
+                try:
+                    if abs(float(hit.stake) - float(wanted_stake)) > 0.01:
+                        continue
+                except Exception:
+                    pass
             return hit
     return None
 
 
 def search_bet_history_for_pairs(
     driver: WebDriver,
-    triples: list[tuple[str, str, str]],
+    triples: list[tuple[str, str, float | None, str]],
     *,
     base_url: str = "https://www.sportybet.com/ng/my_accounts/bet_history/sport_bets",
     max_pages: int = 5,
@@ -202,14 +232,14 @@ def search_bet_history_for_pairs(
 ) -> dict[str, SettledBetInfo]:
     """
     Scan bet history pages once per page and match many fixtures per page.
-    triples: (home, away, cache_key) where cache_key == result_cache_key(home, away).
+    triples: (home, away, stake, cache_key) where cache_key is stable (often result_cache_key_with_stake()).
     Returns mapping cache_key -> SettledBetInfo for keys found (may be partial).
     """
     log = logger or logging.getLogger(__name__)
     out: dict[str, SettledBetInfo] = {}
     if not triples:
         return out
-    want = {k for _, _, k in triples}
+    want = {k for _, _, _, k in triples}
     for page in range(1, max_pages + 1):
         if want <= set(out.keys()):
             break

@@ -1,0 +1,1715 @@
+2026-04-08 18:37:51 [DEBUG] Log file: c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\logs\ezekiel_run_live_football_betting_t0.log
+2026-04-08 18:38:07 [INFO] Starting live betting bot | thread=0 config={'amount_to_use': 3000, 'max_simultaneous_matches': 300, 'incremental': False, 'average_odd': 1.17, 'bet_fulltime': True, 'ft_min_minute_exclusive': 1, 'ft_max_minute_exclusive': 92.0, 'bet_halftime': False, 'ht_min_minute_exclusive': 38, 'ht_max_minute_exclusive': 40.0, 'minimum_odd': 1.07, 'maximum_odd': 10, 'max_abs_goal_diff_for_1x2': 1, 'ft_max_total_goals': 1, 'ht_max_total_goals': 2, 'winning': True, 'excluded_competitions': ['Premier League (England)', 'La Liga (Spain)', 'UEFA Champions League', 'FA Cup (England)', 'FIFA World Cup Qualifiers', 'NWSL (USA)', 'Serie A (Italy)', 'Ligue 1 (France)', "Women's Super League (UK)", "UEFA Women's Champions League", "Women's EURO 2025", 'Bundesliga (Germany)', 'simulated reality', 'india i-league', 'india mumbai premier league', 'india goa pro league', 'Any india football league'], 'league_cache_path': 'c:\\Users\\ezeki\\PycharmProjects\\SportBettingPrediction\\UI_webscraping\\Betting\\league_filter_cache.json', 'deepseek_enabled': True, 'deepseek_base_url': None, 'deepseek_model': 'deepseek-chat', 'deepseek_timeout_s': 35.0, 'only_bet_draws': False, 'only_bet_zero_zero_score': False, 'result_wait_seconds': 500.0, 'cache_ttl_seconds': 1200.0, 'bet_history_pages': 1, 'bet_history_team_match_ratio': 0.85, 'poll_sleep_seconds': 8.0, 'live_url': 'https://www.sportybet.com/ng/sport/football/live_list/', 'sporty_phone': '***', 'sporty_password': '***', 'hard_refresh_seconds': 600.0, 'thread_turn_full_reload': True, 'thread_turn_reload_min_interval_seconds': 300.0, 'num_threads': 2, 'log_base_name': 'ezekiel_run_live_football_betting', 'log_include_date': False}
+2026-04-08 18:38:07 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:38:08 [DEBUG] Football sport already active in overview.
+2026-04-08 18:38:10 [DEBUG] Balance from header: 20338.65
+2026-04-08 18:38:10 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 0
+  site_balance           = 20338.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:38:10 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:38:10 [INFO] [Betslip tab] Clicked Cashout.
+2026-04-08 18:38:15 [INFO] [Cashout] No wanted selections; skipping scan.
+2026-04-08 18:38:19 [DEBUG] [Live list] skip HT break: CS Italiano Reserve vs CD Uai Urquiza Reserve | clock=45:00 game_id=HT
+2026-04-08 18:38:30 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:38:30 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:38:30 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:38:30 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:38:30 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:38:30 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:38:30 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:38:30 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:38:30 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:38:30 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:38:30 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:38:30 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:38:30 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:38:30 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:38:30 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:38:30 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:38:30 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-0 (gap 4 > max 1 for 1X2)
+2026-04-08 18:38:30 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:38:30 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:38:30 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:38:30 [DEBUG] Skip FK Veles Moscow vs FC Sibir Novosibirsk: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:38:30 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 4-0 (gap 4 > max 1 for 1X2)
+2026-04-08 18:38:30 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:38:30 [INFO] Live rows=64 eligible=39 pending=0/300
+2026-04-08 18:38:30 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:38:30 [INFO] [Winning] Locked match: Al Rayyan SC vs Umm-Salal SC tag=FT market=1X2
+2026-04-08 18:38:37 [INFO] [Winning] Profit target set for Al Rayyan SC vs Umm-Salal SC: 38.50 (base stake 10.00 @ odd 4.85)
+2026-04-08 18:38:37 [INFO] [Winning] Bet Al Rayyan SC vs Umm-Salal SC sel=draw odd=4.85 stake=10.00 net_before=0.00 target_profit=38.50
+2026-04-08 18:38:38 [INFO] Clicked 1X2 draw (odd text=4.85)
+2026-04-08 18:38:41 [INFO] Stake entered: requested=10 field=10
+2026-04-08 18:38:42 [INFO] Clicked Place Bet (trial 1/5).
+2026-04-08 18:38:43 [INFO] Clicked Place Bet (trial 2/5).
+2026-04-08 18:38:43 [INFO] [Betslip] Payment Confirm visible (trial 3/5).
+2026-04-08 18:38:44 [INFO] Clicked Confirm
+2026-04-08 18:38:45 [INFO] Success dialog visible
+2026-04-08 18:38:45 [INFO] Success details: {'booking_code': 'QB0NSE', 'potential_win': '48.50', 'stake': '10.00'}
+2026-04-08 18:38:46 [INFO] Clicked OK on success dialog
+2026-04-08 18:38:47 [INFO] [Winning] Pending added Al Rayyan SC vs Umm-Salal SC sel=draw stake=10.00 | pending_now=1
+2026-04-08 18:38:51 [DEBUG] Football sport already active in overview.
+2026-04-08 18:39:20 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:39:21 [DEBUG] Football sport already active in overview.
+2026-04-08 18:39:22 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:39:22 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:39:22 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:39:23 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:39:28 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:39:28 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:39:45 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:39:45 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:39:45 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:39:45 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:39:45 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:39:45 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:39:45 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:39:45 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:39:45 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:39:45 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:39:45 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:39:45 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:39:45 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:39:45 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:39:45 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:39:45 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:39:45 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:39:45 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:39:45 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:39:45 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:39:45 [DEBUG] Skip FK Veles Moscow vs FC Sibir Novosibirsk: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:39:45 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:39:45 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:39:45 [INFO] Live rows=65 eligible=41 pending=1/300
+2026-04-08 18:39:45 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:39:45 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:40:18 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:40:18 [DEBUG] Football sport already active in overview.
+2026-04-08 18:40:21 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:40:21 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:40:21 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:40:21 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:40:26 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:40:26 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:40:44 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:40:44 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:40:44 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:40:44 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:40:44 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:40:44 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:40:44 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:40:44 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:40:44 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:40:44 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:40:44 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:40:44 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:40:44 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:40:44 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:40:44 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:40:44 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:40:44 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:40:44 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:40:44 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:40:44 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:40:44 [DEBUG] Skip FK Veles Moscow vs FC Sibir Novosibirsk: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:40:44 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:40:44 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:40:44 [INFO] Live rows=65 eligible=41 pending=1/300
+2026-04-08 18:40:44 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:40:44 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:41:06 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:41:07 [DEBUG] Football sport already active in overview.
+2026-04-08 18:41:08 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:41:08 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:41:08 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:41:09 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:41:14 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:41:14 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:41:28 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:41:28 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:41:28 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:41:28 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:41:28 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:41:28 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:41:28 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:41:28 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:41:28 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:41:28 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:41:28 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:41:28 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:41:28 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:41:28 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:41:28 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:41:28 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:41:28 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:41:28 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:41:28 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:41:28 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:41:28 [DEBUG] Skip FK Veles Moscow vs FC Sibir Novosibirsk: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:41:28 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:41:28 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:41:28 [INFO] Live rows=65 eligible=41 pending=1/300
+2026-04-08 18:41:28 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:41:28 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:41:54 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:41:54 [DEBUG] Football sport already active in overview.
+2026-04-08 18:41:56 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:41:56 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:41:56 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:41:56 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:42:01 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:42:01 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:42:15 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:42:15 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:42:15 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:42:15 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:42:15 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:42:15 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:42:15 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:42:15 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:42:15 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:42:15 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:42:15 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:42:15 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:42:15 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:42:15 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:42:15 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:42:15 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:42:15 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:42:15 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:42:15 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:42:15 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:42:15 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:42:15 [DEBUG] Skip FK Veles Moscow vs FC Sibir Novosibirsk: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:42:15 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:42:15 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:42:15 [INFO] Live rows=65 eligible=40 pending=1/300
+2026-04-08 18:42:15 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:42:15 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:42:37 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:42:38 [DEBUG] Football sport already active in overview.
+2026-04-08 18:42:39 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:42:39 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:42:39 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:42:40 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:42:45 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:42:45 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:43:15 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:43:15 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:43:15 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:43:15 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:43:15 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:43:15 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:43:15 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:43:15 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:43:15 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:43:15 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:43:15 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:43:15 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:43:15 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:43:15 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:43:15 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:43:15 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:43:15 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:43:15 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:43:15 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:43:15 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:43:15 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:43:15 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:43:15 [DEBUG] Skip FK Veles Moscow vs FC Sibir Novosibirsk: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:43:15 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 6-0 (gap 6 > max 1 for 1X2)
+2026-04-08 18:43:15 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:43:15 [INFO] Live rows=65 eligible=39 pending=1/300
+2026-04-08 18:43:15 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:43:15 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:43:45 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:43:46 [DEBUG] Football sport already active in overview.
+2026-04-08 18:43:47 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:43:47 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:43:47 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:43:47 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:43:53 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:43:53 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:44:08 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:08 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:44:08 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:44:08 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:08 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:08 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:08 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:08 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:08 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:08 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:08 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:44:08 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:44:08 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:44:08 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:44:08 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:44:08 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:44:08 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:08 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:44:08 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:08 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:44:08 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:44:08 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:08 [DEBUG] Skip FK Veles Moscow vs FC Sibir Novosibirsk: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:08 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 6-0 (gap 6 > max 1 for 1X2)
+2026-04-08 18:44:08 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:08 [INFO] Live rows=65 eligible=39 pending=1/300
+2026-04-08 18:44:08 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:44:08 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:44:30 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:44:30 [DEBUG] Football sport already active in overview.
+2026-04-08 18:44:31 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:44:31 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:44:31 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:44:32 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:44:37 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:44:37 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:44:52 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:52 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:44:52 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:44:52 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:52 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:52 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:52 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:52 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:52 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:52 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:44:52 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:44:52 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:44:52 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:44:52 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:44:52 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:44:52 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:44:52 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:52 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:44:52 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:52 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:44:52 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:44:52 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:52 [DEBUG] Skip FK Veles Moscow vs FC Sibir Novosibirsk: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:44:52 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 6-0 (gap 6 > max 1 for 1X2)
+2026-04-08 18:44:52 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 3-0 (gap 3 > max 1 for 1X2)
+2026-04-08 18:44:52 [INFO] Live rows=65 eligible=39 pending=1/300
+2026-04-08 18:44:52 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:44:52 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:45:16 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:45:17 [DEBUG] Football sport already active in overview.
+2026-04-08 18:45:18 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:45:18 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:45:18 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:45:18 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:45:23 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:45:24 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:45:39 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:45:42 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:45:42 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:45:42 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:45:42 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:45:42 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:45:42 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:45:42 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:45:42 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:45:42 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:45:42 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:45:42 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:45:42 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:45:42 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:45:42 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:45:42 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:45:42 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:45:42 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:45:42 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:45:42 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:45:42 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:45:42 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:45:42 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:45:42 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 6-0 (gap 6 > max 1 for 1X2)
+2026-04-08 18:45:42 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 3-0 (gap 3 > max 1 for 1X2)
+2026-04-08 18:45:42 [INFO] Live rows=64 eligible=39 pending=1/300
+2026-04-08 18:45:42 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:45:42 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:46:03 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:46:04 [DEBUG] Football sport already active in overview.
+2026-04-08 18:46:05 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:46:05 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:46:05 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:46:05 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:46:11 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:46:11 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:46:23 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:46:23 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:46:23 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:46:23 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:46:23 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:46:23 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:46:23 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:46:23 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:46:23 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:46:23 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:46:23 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:46:23 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:46:23 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:46:23 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:46:23 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:46:23 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:46:23 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:46:23 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:46:23 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:46:23 [DEBUG] Skip Al Wasl U19 vs Gulf United U19: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:46:23 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:46:23 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:46:23 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:46:23 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 6-0 (gap 6 > max 1 for 1X2)
+2026-04-08 18:46:23 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 3-0 (gap 3 > max 1 for 1X2)
+2026-04-08 18:46:23 [INFO] Live rows=64 eligible=37 pending=1/300
+2026-04-08 18:46:23 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:46:23 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:46:42 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:46:42 [DEBUG] Football sport already active in overview.
+2026-04-08 18:46:43 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:46:43 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:46:43 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:46:44 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:46:49 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:46:49 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:46:51 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:46:52 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:47:03 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:47:04 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:47:04 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:47:04 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:47:04 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:47:04 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:04 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:04 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:04 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:04 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:04 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:04 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:47:04 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:47:04 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:47:04 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:47:04 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:47:04 [DEBUG] Skip NK TOSK Tesanj vs NK Stupcanica Olovo: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:47:04 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:47:04 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:47:04 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:47:04 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:47:04 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:47:04 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 6-0 (gap 6 > max 1 for 1X2)
+2026-04-08 18:47:04 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 4-0 (gap 4 > max 1 for 1X2)
+2026-04-08 18:47:04 [INFO] Live rows=62 eligible=35 pending=1/300
+2026-04-08 18:47:04 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:47:04 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:47:24 [INFO] Checking result for Al Rayyan SC vs Umm-Salal SC (placed 517s ago) thread=0
+2026-04-08 18:47:24 [INFO] [Bet history batch] Opening page https://www.sportybet.com/ng/my_accounts/bet_history/sport_bets?page=1
+2026-04-08 18:47:28 [INFO] Found order: Al Rayyan SCvUmm-Salal SC status=running stake=10.0 return=None
+2026-04-08 18:47:28 [INFO] Still running — re-check in 120s
+2026-04-08 18:47:33 [DEBUG] Football sport already active in overview.
+2026-04-08 18:47:34 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:47:34 [DEBUG] Football sport already active in overview.
+2026-04-08 18:47:36 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:47:36 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:47:36 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:47:36 [INFO] [Betslip tab] Clicked Cashout.
+2026-04-08 18:47:41 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:47:41 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:47:43 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:47:45 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:47:51 [INFO] [Live list parse] (unknown teams) | StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame
+2026-04-08 18:47:51 [DEBUG] Live list parse row (stack)
+Traceback (most recent call last):
+  File "c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\live_betting_bot.py", line 684, in collect_live_rows
+    left = mr.find_element(By.CSS_SELECTOR, ".left-team-cell")
+  File "C:\Users\ezeki\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webelement.py", line 602, in find_element
+    return self._execute(Command.FIND_CHILD_ELEMENT, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ezeki\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webelement.py", line 573, in _execute
+    return self._parent.execute(command, params)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ezeki\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 458, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ezeki\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame
+  (Session info: chrome=146.0.7680.166); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#staleelementreferenceexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6723a29c5+2ed785]
+	chromedriver!GetHandleVerifier [0x7ff6720ca0d0+14e90]
+	chromedriver!(No symbol) [0x7ff671e2db2d]
+	chromedriver!(No symbol) [0x7ff671e35ab1]
+	chromedriver!(No symbol) [0x7ff671e38bc5]
+	chromedriver!(No symbol) [0x7ff671e38c8f]
+	chromedriver!(No symbol) [0x7ff671e8631e]
+	chromedriver!(No symbol) [0x7ff671e86eac]
+	chromedriver!(No symbol) [0x7ff671e7ab5c]
+	chromedriver!(No symbol) [0x7ff671e7aa06]
+	chromedriver!(No symbol) [0x7ff671ed3b9b]
+	chromedriver!(No symbol) [0x7ff671e79298]
+	chromedriver!(No symbol) [0x7ff671e7a183]
+	chromedriver!GetHandleVerifier [0x7ff6723cde0d+318bcd]
+	chromedriver!GetHandleVerifier [0x7ff6723c8588+313348]
+	chromedriver!GetHandleVerifier [0x7ff6723e9d7a+334b3a]
+	chromedriver!GetHandleVerifier [0x7ff6720e6785+31545]
+	chromedriver!GetHandleVerifier [0x7ff6720efacc+3a88c]
+	chromedriver!GetHandleVerifier [0x7ff6720d3634+1e3f4]
+	chromedriver!GetHandleVerifier [0x7ff6720d37e6+1e5a6]
+	chromedriver!GetHandleVerifier [0x7ff6720b7e37+2bf7]
+	KERNEL32!BaseThreadInitThunk [0x7ffa2c68257d+1d]
+	ntdll!RtlUserThreadStart [0x7ffa2e48aa48+28]
+
+2026-04-08 18:47:52 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:47:53 [INFO] [Live list] summary: parsed=60 raw_dom=64 halftime_skipped=3 (HT rows) parse_errors=1
+2026-04-08 18:47:53 [DEBUG] Skip Wadi Degla SC vs Pharco FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:47:53 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:47:53 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:47:53 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:47:53 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:53 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:53 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:53 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:53 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:53 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:47:53 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:47:53 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:47:53 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:47:53 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:47:53 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:47:53 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:47:53 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:47:53 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:47:53 [DEBUG] Skip Heartland Queens vs Pacesetters Queens: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:47:53 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:47:53 [DEBUG] Skip OFC Nesebar vs Levski Karlovo: score 6-0 (gap 6 > max 1 for 1X2)
+2026-04-08 18:47:53 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 4-0 (gap 4 > max 1 for 1X2)
+2026-04-08 18:47:53 [INFO] Live rows=60 eligible=34 pending=1/300
+2026-04-08 18:47:53 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:47:53 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:48:17 [INFO] [Live list] Thread-turn full reload.
+2026-04-08 18:48:21 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:48:21 [DEBUG] Football sport already active in overview.
+2026-04-08 18:48:23 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:48:23 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:48:23 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:48:23 [INFO] [Betslip tab] Clicked Cashout.
+2026-04-08 18:48:28 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:48:28 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:48:29 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:48:30 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:48:31 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:48:31 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:48:41 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:48:41 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:48:42 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:48:42 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:48:42 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:48:42 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:48:42 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:48:42 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:48:42 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:48:42 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:48:42 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:48:42 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:48:42 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:48:42 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:48:42 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:48:42 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:48:42 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:48:42 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:48:42 [DEBUG] Skip Al-Ramms U19 vs Al-Ain U19: total_goals=4 (score 2-2) > FT_max_total_goals=1
+2026-04-08 18:48:42 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:48:42 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 4-0 (gap 4 > max 1 for 1X2)
+2026-04-08 18:48:42 [INFO] Live rows=56 eligible=33 pending=1/300
+2026-04-08 18:48:42 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:48:42 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:48:59 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:49:00 [DEBUG] Football sport already active in overview.
+2026-04-08 18:49:01 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:49:01 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:49:01 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:49:01 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:49:06 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:49:06 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:49:07 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:49:08 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:49:08 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:49:09 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:49:17 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:49:18 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:49:19 [DEBUG] [Live list] skip HT break: Gallos Blancos de Queretaro vs Deportivo Toluca FC | clock=45:00 game_id=HT
+2026-04-08 18:49:19 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:49:19 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:49:19 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:49:19 [DEBUG] Skip CD Junior FC SRL vs SE Palmeiras SP SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:49:19 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:49:19 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:49:19 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:49:19 [DEBUG] Skip Mirassol FC SP Srl vs CA Lanus Srl: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:49:19 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:49:19 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:49:19 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:49:19 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:49:19 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:49:19 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:49:19 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:49:19 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:49:19 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:49:19 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 4-0 (gap 4 > max 1 for 1X2)
+2026-04-08 18:49:19 [INFO] Live rows=55 eligible=32 pending=1/300
+2026-04-08 18:49:19 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=6 | Italy Coppa Italia Primavera=1
+2026-04-08 18:49:19 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:49:37 [INFO] Checking result for Al Rayyan SC vs Umm-Salal SC (placed 650s ago) thread=0
+2026-04-08 18:49:37 [INFO] [Bet history batch] Opening page https://www.sportybet.com/ng/my_accounts/bet_history/sport_bets?page=1
+2026-04-08 18:49:40 [INFO] Found order: Al Rayyan SCvUmm-Salal SC status=running stake=10.0 return=None
+2026-04-08 18:49:40 [INFO] Still running — re-check in 120s
+2026-04-08 18:49:45 [DEBUG] Football sport already active in overview.
+2026-04-08 18:49:46 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:49:47 [DEBUG] Football sport already active in overview.
+2026-04-08 18:49:48 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:49:48 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:49:48 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:49:48 [INFO] [Betslip tab] Clicked Cashout.
+2026-04-08 18:49:54 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:49:54 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:49:54 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:49:56 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:49:56 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:49:56 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:49:57 [DEBUG] [Live list] skip HT break: Bosonohy vs FC Dosta Bystrc-Kninicky | clock=45:00 game_id=HT
+2026-04-08 18:50:03 [DEBUG] [Live list] skip HT break: GD Interclube vs 1º de Maio de Benguela | clock=45:00 game_id=HT
+2026-04-08 18:50:05 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:50:06 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:50:06 [DEBUG] [Live list] skip HT break: Sevilla FC vs Tomares UD Youth | clock=45:00 game_id=HT
+2026-04-08 18:50:06 [DEBUG] [Live list] skip HT break: Gallos Blancos de Queretaro vs Deportivo Toluca FC | clock=45:00 game_id=HT
+2026-04-08 18:50:06 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:50:06 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:50:06 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:50:06 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:50:06 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:50:06 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:50:06 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:50:06 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:50:06 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:50:06 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:50:06 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:50:06 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:50:06 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:50:06 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:50:06 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:50:06 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 4-0 (gap 4 > max 1 for 1X2)
+2026-04-08 18:50:06 [INFO] Live rows=48 eligible=27 pending=1/300
+2026-04-08 18:50:06 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=4 | Italy Coppa Italia Primavera=1
+2026-04-08 18:50:06 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:50:25 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:50:26 [DEBUG] Football sport already active in overview.
+2026-04-08 18:50:27 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:50:27 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:50:27 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:50:27 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:50:33 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:50:33 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:50:33 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:50:34 [DEBUG] [Live list] skip HT break: PFC Montana 1921 vs PFC CSKA Sofia | clock=45:00 game_id=HT
+2026-04-08 18:50:34 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:50:34 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:50:35 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:50:35 [DEBUG] [Live list] skip HT break: Bosonohy vs FC Dosta Bystrc-Kninicky | clock=45:00 game_id=HT
+2026-04-08 18:50:38 [DEBUG] [Live list] skip HT break: GD Interclube vs 1º de Maio de Benguela | clock=45:00 game_id=HT
+2026-04-08 18:50:40 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:50:40 [DEBUG] [Live list] skip HT break: Naija Ratels vs Ekiti Queens | clock=44:27 game_id=HT
+2026-04-08 18:50:40 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:50:41 [DEBUG] [Live list] skip HT break: Sevilla FC vs Tomares UD Youth | clock=45:00 game_id=HT
+2026-04-08 18:50:41 [DEBUG] [Live list] skip HT break: Gallos Blancos de Queretaro vs Deportivo Toluca FC | clock=45:00 game_id=HT
+2026-04-08 18:50:41 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:50:41 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:50:41 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:50:41 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:50:41 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:50:41 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:50:41 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:50:41 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:50:41 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:50:41 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:50:41 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:50:41 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:50:41 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:50:41 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:50:41 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:50:41 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:50:41 [INFO] Live rows=46 eligible=25 pending=1/300
+2026-04-08 18:50:41 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=4 | Italy Coppa Italia Primavera=1
+2026-04-08 18:50:41 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:50:56 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:50:57 [DEBUG] Football sport already active in overview.
+2026-04-08 18:50:58 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:50:58 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:50:58 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:50:58 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:51:03 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:51:04 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:51:04 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:51:05 [DEBUG] [Live list] skip HT break: PFC Montana 1921 vs PFC CSKA Sofia | clock=45:00 game_id=HT
+2026-04-08 18:51:06 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:51:06 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:51:07 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:51:07 [DEBUG] [Live list] skip HT break: Bosonohy vs FC Dosta Bystrc-Kninicky | clock=45:00 game_id=HT
+2026-04-08 18:51:12 [DEBUG] [Live list] skip HT break: GD Interclube vs 1º de Maio de Benguela | clock=45:00 game_id=HT
+2026-04-08 18:51:12 [DEBUG] [Live list] skip HT break: Wiliete SC vs FC Bravos do Maquis | clock=45:00 game_id=HT
+2026-04-08 18:51:13 [DEBUG] [Live list] skip HT break: FC Gonio vs FC Guria Lanchkhuti | clock=45:00 game_id=HT
+2026-04-08 18:51:14 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:51:14 [DEBUG] [Live list] skip HT break: Naija Ratels vs Ekiti Queens | clock=44:27 game_id=HT
+2026-04-08 18:51:14 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:51:14 [DEBUG] [Live list] skip HT break: Sevilla FC vs Tomares UD Youth | clock=45:00 game_id=HT
+2026-04-08 18:51:14 [DEBUG] [Live list] skip HT break: Gallos Blancos de Queretaro vs Deportivo Toluca FC | clock=45:00 game_id=HT
+2026-04-08 18:51:15 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:51:15 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:51:15 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:51:15 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:51:15 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:51:15 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:51:15 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:51:15 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:51:15 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:51:15 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:51:15 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:51:15 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:51:15 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:51:15 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:51:15 [DEBUG] Skip Al-Wahda Abu Dhabi U19 vs Al Jazira U19: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:51:15 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:51:15 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:51:15 [INFO] Live rows=44 eligible=23 pending=1/300
+2026-04-08 18:51:15 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=4 | Italy Coppa Italia Primavera=1
+2026-04-08 18:51:15 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:51:33 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:51:34 [DEBUG] Football sport already active in overview.
+2026-04-08 18:51:35 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:51:35 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:51:35 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:51:36 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:51:41 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:51:41 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:51:42 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:51:42 [DEBUG] [Live list] skip HT break: PFC Montana 1921 vs PFC CSKA Sofia | clock=45:00 game_id=HT
+2026-04-08 18:51:43 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:51:43 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:51:43 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:51:44 [DEBUG] [Live list] skip HT break: Bosonohy vs FC Dosta Bystrc-Kninicky | clock=45:00 game_id=HT
+2026-04-08 18:51:47 [DEBUG] [Live list] skip HT break: GD Interclube vs 1º de Maio de Benguela | clock=45:00 game_id=HT
+2026-04-08 18:51:47 [DEBUG] [Live list] skip HT break: Wiliete SC vs FC Bravos do Maquis | clock=45:00 game_id=HT
+2026-04-08 18:51:48 [DEBUG] [Live list] skip HT break: FC Gonio vs FC Guria Lanchkhuti | clock=45:00 game_id=HT
+2026-04-08 18:51:49 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:51:49 [DEBUG] [Live list] skip HT break: Naija Ratels vs Ekiti Queens | clock=44:27 game_id=HT
+2026-04-08 18:51:49 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:51:50 [DEBUG] [Live list] skip HT break: Sevilla FC vs Tomares UD Youth | clock=45:00 game_id=HT
+2026-04-08 18:51:50 [DEBUG] [Live list] skip HT break: Gallos Blancos de Queretaro vs Deportivo Toluca FC | clock=45:00 game_id=HT
+2026-04-08 18:51:50 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:51:50 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:51:50 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:51:50 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:51:50 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:51:50 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:51:50 [DEBUG] Skip Sporting Cristal SRL vs Cerro Porteno SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:51:50 [DEBUG] Skip Wits University FC vs Tshwane South College FC: total_goals=5 (score 3-2) > FT_max_total_goals=1
+2026-04-08 18:51:50 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:51:50 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:51:50 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:51:50 [DEBUG] Skip Zakho FC vs Al Zawraa: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:51:50 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:51:50 [DEBUG] Skip UD Leiria U23 vs Portimonense: score 4-1 (gap 3 > max 1 for 1X2)
+2026-04-08 18:51:50 [DEBUG] Skip Al-Wahda Abu Dhabi U19 vs Al Jazira U19: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:51:50 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:51:50 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:51:50 [INFO] Live rows=44 eligible=23 pending=1/300
+2026-04-08 18:51:50 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=4 | Italy Coppa Italia Primavera=1
+2026-04-08 18:51:50 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:52:07 [INFO] Checking result for Al Rayyan SC vs Umm-Salal SC (placed 800s ago) thread=0
+2026-04-08 18:52:07 [INFO] [Bet history batch] Opening page https://www.sportybet.com/ng/my_accounts/bet_history/sport_bets?page=1
+2026-04-08 18:52:10 [INFO] Found order: Al Rayyan SCvUmm-Salal SC status=running stake=10.0 return=None
+2026-04-08 18:52:10 [INFO] Still running — re-check in 120s
+2026-04-08 18:52:14 [DEBUG] Football sport already active in overview.
+2026-04-08 18:52:16 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:52:16 [DEBUG] Football sport already active in overview.
+2026-04-08 18:52:18 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:52:18 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:52:18 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:52:18 [INFO] [Betslip tab] Clicked Cashout.
+2026-04-08 18:52:23 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:52:23 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:52:24 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:52:24 [DEBUG] [Live list] skip HT break: PFC Montana 1921 vs PFC CSKA Sofia | clock=45:00 game_id=HT
+2026-04-08 18:52:25 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:52:25 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:52:26 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:52:26 [DEBUG] [Live list] skip HT break: Bosonohy vs FC Dosta Bystrc-Kninicky | clock=45:00 game_id=HT
+2026-04-08 18:52:29 [DEBUG] [Live list] skip HT break: GD Interclube vs 1º de Maio de Benguela | clock=45:00 game_id=HT
+2026-04-08 18:52:29 [DEBUG] [Live list] skip HT break: Wiliete SC vs FC Bravos do Maquis | clock=45:00 game_id=HT
+2026-04-08 18:52:29 [DEBUG] [Live list] skip HT break: FC Gonio vs FC Guria Lanchkhuti | clock=45:00 game_id=HT
+2026-04-08 18:52:30 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:52:30 [DEBUG] [Live list] skip HT break: Naija Ratels vs Ekiti Queens | clock=44:27 game_id=HT
+2026-04-08 18:52:30 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:52:30 [DEBUG] [Live list] skip HT break: Sevilla FC vs Tomares UD Youth | clock=45:00 game_id=HT
+2026-04-08 18:52:30 [DEBUG] [Live list] skip HT break: Gallos Blancos de Queretaro vs Deportivo Toluca FC | clock=45:00 game_id=HT
+2026-04-08 18:52:30 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:52:30 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:52:30 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:52:30 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:52:30 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:52:30 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:52:30 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:52:30 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:52:30 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:52:30 [DEBUG] Skip Rio Ave vs CS Maritimo: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:52:30 [DEBUG] Skip Al-Wahda Abu Dhabi U19 vs Al Jazira U19: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:52:30 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:52:30 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:52:30 [INFO] Live rows=39 eligible=22 pending=1/300
+2026-04-08 18:52:30 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=3 | Italy Coppa Italia Primavera=1
+2026-04-08 18:52:30 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:52:45 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:52:45 [DEBUG] Football sport already active in overview.
+2026-04-08 18:52:47 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:52:47 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:52:47 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:52:47 [INFO] [Betslip tab] Cashout already active (ensured by click).
+2026-04-08 18:52:53 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:52:53 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:52:56 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:52:57 [DEBUG] [Live list] skip HT break: PFC Montana 1921 vs PFC CSKA Sofia | clock=45:00 game_id=HT
+2026-04-08 18:52:59 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:52:59 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:53:01 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:53:02 [DEBUG] [Live list] skip HT break: Bosonohy vs FC Dosta Bystrc-Kninicky | clock=45:00 game_id=HT
+2026-04-08 18:53:09 [DEBUG] [Live list] skip HT break: GD Interclube vs 1º de Maio de Benguela | clock=45:00 game_id=HT
+2026-04-08 18:53:09 [DEBUG] [Live list] skip HT break: Wiliete SC vs FC Bravos do Maquis | clock=45:00 game_id=HT
+2026-04-08 18:53:10 [DEBUG] [Live list] skip HT break: FC Gonio vs FC Guria Lanchkhuti | clock=45:00 game_id=HT
+2026-04-08 18:53:11 [INFO] [Live list parse] (unknown teams) | StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame
+2026-04-08 18:53:11 [DEBUG] Live list parse row (stack)
+Traceback (most recent call last):
+  File "c:\Users\ezeki\PycharmProjects\SportBettingPrediction\UI_webscraping\Betting\live_betting_bot.py", line 684, in collect_live_rows
+    left = mr.find_element(By.CSS_SELECTOR, ".left-team-cell")
+  File "C:\Users\ezeki\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webelement.py", line 602, in find_element
+    return self._execute(Command.FIND_CHILD_ELEMENT, {"using": by, "value": value})["value"]
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\ezeki\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webelement.py", line 573, in _execute
+    return self._parent.execute(command, params)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\ezeki\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\webdriver.py", line 458, in execute
+    self.error_handler.check_response(response)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\ezeki\AppData\Roaming\Python\Python313\site-packages\selenium\webdriver\remote\errorhandler.py", line 232, in check_response
+    raise exception_class(message, screen, stacktrace)
+selenium.common.exceptions.StaleElementReferenceException: Message: stale element reference: stale element not found in the current frame
+  (Session info: chrome=146.0.7680.166); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#staleelementreferenceexception
+Stacktrace:
+	chromedriver!GetHandleVerifier [0x7ff6723a29c5+2ed785]
+	chromedriver!GetHandleVerifier [0x7ff6720ca0d0+14e90]
+	chromedriver!(No symbol) [0x7ff671e2db2d]
+	chromedriver!(No symbol) [0x7ff671e35ab1]
+	chromedriver!(No symbol) [0x7ff671e38bc5]
+	chromedriver!(No symbol) [0x7ff671e38c8f]
+	chromedriver!(No symbol) [0x7ff671e8631e]
+	chromedriver!(No symbol) [0x7ff671e86eac]
+	chromedriver!(No symbol) [0x7ff671e7ab5c]
+	chromedriver!(No symbol) [0x7ff671e7aa06]
+	chromedriver!(No symbol) [0x7ff671ed3b9b]
+	chromedriver!(No symbol) [0x7ff671e79298]
+	chromedriver!(No symbol) [0x7ff671e7a183]
+	chromedriver!GetHandleVerifier [0x7ff6723cde0d+318bcd]
+	chromedriver!GetHandleVerifier [0x7ff6723c8588+313348]
+	chromedriver!GetHandleVerifier [0x7ff6723e9d7a+334b3a]
+	chromedriver!GetHandleVerifier [0x7ff6720e6785+31545]
+	chromedriver!GetHandleVerifier [0x7ff6720efacc+3a88c]
+	chromedriver!GetHandleVerifier [0x7ff6720d3634+1e3f4]
+	chromedriver!GetHandleVerifier [0x7ff6720d37e6+1e5a6]
+	chromedriver!GetHandleVerifier [0x7ff6720b7e37+2bf7]
+	KERNEL32!BaseThreadInitThunk [0x7ffa2c68257d+1d]
+	ntdll!RtlUserThreadStart [0x7ffa2e48aa48+28]
+
+2026-04-08 18:53:12 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:53:13 [DEBUG] [Live list] skip HT break: Naija Ratels vs Ekiti Queens | clock=44:27 game_id=HT
+2026-04-08 18:53:13 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:53:15 [DEBUG] [Live list] skip HT break: Sevilla FC vs Tomares UD Youth | clock=45:00 game_id=HT
+2026-04-08 18:53:15 [DEBUG] [Live list] skip HT break: Gallos Blancos de Queretaro vs Deportivo Toluca FC | clock=45:00 game_id=HT
+2026-04-08 18:53:15 [INFO] [Live list] summary: parsed=37 raw_dom=52 halftime_skipped=14 (HT rows) parse_errors=1
+2026-04-08 18:53:15 [DEBUG] Skip Sassuolo Calcio vs Atalanta BC: excluded competition league='Italy Coppa Italia Primavera' (matched='Serie A (Italy)')
+2026-04-08 18:53:15 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:53:15 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:53:15 [DEBUG] Skip Coquimbo Unido Srl vs Club Nacional de Football SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:53:15 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:53:15 [DEBUG] Skip Independiente Medellin SRL vs Estudiantes de la Plata SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:53:15 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:53:15 [DEBUG] Skip FK Rudar Pljevlja vs OFK Grbalj: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:53:15 [DEBUG] Skip AL Talaba vs AL Najaf: total_goals=3 (score 2-1) > FT_max_total_goals=1
+2026-04-08 18:53:15 [DEBUG] Skip Al-Wahda Abu Dhabi U19 vs Al Jazira U19: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:53:15 [DEBUG] Skip Rivers Angels vs Adamawa Queens FC: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:53:15 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:53:15 [INFO] Live rows=37 eligible=22 pending=1/300
+2026-04-08 18:53:15 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=3 | Italy Coppa Italia Primavera=1
+2026-04-08 18:53:15 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:53:48 [INFO] [Live list] Thread-turn full reload.
+2026-04-08 18:53:54 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:53:54 [DEBUG] Football sport already active in overview.
+2026-04-08 18:53:56 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:53:56 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:53:56 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:53:57 [INFO] [Betslip tab] Clicked Cashout.
+2026-04-08 18:54:02 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:54:02 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:54:04 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:54:05 [DEBUG] [Live list] skip HT break: PFC Montana 1921 vs PFC CSKA Sofia | clock=45:00 game_id=HT
+2026-04-08 18:54:06 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:54:07 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:54:08 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:54:09 [DEBUG] [Live list] skip HT break: Bosonohy vs FC Dosta Bystrc-Kninicky | clock=45:00 game_id=HT
+2026-04-08 18:54:15 [DEBUG] [Live list] skip HT break: Shire Endaselassie FC vs Dire Dawa Kenema | clock=45:00 game_id=HT
+2026-04-08 18:54:16 [DEBUG] [Live list] skip HT break: GD Interclube vs 1º de Maio de Benguela | clock=45:00 game_id=HT
+2026-04-08 18:54:17 [DEBUG] [Live list] skip HT break: Wiliete SC vs FC Bravos do Maquis | clock=45:00 game_id=HT
+2026-04-08 18:54:17 [DEBUG] [Live list] skip HT break: FC Gonio vs FC Guria Lanchkhuti | clock=45:00 game_id=HT
+2026-04-08 18:54:19 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:54:19 [DEBUG] [Live list] skip HT break: Naija Ratels vs Ekiti Queens | clock=44:27 game_id=HT
+2026-04-08 18:54:19 [DEBUG] [Live list] skip HT break: Rivers Angels vs Adamawa Queens FC | clock=45:00 game_id=HT
+2026-04-08 18:54:19 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:54:20 [DEBUG] [Live list] skip HT break: Sevilla FC vs Tomares UD Youth | clock=45:00 game_id=HT
+2026-04-08 18:54:20 [DEBUG] [Live list] skip HT break: Gallos Blancos de Queretaro vs Deportivo Toluca FC | clock=45:00 game_id=HT
+2026-04-08 18:54:20 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:54:20 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:54:20 [DEBUG] Skip Cusco FC Srl vs CD Flamengo RJ SRL: excluded competition league='Simulated Reality League Copa Libertadores SRL' (matched='simulated reality')
+2026-04-08 18:54:20 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:54:20 [DEBUG] Skip AGMK FC vs FK Termez Surkhon: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:54:20 [DEBUG] Skip AL Talaba vs AL Najaf: score 3-1 (gap 2 > max 1 for 1X2)
+2026-04-08 18:54:20 [DEBUG] Skip Al-Wahda Abu Dhabi U19 vs Al Jazira U19: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:54:20 [DEBUG] Skip Shabab Al Ahli Dubai U19 vs Al-Ain B U19: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:54:20 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:54:20 [INFO] Live rows=30 eligible=20 pending=1/300
+2026-04-08 18:54:20 [INFO] [League filter] skipped_by_league: Simulated Reality League Copa Libertadores SRL=1
+2026-04-08 18:54:20 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.
+2026-04-08 18:54:37 [INFO] Checking result for Al Rayyan SC vs Umm-Salal SC (placed 951s ago) thread=0
+2026-04-08 18:54:37 [INFO] [Bet history batch] Opening page https://www.sportybet.com/ng/my_accounts/bet_history/sport_bets?page=1
+2026-04-08 18:54:42 [INFO] Found order: Al Rayyan SCvUmm-Salal SC status=running stake=10.0 return=None
+2026-04-08 18:54:42 [INFO] Still running — re-check in 120s
+2026-04-08 18:54:47 [DEBUG] Football sport already active in overview.
+2026-04-08 18:54:48 [DEBUG] Already on football live list; skipping driver.get() reload
+2026-04-08 18:54:49 [DEBUG] Football sport already active in overview.
+2026-04-08 18:54:50 [DEBUG] Balance from header: 20328.65
+2026-04-08 18:54:50 [INFO] [STATUS] ------------------------------------------------------------------
+  thread_id                = 0  (pool wins/losses = 0/0 cashout_settles=0 loss_pool=0.00)
+  initial_capital          = 3000.00
+  incremental             = False
+  ft_window               = (1.0, 92.0)
+  bet_fulltime            = True
+  bet_halftime            = False
+  ht_window               = (38.0, 40.0)  (H1 only)
+  minimum_odd              = 1.07
+  maximum_odd              = 10.00
+  max_abs_goal_diff_1x2  = 1  (skip if |H-A| > this)
+  ft_max_total_goals     = 1  (skip if H+A > this)
+  ht_max_total_goals     = 2  (skip if H+A > this)
+  excluded_competitions  = 17  (DeepSeek mapping cached)
+  deepseek_enabled       = True  (model deepseek-chat)
+  bet_history_match_ratio = 0.85  (fuzzy name match in history)
+  -- estimated (stake sizing: wins only; no deduction on loss) ------------
+  estimated_balance      = 3000.00
+  total_profit_est       = +0.00  (balance - initial)
+  profit_pct_est         = +0.00%
+  -- tracked (logging balance: +win / -loss net) ---------------------------
+  tracked_balance        = 3000.00
+  total_profit_tracked   = +0.00  (balance - initial)
+  profit_pct_tracked     = +0.00%
+  -- next stake ------------------------------------------------------------
+  stake_next             = 10.00  (= estimated_balance / 300)
+  -- settled record --------------------------------------------------------
+  wins                   = 0
+  losses                 = 0
+  cashout_settles         = 0  (won but return < stake)
+  loss_pool               = 0.00  (shared loss to recover)
+  settled_total          = 0
+  win_rate               = n/a  (wins / settled)
+  -- pending / site --------------------------------------------------------
+  pending_bets           = 1
+  site_balance           = 20328.65
+[STATUS] ------------------------------------------------------------------
+2026-04-08 18:54:50 [INFO] [Cashout] Scan start (before betting).
+2026-04-08 18:54:51 [INFO] [Betslip tab] Clicked Cashout.
+2026-04-08 18:54:56 [INFO] [Cashout] Page scan: items=3 wanted=2
+2026-04-08 18:54:56 [INFO] [Cashout] Summary: scanned=1 matched=1 triggered=0 unfolded=0 cashout_clicks=0 confirms=0
+2026-04-08 18:54:57 [DEBUG] [Live list] skip HT break: Wadi Degla SC vs Pharco FC | clock=45:00 game_id=HT
+2026-04-08 18:54:57 [DEBUG] [Live list] skip HT break: PFC Montana 1921 vs PFC CSKA Sofia | clock=45:00 game_id=HT
+2026-04-08 18:54:58 [DEBUG] [Live list] skip HT break: Backa Topola vs FK IMT Novi Beograd | clock=45:00 game_id=HT
+2026-04-08 18:54:58 [DEBUG] [Live list] skip HT break: FK Javor Ivanjica vs FK Zeleznicar Pancevo | clock=45:00 game_id=HT
+2026-04-08 18:54:59 [DEBUG] [Live list] skip HT break: FK Liepaja vs FK Auda | clock=45:00 game_id=HT
+2026-04-08 18:54:59 [DEBUG] [Live list] skip HT break: Bosonohy vs FC Dosta Bystrc-Kninicky | clock=45:00 game_id=HT
+2026-04-08 18:55:01 [DEBUG] [Live list] skip HT break: Shire Endaselassie FC vs Dire Dawa Kenema | clock=45:00 game_id=HT
+2026-04-08 18:55:02 [DEBUG] [Live list] skip HT break: GD Interclube vs 1º de Maio de Benguela | clock=45:00 game_id=HT
+2026-04-08 18:55:02 [DEBUG] [Live list] skip HT break: Wiliete SC vs FC Bravos do Maquis | clock=45:00 game_id=HT
+2026-04-08 18:55:02 [DEBUG] [Live list] skip HT break: FC Gonio vs FC Guria Lanchkhuti | clock=45:00 game_id=HT
+2026-04-08 18:55:03 [DEBUG] [Live list] skip HT break: Heartland Queens vs Pacesetters Queens | clock=45:00 game_id=HT
+2026-04-08 18:55:03 [DEBUG] [Live list] skip HT break: Naija Ratels vs Ekiti Queens | clock=44:27 game_id=HT
+2026-04-08 18:55:03 [DEBUG] [Live list] skip HT break: Rivers Angels vs Adamawa Queens FC | clock=45:00 game_id=HT
+2026-04-08 18:55:03 [DEBUG] [Live list] skip HT break: FK Veles Moscow vs FC Sibir Novosibirsk | clock=45:00 game_id=HT
+2026-04-08 18:55:03 [DEBUG] [Live list] skip HT break: Sevilla FC vs Tomares UD Youth | clock=45:00 game_id=HT
+2026-04-08 18:55:03 [DEBUG] [Live list] skip HT break: Gallos Blancos de Queretaro vs Deportivo Toluca FC | clock=45:00 game_id=HT
+2026-04-08 18:55:03 [DEBUG] Skip FK Mornar Bar vs FK Sutjeska Niksic: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:55:03 [DEBUG] Skip Nd Slovan vs Ilirija Ljubljana: score 2-0 (gap 2 > max 1 for 1X2)
+2026-04-08 18:55:03 [DEBUG] Skip FK Lovcen vs FK Podgorica: total_goals=3 (score 1-2) > FT_max_total_goals=1
+2026-04-08 18:55:03 [DEBUG] Skip Shabab Al Ahli Dubai U19 vs Al-Ain B U19: total_goals=2 (score 1-1) > FT_max_total_goals=1
+2026-04-08 18:55:03 [DEBUG] Skip Cadiz CF vs CD Mosquito U19: score 5-0 (gap 5 > max 1 for 1X2)
+2026-04-08 18:55:03 [INFO] Live rows=27 eligible=20 pending=1/300
+2026-04-08 18:55:03 [INFO] [Winning] Pending exists (1) — not selecting a new match this cycle.

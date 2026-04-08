@@ -63,6 +63,10 @@ class LiveBettingConfig:
     # Skip matches where (home_goals + away_goals) > this.
     ft_max_total_goals: int = 4
     ht_max_total_goals: int = 2
+    # Winning mode: track one match per thread, bet current leader (or draw if level).
+    # When the bet is no longer winning, cash out and re-bet the new winning outcome with
+    # stake sized to recover this match's net loss plus the original target profit.
+    winning: bool = False
     # Exclude competitions (league names) that often have volatile stoppage-time goals.
     # Mapping is done via DeepSeek and cached to disk (normalized league -> matched excluded name or "NONE").
     excluded_competitions: list[str] = field(
@@ -123,6 +127,13 @@ class PendingBet:
     selection: str
     history_retries: int = 0
     inc_trial: int | None = None
+    # Used to group multiple pending bets per match (winning mode).
+    match_group_key: str | None = None
+    # When we successfully click Cashout+Confirm for a specific pending bet, we can often read the
+    # cashout return amount immediately from the cashout card. Store it here so winning-mode stake
+    # sizing can treat the outstanding exposure as (stake - cashout_return) instead of full stake,
+    # even before bet-history reflects the settlement.
+    cashout_expected_return: float | None = None
 
 
 @dataclass
@@ -154,7 +165,8 @@ class SharedBettingContext:
     driver_ready: threading.Event = field(default_factory=threading.Event)
     driver: object | None = None
 
-    # Settled results keyed by bet_history.result_cache_key(home, away); omit "running" for cache longevity
+    # Settled results keyed by bet_history.result_cache_key_with_stake(home, away, stake) (or base key).
+    # Omit "running" for cache longevity.
     result_cache: dict[str, bh.SettledBetInfo] = field(default_factory=dict)
     _bet_cache: list[BetCacheEntry] = field(default_factory=list)
     _skipped_cache: list[BetCacheEntry] = field(default_factory=list)
@@ -166,6 +178,7 @@ class SharedBettingContext:
     wins: int = 0
     losses: int = 0
     cashout_settles: int = 0
+    loss_pool: float = 0.0
     next_hard_refresh_at: float = field(default_factory=lambda: time.monotonic() + 600.0)
     last_thread_turn_reload_at: float = field(default_factory=time.monotonic)
 
@@ -178,18 +191,35 @@ class SharedBettingContext:
     def register(self, bot: "LiveBettingBot") -> None:
         self.bots.append(bot)
 
-    def collect_due_pending_triples(self, now: float) -> list[tuple[str, str, str]]:
-        """(home, away, cache_key) for all threads' pending bets that are due, deduped by key."""
+    def collect_due_pending_triples(self, now: float) -> list[tuple[str, str, float | None, str]]:
+        """(home, away, stake, cache_key) for all threads' pending bets that are due, deduped by key."""
         seen: set[str] = set()
-        out: list[tuple[str, str, str]] = []
+        out: list[tuple[str, str, float | None, str]] = []
         for bot in self.bots:
             for p in bot.pending:
                 if p.check_after <= now:
-                    k = bh.result_cache_key(p.home, p.away)
+                    k = bh.result_cache_key_with_stake(p.home, p.away, p.stake)
                     if k not in seen:
                         seen.add(k)
-                        out.append((p.home, p.away, k))
+                        out.append((p.home, p.away, p.stake, k))
         return out
+
+
+@dataclass
+class WinningMatchState:
+    """Per-thread state for winning-mode progression on a single match."""
+    home: str
+    away: str
+    bet_tag: str  # "FT" or "HT"
+    market_name: str
+    profit_target: float  # desired net profit for this match when it finally wins
+    net_before: float = 0.0  # cumulative net: returns - stakes (negative means loss)
+    last_selection: str | None = None
+    has_bet_before: bool = False
+    # The live list is a dynamic SPA and our parser deliberately skips some transient rows
+    # (e.g. HT break). Track consecutive "not found" cycles so we can tolerate short misses
+    # without unlocking the match.
+    missing_live_count: int = 0
 
 
 class LiveBettingBot(SportyBetLoginBot):
@@ -241,7 +271,9 @@ class LiveBettingBot(SportyBetLoginBot):
         self.wins: int = 0
         self.losses: int = 0
         self.cashout_settles: int = 0
+        self.loss_pool: float = 0.0
         self.pending: list[PendingBet] = []
+        self._winning: WinningMatchState | None = None
         # Successful bet recently placed — do not open same fixture again until TTL
         self._cache: list[BetCacheEntry] = []
         # Tried and failed (low odd, closed market, errors) — same TTL as _cache
@@ -280,6 +312,43 @@ class LiveBettingBot(SportyBetLoginBot):
             with self.shared.balance_lock:
                 return float(self.shared.tracked_balance)
         return float(self.tracked_balance)
+
+    def _loss_pool_value(self) -> float:
+        if self.shared is not None:
+            with self.shared.balance_lock:
+                return float(self.shared.loss_pool)
+        return float(self.loss_pool)
+
+    def _loss_pool_add(self, amount: float) -> None:
+        """Add positive amount to shared loss pool."""
+        try:
+            a = float(amount)
+        except Exception:
+            return
+        if a <= 0:
+            return
+        if self.shared is not None:
+            with self.shared.balance_lock:
+                self.shared.loss_pool += a
+        else:
+            self.loss_pool += a
+
+    def _loss_pool_repay(self, amount: float) -> float:
+        """Repay as much as possible from pool; returns actual repaid."""
+        try:
+            a = float(amount)
+        except Exception:
+            return 0.0
+        if a <= 0:
+            return 0.0
+        if self.shared is not None:
+            with self.shared.balance_lock:
+                rep = min(float(self.shared.loss_pool), a)
+                self.shared.loss_pool -= rep
+                return float(rep)
+        rep = min(float(self.loss_pool), a)
+        self.loss_pool -= rep
+        return float(rep)
 
     # --- incremental staking ---
 
@@ -821,6 +890,70 @@ class LiveBettingBot(SportyBetLoginBot):
             stake = min(stake, cap)
         return max(0.0, round(float(stake), 2))
 
+    @staticmethod
+    def _winning_selection_from_score(hg: int, ag: int) -> str:
+        if hg > ag:
+            return "home"
+        if ag > hg:
+            return "away"
+        return "draw"
+
+    def _winning_compute_next_stake(self, current_odd: float, state: WinningMatchState) -> float | None:
+        """
+        Choose stake so that if the bet wins, net_after >= profit_target.
+        net_after = net_before + stake*(odd-1)
+        """
+        try:
+            o = float(current_odd)
+        except Exception:
+            return None
+        if o <= 1.0:
+            return None
+        # Global loss sharing: each thread aims to recover its share of the pool
+        # *in addition* to its own match profit target.
+        threads = max(1, int(self.cfg.num_threads))
+        loss_share = self._loss_pool_value() / float(threads)
+
+        # Include outstanding exposure for this match group (pending stakes not yet reflected
+        # in state.net_before because bet history settlement may lag).
+        outstanding_loss = 0.0
+        try:
+            group = f"{state.home}|{state.away}|{state.bet_tag}"
+            pending_src = (
+                [p for b in self.shared.bots for p in b.pending] if self.shared is not None else list(self.pending)
+            )
+            for p in pending_src:
+                try:
+                    if (p.match_group_key or "") != group:
+                        continue
+                    exp_ret = float(p.cashout_expected_return) if p.cashout_expected_return is not None else None
+                    if exp_ret is not None and exp_ret >= 0:
+                        outstanding_loss += max(0.0, float(p.stake) - exp_ret)
+                    else:
+                        outstanding_loss += max(0.0, float(p.stake))
+                except Exception:
+                    continue
+        except Exception:
+            outstanding_loss = 0.0
+
+        required = (
+            float(state.profit_target)
+            - float(state.net_before)
+            + float(loss_share)
+            + float(outstanding_loss)
+        )
+        if required < 0:
+            required = 0.0
+        stake = required / (o - 1.0) if (o - 1.0) > 0 else None
+        if stake is None:
+            return None
+        stake = max(10.0, round(float(stake), 2))
+        # Cap by header balance (rounded down)
+        if self._last_site_balance is not None:
+            cap = float(math.floor(float(self._last_site_balance)))
+            stake = min(stake, cap)
+        return float(stake)
+
     def eligible_rows(self, rows: list[LiveListRow]) -> list[LiveListRow]:
         out: list[LiveListRow] = []
         for r in rows:
@@ -930,6 +1063,10 @@ class LiveBettingBot(SportyBetLoginBot):
             more = f" (+{len(top)-12} more)" if len(top) > 12 else ""
             self.log.info("[League filter] skipped_by_league: %s%s", summary, more)
 
+        # Winning mode: each thread manages a single match until it ends.
+        if self.cfg.winning:
+            return self._winning_try_manage_match(rows, candidates)
+
         # Incremental mode: only one bet at a time (must wait for result).
         if self.cfg.incremental and self.pending:
             self.log.info(
@@ -1018,6 +1155,372 @@ class LiveBettingBot(SportyBetLoginBot):
                 self._cache_add(bet_key)
             random_human_pause(0.3, 2.0)
         return placed
+
+    def _winning_try_manage_match(self, rows: list[LiveListRow], candidates: list[LiveListRow]) -> int:
+        """
+        Winning mode loop:
+        - If no current match, pick one candidate and start it.
+        - If current match is still live, ensure we have a bet on the current winning outcome.
+          If the last selection is no longer winning, cashout and re-bet current winner.
+        - If match is gone from live list, treat as ended; clear current and let next loop pick a new one.
+        """
+        # Winning mode constraint: do not start managing a new match while this thread still has
+        # any unresolved pending bet(s). This prevents the bot from accumulating multiple pending
+        # bets across different matches when a locked match temporarily disappears from parsing.
+        try:
+            if self.pending:
+                self.log.info(
+                    "[Winning] Pending exists (%d) — not selecting a new match this cycle.",
+                    len(self.pending),
+                )
+                return 0
+        except Exception:
+            pass
+
+        if self._winning is None:
+            if not candidates:
+                return 0
+            r = candidates[0]
+            bet_market = getattr(r, "_bet_market_name", "1X2")
+            bet_tag = getattr(r, "_bet_tag", "FT")
+            self._winning = WinningMatchState(
+                home=r.home,
+                away=r.away,
+                bet_tag=str(bet_tag),
+                market_name=str(bet_market),
+                profit_target=0.0,
+            )
+            self.log.info(
+                "[Winning] Locked match: %s vs %s tag=%s market=%s",
+                r.home,
+                r.away,
+                bet_tag,
+                bet_market,
+            )
+
+        st = self._winning
+        if st is None:
+            return 0
+
+        # Find the match row (if missing, match ended).
+        live_row = None
+        for r in rows:
+            try:
+                if r.home == st.home and r.away == st.away:
+                    live_row = r
+                    break
+            except Exception:
+                continue
+        if live_row is None:
+            # If we already have a pending bet for this locked match, do NOT unlock immediately.
+            # Common case: HT break rows are skipped by the parser (game_id == HT), or the row
+            # is temporarily missing while the live list updates.
+            try:
+                pending_src = (
+                    [p for b in self.shared.bots for p in b.pending] if self.shared is not None else list(self.pending)
+                )
+                has_pending_for_locked = any(
+                    (p.home == st.home and p.away == st.away) or (p.home == st.away and p.away == st.home)
+                    for p in pending_src
+                )
+            except Exception:
+                has_pending_for_locked = False
+
+            st.missing_live_count = int(getattr(st, "missing_live_count", 0)) + 1
+            if has_pending_for_locked:
+                self.log.info(
+                    "[Winning] Locked match missing from parsed live list (pending exists); holding lock: %s vs %s (missing_count=%d)",
+                    st.home,
+                    st.away,
+                    st.missing_live_count,
+                )
+                return 0
+
+            self.log.info(
+                "[Winning] Match ended (not in parsed live list): %s vs %s (missing_count=%d pending=%s)",
+                st.home,
+                st.away,
+                st.missing_live_count,
+                has_pending_for_locked,
+            )
+            self._winning = None
+            return 0
+        else:
+            st.missing_live_count = 0
+
+        sel = self._winning_selection_from_score(live_row.home_goals, live_row.away_goals)
+
+        # Guard: if we already have a pending bet for this match + current winning selection,
+        # do not place another identical bet (prevents repeated re-betting while score is unchanged).
+        try:
+            group_key = f"{live_row.match_key}|{st.bet_tag}"
+            pending_src = (
+                [p for b in self.shared.bots for p in b.pending] if self.shared is not None else list(self.pending)
+            )
+            already_pending = any(
+                (p.match_group_key == group_key and (p.selection or "").strip().lower() == (sel or "").strip().lower())
+                for p in pending_src
+            )
+            if already_pending:
+                self.log.info(
+                    "[Winning] Skip re-bet (already pending): %s vs %s sel=%s group=%s",
+                    st.home,
+                    st.away,
+                    sel,
+                    group_key,
+                )
+                st.last_selection = sel
+                return 0
+        except Exception:
+            # If this check fails for any reason, fall back to previous behavior.
+            self.log.debug("[Winning] pending dedupe check detail", exc_info=True)
+
+        # If we have a previous selection and it is no longer winning, cash out.
+        if st.last_selection is not None and st.last_selection != sel:
+            try:
+                # Disambiguate cashout by team + stake. If multiple cashouts exist for the same
+                # teams (e.g. repeated bets), this prevents cashing out the "new" bet by mistake.
+                wanted_stake = None
+                try:
+                    pending_src = (
+                        [p for b in self.shared.bots for p in b.pending] if self.shared is not None else list(self.pending)
+                    )
+                    # Prefer the most recently placed pending bet for the *previous* selection.
+                    cand = [
+                        p
+                        for p in pending_src
+                        if (
+                            (p.home == st.home and p.away == st.away) or (p.home == st.away and p.away == st.home)
+                        )
+                        and (p.selection or "").strip().lower() == (st.last_selection or "").strip().lower()
+                    ]
+                    if cand:
+                        cand.sort(key=lambda x: float(x.placed_at or 0.0), reverse=True)
+                        wanted_stake = float(cand[0].stake)
+                except Exception:
+                    wanted_stake = None
+
+                wanted = {
+                    bh.result_cache_key(st.home, st.away): (st.last_selection, wanted_stake),
+                    bh.result_cache_key(st.away, st.home): (st.last_selection, wanted_stake),
+                }
+                self.log.info(
+                    "[Winning] Selection changed %s -> %s for %s vs %s; attempting cashout.",
+                    st.last_selection,
+                    sel,
+                    st.home,
+                    st.away,
+                )
+                actions = slip.cashout_scan_and_execute_detailed(self.driver, wanted, logger=self.log, max_pages=5)
+                # Mark expected returns on pending bets so stake sizing can account for (stake - return)
+                # even before bet-history settles.
+                if actions:
+                    try:
+                        pending_src2 = (
+                            [p for b in self.shared.bots for p in b.pending] if self.shared is not None else list(self.pending)
+                        )
+                        for act in actions:
+                            for p in pending_src2:
+                                try:
+                                    if (
+                                        ((p.home == act.home and p.away == act.away) or (p.home == act.away and p.away == act.home))
+                                        and abs(float(p.stake) - float(act.stake)) < 0.01
+                                    ):
+                                        p.cashout_expected_return = float(act.cashout_return)
+                                except Exception:
+                                    continue
+                    except Exception:
+                        pass
+            except Exception:
+                self.log.debug("[Winning] cashout attempt detail", exc_info=True)
+
+        # Place/replace bet on current winning selection.
+        bet_key = f"{live_row.match_key}|{st.bet_tag}"
+        stake_guess = self.stake_per_match()
+        ok = self._place_winning_bet_sequence(live_row, sel, stake_guess, st.market_name, bet_key, st)
+        if ok:
+            return 1
+        return 0
+
+    def _place_winning_bet_sequence(
+        self,
+        row: LiveListRow,
+        selection: str,
+        stake_amt: float,
+        market_name: str,
+        cache_key: str,
+        state: WinningMatchState,
+    ) -> bool:
+        """
+        Similar to _place_bet_sequence but:
+        - selection is the current winning outcome
+        - stake is computed from match ledger to recover net_before + profit_target
+        - do not skip-cache failures after first successful bet on this match
+        """
+        try:
+            try:
+                slip.dismiss_winning_popup(self.driver, self.log)
+            except Exception:
+                pass
+            self._scroll_live_list_for_lazy_rows()
+            random_human_pause()
+            click_el = self._find_live_list_click_target(row.home, row.away)
+            if click_el is None:
+                self.log.info(
+                    "[Winning] Could not find click target for %s vs %s on live list (row may have updated).",
+                    row.home,
+                    row.away,
+                )
+                return False
+            self._click_open_match(click_el)
+            random_human_pause()
+            if not slip.wait_for_match_detail_1x2(self.driver, self.log, timeout=12, market_name=market_name):
+                self.log.info(
+                    "[Winning] Match page did not show market header %s for %s vs %s.",
+                    market_name,
+                    row.home,
+                    row.away,
+                )
+                return False
+
+            odd_val = slip.read_1x2_selection_odd(
+                self.driver,
+                selection,
+                home_name=row.home,
+                away_name=row.away,
+                logger=self.log,
+                market_name=market_name,
+            )
+            if odd_val is None:
+                self.log.info(
+                    "[Winning] Could not read odd for %s vs %s selection=%s market=%s.",
+                    row.home,
+                    row.away,
+                    selection,
+                    market_name,
+                )
+                return False
+            if not slip.odd_in_range(odd_val, self.cfg.minimum_odd, self.cfg.maximum_odd):
+                self.log.info(
+                    "[Winning] Odd %.2f outside range [min=%s max=%s] for %s vs %s.",
+                    float(odd_val),
+                    self.cfg.minimum_odd if self.cfg.minimum_odd is not None else "—",
+                    self.cfg.maximum_odd if self.cfg.maximum_odd is not None else "—",
+                    row.home,
+                    row.away,
+                )
+                return False
+
+            # Initialize per-match profit target on first bet.
+            if not state.has_bet_before or state.profit_target <= 0:
+                base = max(10.0, float(stake_amt))
+                state.profit_target = max(1.0, round(base * (float(odd_val) - 1.0), 2))
+                self.log.info(
+                    "[Winning] Profit target set for %s vs %s: %.2f (base stake %.2f @ odd %.2f)",
+                    state.home,
+                    state.away,
+                    state.profit_target,
+                    base,
+                    float(odd_val),
+                )
+
+            stake2 = self._winning_compute_next_stake(float(odd_val), state)
+            if stake2 is None or float(stake2) < 10.0:
+                self.log.info(
+                    "[Winning] Stake compute failed for %s vs %s odd=%.2f net_before=%.2f profit_target=%.2f pool=%.2f.",
+                    state.home,
+                    state.away,
+                    float(odd_val),
+                    float(state.net_before),
+                    float(state.profit_target),
+                    self._loss_pool_value(),
+                )
+                return False
+
+            self.log.info(
+                "[Winning] Bet %s vs %s sel=%s odd=%.2f stake=%.2f net_before=%.2f target_profit=%.2f",
+                state.home,
+                state.away,
+                selection,
+                float(odd_val),
+                float(stake2),
+                float(state.net_before),
+                float(state.profit_target),
+            )
+
+            if not slip.click_1x2_outcome(
+                self.driver,
+                selection,
+                home_name=row.home,
+                away_name=row.away,
+                logger=self.log,
+                market_name=market_name,
+            ):
+                self.log.info(
+                    "[Winning] Failed to click outcome for %s vs %s selection=%s market=%s.",
+                    row.home,
+                    row.away,
+                    selection,
+                    market_name,
+                )
+                return False
+
+            st = self._submit_stake_place_confirm_success(row, selection, float(stake2))
+            if st != "ok":
+                self.log.info(
+                    "[Winning] Bet submit flow not ok=%s for %s vs %s selection=%s stake=%.2f.",
+                    st,
+                    row.home,
+                    row.away,
+                    selection,
+                    float(stake2),
+                )
+                if not state.has_bet_before:
+                    self._skipped_cache_add(cache_key, "Winning mode: initial bet flow failed.")
+                try:
+                    slip.cancel_all_betslips(self.driver, self.log)
+                except Exception:
+                    pass
+                self.go_live()
+                return False
+
+            details = slip.read_success_dialog_details(self.driver, self.log)
+            slip.click_success_ok(self.driver, self.log)
+            now = time.time()
+            self.pending.append(
+                PendingBet(
+                    home=row.home,
+                    away=row.away,
+                    booking_code=details.get("booking_code"),
+                    stake=float(stake2),
+                    potential_win=details.get("potential_win"),
+                    placed_at=now,
+                    check_after=now + self.cfg.result_wait_seconds,
+                    selection=selection,
+                    inc_trial=None,
+                    match_group_key=f"{row.match_key}|{state.bet_tag}",
+                )
+            )
+            state.last_selection = selection
+            state.has_bet_before = True
+            self.log.info(
+                "[Winning] Pending added %s vs %s sel=%s stake=%.2f | pending_now=%d",
+                row.home,
+                row.away,
+                selection,
+                float(stake2),
+                sum(len(b.pending) for b in self.shared.bots) if self.shared is not None else len(self.pending),
+            )
+            self.go_live()
+            return True
+        except Exception:
+            self.log.debug("_place_winning_bet_sequence detail", exc_info=True)
+            try:
+                slip.cancel_all_betslips(self.driver, self.log)
+            except Exception:
+                pass
+            self.go_live()
+            return False
 
     def _fail_bet_flow(self, row: LiveListRow, public_reason: str, *, cache_key: str) -> bool:
         """Log, add to skip cache, clear slip, return to live. Always returns False."""
@@ -1418,6 +1921,16 @@ class LiveBettingBot(SportyBetLoginBot):
         )
         if is_cashout_settle:
             pnl = float(info.total_return) - float(info.stake)
+            # Winning-mode ledger: cashout settle is a real net PnL for this match.
+            try:
+                if self.cfg.winning and self._winning is not None:
+                    if self._winning.home == p.home and self._winning.away == p.away:
+                        self._winning.net_before += float(pnl)
+            except Exception:
+                pass
+            # Loss pool update: cashout settle with pnl<0 adds (stake - return) to pool.
+            if pnl < 0:
+                self._loss_pool_add(-float(pnl))
             # Apply to balances exactly as recorded (usually a smaller loss than full stake).
             if self.shared is not None:
                 with self.shared.balance_lock:
@@ -1451,6 +1964,16 @@ class LiveBettingBot(SportyBetLoginBot):
         if info.status == "won":
             if info.stake is not None and info.total_return is not None:
                 pnl = info.total_return - info.stake
+                # Repay global loss pool first from positive pnl.
+                if pnl > 0:
+                    rep = self._loss_pool_repay(float(pnl))
+                    if rep > 0:
+                        self.log.info(
+                            "[Loss pool] Repaid %.2f (pool_now=%.2f) from win pnl=%.2f",
+                            rep,
+                            self._loss_pool_value(),
+                            float(pnl),
+                        )
                 if self.shared is not None:
                     with self.shared.balance_lock:
                         self.shared.estimated_balance += pnl
@@ -1462,6 +1985,13 @@ class LiveBettingBot(SportyBetLoginBot):
                 self.wins += 1
                 if self.cfg.incremental:
                     self._inc_reset_round()
+                # Winning-mode ledger: apply net.
+                try:
+                    if self.cfg.winning and self._winning is not None:
+                        if self._winning.home == p.home and self._winning.away == p.away:
+                            self._winning.net_before += float(pnl)
+                except Exception:
+                    pass
                 self.log.info(
                     "WON net_pnl=%.2f estimated_balance=%.2f tracked_balance=%.2f wins=%d losses=%d (thread=%s)",
                     pnl,
@@ -1481,6 +2011,8 @@ class LiveBettingBot(SportyBetLoginBot):
             else:
                 pnl = None
             if pnl is not None:
+                if float(pnl) < 0:
+                    self._loss_pool_add(-float(pnl))
                 if self.shared is not None:
                     with self.shared.balance_lock:
                         self.shared.tracked_balance += pnl
@@ -1496,6 +2028,14 @@ class LiveBettingBot(SportyBetLoginBot):
                     self.shared.losses += 1
             if self.cfg.incremental:
                 self._inc_trial_next = int(self._inc_trial_next) + 1
+            # Winning-mode ledger: apply net.
+            try:
+                if self.cfg.winning and self._winning is not None:
+                    if self._winning.home == p.home and self._winning.away == p.away:
+                        if pnl is not None:
+                            self._winning.net_before += float(pnl)
+            except Exception:
+                pass
             self.log.info(
                 "LOST net_pnl=%s estimated_balance=%.2f tracked_balance=%.2f wins=%d losses=%d (thread=%s)",
                 f"{pnl:.2f}" if pnl is not None else "n/a",
@@ -1513,7 +2053,7 @@ class LiveBettingBot(SportyBetLoginBot):
             return
         p = due[0]
         self.pending.remove(p)
-        key = bh.result_cache_key(p.home, p.away)
+        key = bh.result_cache_key_with_stake(p.home, p.away, p.stake)
         self.log.info(
             "Checking result for %s vs %s (placed %.0fs ago) thread=%s",
             p.home,
@@ -1555,9 +2095,9 @@ class LiveBettingBot(SportyBetLoginBot):
                     return
 
                 triples = self.shared.collect_due_pending_triples(now)
-                keys = {t[2] for t in triples}
+                keys = {t[3] for t in triples}
                 if key not in keys:
-                    triples = list(triples) + [(p.home, p.away, key)]
+                    triples = list(triples) + [(p.home, p.away, p.stake, key)]
 
                 try:
                     results = bh.search_bet_history_for_pairs(
@@ -1614,6 +2154,7 @@ class LiveBettingBot(SportyBetLoginBot):
                 p.away,
                 max_pages=self.cfg.bet_history_pages,
                 match_ratio=self.cfg.bet_history_team_match_ratio,
+                wanted_stake=p.stake,
                 logger=self.log,
             )
         except Exception:
@@ -1687,7 +2228,7 @@ class LiveBettingBot(SportyBetLoginBot):
                 "[STATUS] ------------------------------------------------------------------",
                 f"  thread_id                = {self.thread_id}"
                 + (
-                    f"  (pool wins/losses = {self.shared.wins}/{self.shared.losses} cashout_settles={self.shared.cashout_settles})"
+                    f"  (pool wins/losses = {self.shared.wins}/{self.shared.losses} cashout_settles={self.shared.cashout_settles} loss_pool={self.shared.loss_pool:.2f})"
                     if self.shared is not None
                     else ""
                 ),
@@ -1729,6 +2270,7 @@ class LiveBettingBot(SportyBetLoginBot):
                 f"  wins                   = {self.wins}",
                 f"  losses                 = {self.losses}",
                 f"  cashout_settles         = {self.cashout_settles}  (won but return < stake)",
+                f"  loss_pool               = {self._loss_pool_value():.2f}  (shared loss to recover)",
                 f"  settled_total          = {settled}",
                 f"  win_rate               = {wr_s}  (wins / settled)",
                 "  -- pending / site --------------------------------------------------------",

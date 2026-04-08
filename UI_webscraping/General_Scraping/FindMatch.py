@@ -2,25 +2,20 @@ from Login.login import SportyBetLoginBot
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 import sys
 import os
 import re
-from datetime import datetime, timedelta, timezone
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from threading import Lock
 from queue import Queue
 import time
 
-# Define Nigeria's timezone
-NIGERIA_TZ = timezone(timedelta(hours=1))
-
-from threading import Lock
-import time
-
-# Define Nigeria's timezone
-NIGERIA_TZ = timezone(timedelta(hours=1))
+# SportyBet upcoming pages display time in the browser/server's local timezone.
+# So we interpret HH:MM using the machine's local timezone and only roll to the next day
+# when the time is clearly in the past (with a small grace window).
+START_TIME_PAST_GRACE_SECONDS = 120  # tolerate up to 2 minutes of drift
 
 # Global variables for match tracking
 global_claimed_matches = set()  # Now stores match names instead of IDs
@@ -58,12 +53,16 @@ class FindMatch(SportyBetLoginBot):
                             time_text = match.find_element(By.CLASS_NAME, "clock-time").text.strip()
                             match_hour_minute = datetime.strptime(time_text, "%H:%M").time()
 
-                            # Get current date in Nigeria
-                            nigeria_now = datetime.now(NIGERIA_TZ)
-                            match_datetime = datetime.combine(nigeria_now.date(), match_hour_minute, tzinfo=NIGERIA_TZ)
+                            # Interpret the displayed HH:MM in local machine timezone.
+                            local_now = datetime.now().astimezone()
+                            match_datetime = datetime.combine(
+                                local_now.date(),
+                                match_hour_minute,
+                                tzinfo=local_now.tzinfo,
+                            )
 
                             # Handle past match times (next day)
-                            if match_datetime < nigeria_now:
+                            if (local_now - match_datetime).total_seconds() > START_TIME_PAST_GRACE_SECONDS:
                                 match_datetime += timedelta(days=1)
 
                             home_player = match.find_element(By.CLASS_NAME, "home-team").text.strip()

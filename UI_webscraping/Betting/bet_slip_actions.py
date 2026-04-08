@@ -9,6 +9,7 @@ import logging
 import re
 import time
 from typing import TYPE_CHECKING, Literal
+from dataclasses import dataclass
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -65,6 +66,64 @@ def _split_vs(match_text: str) -> tuple[str, str] | None:
     if not a or not b:
         return None
     return a, b
+
+
+def _parse_money_float(text: str) -> float | None:
+    try:
+        t = (text or "").strip().replace(",", "")
+        m = re.search(r"(-?\d+(?:\.\d+)?)", t)
+        if not m:
+            return None
+        return float(m.group(1))
+    except Exception:
+        return None
+
+
+def _read_cashout_item_stake(item: WebElement) -> float | None:
+    """
+    Cashout cards show:
+      <div class="m-col-title">Bet Stake</div>
+      <div class="m-col-text">100.00</div>
+    Read and parse it as float.
+    """
+    try:
+        cols = item.find_elements(By.CSS_SELECTOR, "div.m-col")
+        for c in cols:
+            try:
+                title = (c.find_element(By.CSS_SELECTOR, "div.m-col-title").text or "").strip().lower()
+                if "bet stake" in title:
+                    val = (c.find_element(By.CSS_SELECTOR, "div.m-col-text").text or "").strip()
+                    return _parse_money_float(val)
+            except Exception:
+                continue
+        return None
+    except Exception:
+        return None
+
+
+def _read_cashout_item_full_cashout_amount(item: WebElement) -> float | None:
+    """
+    When expanded, the card often shows:
+      <div class="cashout-title"><span>Full Cashout</span> <span>78.74</span></div>
+    Parse the numeric amount.
+    """
+    try:
+        spans = item.find_elements(By.CSS_SELECTOR, "div.cashout-title span")
+        if not spans:
+            return None
+        # Prefer the last span as value.
+        val = (spans[-1].text or "").strip()
+        return _parse_money_float(val)
+    except Exception:
+        return None
+
+
+@dataclass(frozen=True)
+class CashoutAction:
+    home: str
+    away: str
+    stake: float
+    cashout_return: float
 
 
 def click_betslip_tab(driver: WebDriver, tab_name: str, logger: logging.Logger | None = None) -> bool:
@@ -479,6 +538,188 @@ def cashout_scan_and_execute(
         confirms,
     )
     return confirms
+
+
+def cashout_scan_and_execute_detailed(
+    driver: WebDriver,
+    wanted: dict[str, str | tuple[str, float | None]],
+    *,
+    logger: logging.Logger | None = None,
+    max_pages: int = 5,
+) -> list[CashoutAction]:
+    """
+    Like cashout_scan_and_execute, but can disambiguate by stake and returns details for
+    each confirmed cashout so callers can update their ledgers.
+
+    `wanted` maps fixture keys to:
+      - selection str ("home"/"away"/"draw") OR
+      - (selection, wanted_stake) where wanted_stake is the exact stake to match.
+    """
+    log = logger or logging.getLogger(__name__)
+    if not click_betslip_tab(driver, "Cashout", log):
+        return []
+    if not wanted:
+        log.info("[Cashout] No wanted selections; skipping scan.")
+        return []
+
+    # Wait for panel render.
+    try:
+        WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "#j_betslip div[data-op='Cashout-panel'], #j_betslip div.m-cashout")
+            )
+        )
+    except Exception:
+        pass
+
+    # Nudge scroll.
+    try:
+        driver.execute_script(
+            """
+            var root = document.querySelector('#j_betslip');
+            if (!root) return;
+            root.scrollTop = root.scrollHeight;
+            """
+        )
+        time.sleep(0.25)
+    except Exception:
+        pass
+
+    actions: list[CashoutAction] = []
+    for _ in range(max_pages):
+        items = driver.find_elements(
+            By.CSS_SELECTOR,
+            "#j_betslip ul.m-cashout-list > li.m-cashout-item, #j_betslip li.m-cashout-item, #j_betslip div.m-cashout-item",
+        )
+        log.info("[Cashout] Page scan: items=%d wanted=%d", len(items), len(wanted))
+        for item in items:
+            try:
+                match_el = item.find_elements(
+                    By.CSS_SELECTOR, "div.m-bet-detail .m-text-min span, div.m-cashout-bet .m-text-min span"
+                )
+                match_txt = (match_el[-1].text if match_el else "").strip()
+                score_el = item.find_elements(By.CSS_SELECTOR, "div.m-bet-detail .m-score span")
+                score_txt = (score_el[0].text if score_el else "").strip()
+                teams = _split_vs(match_txt)
+                score = _parse_score_text(score_txt)
+                if not teams or not score:
+                    continue
+                h, a = teams
+                hg, ag = score
+                stake_val = _read_cashout_item_stake(item)
+
+                key1 = f"{_norm_team(h)}|{_norm_team(a)}"
+                key2 = f"{_norm_team(a)}|{_norm_team(h)}"
+                raw = wanted.get(key1) or wanted.get(key2)
+                if not raw:
+                    continue
+                if isinstance(raw, tuple):
+                    sel = (raw[0] or "").strip().lower()
+                    wanted_stake = raw[1]
+                else:
+                    sel = (raw or "").strip().lower()
+                    wanted_stake = None
+
+                if wanted_stake is not None and stake_val is not None:
+                    if abs(float(stake_val) - float(wanted_stake)) > 0.01:
+                        continue
+                elif wanted_stake is not None and stake_val is None:
+                    # Can't verify stake -> skip to avoid cashing out wrong card.
+                    continue
+
+                no_longer_winning = False
+                if sel == "draw":
+                    no_longer_winning = hg != ag
+                elif sel == "home":
+                    no_longer_winning = hg <= ag
+                elif sel == "away":
+                    no_longer_winning = ag <= hg
+                if not no_longer_winning:
+                    continue
+
+                log.info(
+                    "[Cashout] Trigger: %s vs %s sel=%s stake=%s score=%d:%d",
+                    h,
+                    a,
+                    sel,
+                    f"{stake_val:.2f}" if stake_val is not None else "?",
+                    hg,
+                    ag,
+                )
+
+                # Expand.
+                try:
+                    unfold = item.find_elements(By.CSS_SELECTOR, "div.m-operation i.m-icon-unfold")
+                    if unfold:
+                        driver.execute_script("arguments[0].scrollIntoView({block:'center'});", unfold[0])
+                        driver.execute_script("arguments[0].click();", unfold[0])
+                        time.sleep(0.25)
+                except Exception:
+                    pass
+
+                # Read cashout return offer (best-effort) from expanded card.
+                offer = _read_cashout_item_full_cashout_amount(item)
+
+                # Click cashout + confirm.
+                confirmed = False
+                for trial in range(CASHOUT_ACTION_MAX_TRIALS):
+                    if _cashout_confirm_dialog(driver) is not None:
+                        if _click_cashout_confirm(driver, log):
+                            confirmed = True
+                        time.sleep(CASHOUT_TRIAL_INTERVAL_SECONDS)
+                        break
+                    if _click_cashout_button_in_item(driver, item):
+                        log.info(
+                            "[Cashout] Clicked Cashout for %s vs %s (sel=%s stake=%s) trial %d/%d",
+                            h,
+                            a,
+                            sel,
+                            f"{stake_val:.2f}" if stake_val is not None else "?",
+                            trial + 1,
+                            CASHOUT_ACTION_MAX_TRIALS,
+                        )
+                        time.sleep(CASHOUT_TRIAL_INTERVAL_SECONDS)
+                        continue
+                    time.sleep(CASHOUT_TRIAL_INTERVAL_SECONDS)
+
+                if confirmed and stake_val is not None and offer is not None:
+                    actions.append(CashoutAction(home=h, away=a, stake=float(stake_val), cashout_return=float(offer)))
+            except Exception:
+                log.debug("cashout item scan", exc_info=True)
+                continue
+
+        # Pagination (reuse existing logic by delegating to the old function's block would be messy;
+        # keep it simple here by copying the minimal next-page logic).
+        try:
+            pg = driver.find_elements(By.CSS_SELECTOR, "#j_betslip div.m-pagination-wrapper, div.m-pagination-wrapper")
+            if not pg:
+                break
+            pg_el = pg[0]
+            cur_page = None
+            total_page = None
+            try:
+                spans = pg_el.find_elements(By.CSS_SELECTOR, "span")
+                cur_txt = ((spans[0].text if spans else "") or "").strip()
+                total_sp = pg_el.find_elements(By.CSS_SELECTOR, "span.m-total")
+                total_txt = ((total_sp[0].text if total_sp else "") or "").replace("/", "").strip()
+                cur_page = int(cur_txt) if cur_txt.isdigit() else None
+                total_page = int(total_txt) if total_txt.isdigit() else None
+            except Exception:
+                pass
+            if cur_page is not None and total_page is not None and cur_page >= total_page:
+                break
+
+            nxt_icons = pg_el.find_elements(By.CSS_SELECTOR, "i.m-icon-next")
+            if not nxt_icons:
+                break
+            nxt_icon = nxt_icons[0]
+            driver.execute_script("arguments[0].scrollIntoView({block:'center'});", nxt_icon)
+            driver.execute_script("arguments[0].click();", nxt_icon)
+            time.sleep(0.7)
+        except Exception:
+            break
+
+    return actions
 
 
 def odd_in_range(
