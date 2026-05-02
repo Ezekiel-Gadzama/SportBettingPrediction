@@ -17,7 +17,7 @@ if __name__ == "__main__":
         s = MarketScraper(url, markets)
         # Used by MarketScraper.run() to write to a unique CSV per browser.
         s.thread_index = int(idx)
-        s.run(sport_name=sport)
+        s.run(sport_name=sport, num_threads=num_threads)
 
     with ThreadPoolExecutor(max_workers=num_threads) as executor:
         futures = [executor.submit(_worker, i) for i in range(num_threads)]

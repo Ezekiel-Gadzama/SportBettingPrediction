@@ -621,7 +621,8 @@ def cashout_scan_and_execute_detailed(
                     wanted_stake = None
 
                 if wanted_stake is not None and stake_val is not None:
-                    if abs(float(stake_val) - float(wanted_stake)) > 0.01:
+                    # Stake in cashout cards can be displayed rounded (e.g. 155.93 -> 156.00).
+                    if abs(float(stake_val) - float(wanted_stake)) > 1.0:
                         continue
                 elif wanted_stake is not None and stake_val is None:
                     # Can't verify stake -> skip to avoid cashing out wrong card.

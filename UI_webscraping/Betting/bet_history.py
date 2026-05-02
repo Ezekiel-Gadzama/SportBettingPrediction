@@ -15,6 +15,8 @@ from UI_webscraping.Betting.parsing import teams_match_fuzzy
 if TYPE_CHECKING:
     from selenium.webdriver.remote.webdriver import WebDriver
 
+STAKE_TOLERANCE = 1.0  # SportyBet stake is often rounded; allow +/- 1 unit for matching.
+
 
 @dataclass
 class SettledBetInfo:
@@ -57,7 +59,13 @@ def _parse_money(text: str) -> float | None:
         return None
 
 
-def _parse_order_to_info(order, match_text: str, *, logger: logging.Logger | None) -> SettledBetInfo | None:
+def _parse_order_to_info(
+    order,
+    match_text: str,
+    *,
+    logger: logging.Logger | None,
+    log_found_line: bool = True,
+) -> SettledBetInfo | None:
     """Extract status + stake/return from a bet-history order block."""
     log = logger or logging.getLogger(__name__)
     try:
@@ -89,7 +97,8 @@ def _parse_order_to_info(order, match_text: str, *, logger: logging.Logger | Non
         except Exception:
             pass
 
-        log.info("Found order: %s status=%s stake=%s return=%s", match_text, st, stake, ret)
+        if log_found_line:
+            log.info("Found order: %s status=%s stake=%s return=%s", match_text, st, stake, ret)
         return SettledBetInfo(status=st, stake=stake, total_return=ret, match_text=match_text)
     except Exception:
         return None
@@ -169,7 +178,7 @@ def find_bets_for_pairs_on_page(
                         # If stake is provided, require stake match (disambiguates repeated bets on same teams).
                         if wanted_stake is not None and info.stake is not None:
                             try:
-                                if abs(float(info.stake) - float(wanted_stake)) > 0.01:
+                                if abs(float(info.stake) - float(wanted_stake)) > float(STAKE_TOLERANCE):
                                     continue
                             except Exception:
                                 pass
@@ -212,7 +221,7 @@ def search_bet_history(
         if hit:
             if wanted_stake is not None and hit.stake is not None:
                 try:
-                    if abs(float(hit.stake) - float(wanted_stake)) > 0.01:
+                    if abs(float(hit.stake) - float(wanted_stake)) > float(STAKE_TOLERANCE):
                         continue
                 except Exception:
                     pass
@@ -260,6 +269,66 @@ def search_bet_history_for_pairs(
         for k, info in page_hits.items():
             if k not in out:
                 out[k] = info
+    return out
+
+
+def collect_bet_history_snapshots(
+    driver: WebDriver,
+    *,
+    base_url: str = "https://www.sportybet.com/ng/my_accounts/bet_history/sport_bets",
+    max_pages: int = 5,
+    settle_delay_s: float = 2.0,
+    logger: logging.Logger | None = None,
+) -> list[dict]:
+    """
+    Load each bet-history page up to max_pages and collect every order row with parsed fields.
+    Each item is a dict: index (0..n-1), page, match_text, status, stake, total_return.
+    Used when fuzzy matching fails and DeepSeek must pick the correct row by index.
+    """
+    log = logger or logging.getLogger(__name__)
+    out: list[dict] = []
+    for page in range(1, max_pages + 1):
+        url = f"{base_url}?page={page}"
+        log.info("[Bet history snapshot] Opening page %s", url)
+        driver.get(url)
+        time.sleep(settle_delay_s)
+        try:
+            WebDriverWait(driver, 5).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".m-order-list, .m-order-wrapper"))
+            )
+        except Exception:
+            log.warning("[Bet history snapshot] Container slow/missing on page %s", page)
+
+        orders = driver.find_elements(By.CSS_SELECTOR, ".m-order-list")
+        for order in orders:
+            try:
+                vs_els = order.find_elements(By.CSS_SELECTOR, ".m-order-vs.label")
+                match_text = ""
+                for vs_el in vs_els:
+                    match_text = (vs_el.text or vs_el.get_attribute("innerText") or "").strip()
+                    if match_text:
+                        break
+                if not match_text:
+                    continue
+                info = _parse_order_to_info(
+                    order, match_text, logger=log, log_found_line=False
+                )
+                if not info:
+                    continue
+                idx = len(out)
+                out.append(
+                    {
+                        "index": idx,
+                        "page": page,
+                        "match_text": match_text,
+                        "status": info.status,
+                        "stake": info.stake,
+                        "total_return": info.total_return,
+                    }
+                )
+            except Exception:
+                continue
+    log.info("[Bet history snapshot] Collected %d order row(s) across %d page(s).", len(out), max_pages)
     return out
 
 

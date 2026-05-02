@@ -6,7 +6,14 @@ from datetime import datetime
 import csv
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Project root so `Database.Get_data.*` imports work when this module is loaded first.
+_PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from Database.Get_data import data_file_manager as _dfm
 from UI_webscraping.General_Scraping.FindMatch import FindMatch
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import threading
@@ -531,11 +538,30 @@ class MarketScraper(FindMatch):
             return full_team_name[start:end]
         return full_team_name
 
-    def run(self, sport_name: str):
-        # Create folders and paths
-        folder = os.path.join("Database", "Data")
-        os.makedirs(folder, exist_ok=True)
-        long_path = os.path.join(folder, f"{sport_name.lower().replace(' ', '_')}_long_format_{self.thread_index}.csv")
+    def run(
+        self,
+        sport_name: str,
+        num_threads: int = 1,
+        max_file_bytes_base: int | None = None,
+    ):
+        """
+        Scrapes matches into Database/Data CSVs named with date/time to avoid collisions.
+
+        num_threads: same value as ThreadPoolExecutor max_workers — used to shrink per-file
+        size limit (base budget / threads) so many parallel writers do not each grow huge files.
+
+        max_file_bytes_base: total byte budget before splitting across threads; default from env
+        SCRAPER_DATA_MAX_BYTES_BASE or 50 MiB. Rotation happens only after the current match ends.
+        """
+        data_dir, done_dir = _dfm.ensure_data_dirs()
+        sport_slug = sport_name.lower().replace(" ", "_")
+        base_max = _dfm.resolve_base_max_bytes(max_file_bytes_base)
+        eff_thr = _dfm.effective_max_bytes_per_thread(base_max, num_threads)
+        print(
+            f"[INFO] Data CSV rotation: base_max={base_max} B, num_threads={num_threads}, "
+            f"per-thread max before move (after match ends)={eff_thr} B"
+        )
+        long_path = _dfm.new_stamped_csv_path(data_dir, sport_slug, int(self.thread_index))
         print(f"[INFO] Long format CSV path: {long_path}")
         print("Current working directory:", os.getcwd())
         print(f"Writing to file: {os.path.abspath(long_path)}")
@@ -683,6 +709,16 @@ class MarketScraper(FindMatch):
                 else:
                     if current_match_status:
                         break
+
+            long_path = _dfm.rotate_oversized_csv_after_match(
+                long_path,
+                sport_slug=sport_slug,
+                thread_index=int(self.thread_index),
+                data_dir=data_dir,
+                done_dir=done_dir,
+                base_max_bytes=base_max,
+                num_threads=int(num_threads),
+            )
 
             print(f"[INFO] Finished processing match {match_id}. Moving to the next match...")
 

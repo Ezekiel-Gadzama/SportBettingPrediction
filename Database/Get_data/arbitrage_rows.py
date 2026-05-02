@@ -105,5 +105,7 @@ if __name__ == "__main__":
     sport_name = "vFootball"
     folder = os.path.join("Database", "Data")
     os.makedirs(folder, exist_ok=True)
+    # Live scrapers now write timestamped files, e.g. vfootball_long_format_0_YYYYMMDD_HHMMSS_ffffff.csv
+    # and move finished large files to Database/Data/Done — point long_path at a concrete CSV to analyze.
     long_path = os.path.join(folder, f"{sport_name.lower().replace(' ', '_')}_long_format_{0}.csv")
     find_arbitrage_opportunities(long_path)

@@ -1100,7 +1100,7 @@ def main():
         for i in range(num_threads):
             print(f"[MAIN] Starting scraper {i+1}")
             scraper = CustomMarketScraper(url, markets,account_balance, divide)
-            futures.append(executor.submit(scraper.run, sport)) # Changed this line
+            futures.append(executor.submit(scraper.run, sport))  # CustomMarketScraper.run signature unchanged
         # Wait for all threads to complete
         for future in as_completed(futures):
             print("Completed future")

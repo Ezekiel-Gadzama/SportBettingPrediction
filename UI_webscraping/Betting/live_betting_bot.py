@@ -3,9 +3,11 @@ from __future__ import annotations
 import dataclasses
 import logging
 import math
+import re
 import threading
 import time
 from dataclasses import dataclass, field
+from typing import Literal, cast
 
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -25,7 +27,7 @@ from UI_webscraping.Betting import betting_logger as _bet_log
 from UI_webscraping.Betting import bet_slip_actions as slip
 from UI_webscraping.Betting import bet_history as bh
 from UI_webscraping.Betting.betting_timing import random_human_pause
-from UI_webscraping.Betting.league_filter import LeagueFilter
+from UI_webscraping.Betting.league_filter import LeagueFilter, deepseek_match_bet_history_index
 from UI_webscraping.Betting.parsing import (
     LiveListRow,
     is_halftime_game_id,
@@ -35,6 +37,9 @@ from UI_webscraping.Betting.parsing import (
     pick_1x2_selection,
 )
 DEFAULT_LIVE_URL = "https://www.sportybet.com/ng/sport/football/live_list/"
+
+# Fuzzy bet-history lookups can miss; re-queue many times before DeepSeek + incremental safety reset.
+BET_HISTORY_MAX_MISS_RETRIES = 100
 
 
 @dataclass
@@ -50,6 +55,9 @@ class LiveBettingConfig:
     bet_fulltime: bool = True
     ft_min_minute_exclusive: float = 88.0
     ft_max_minute_exclusive: float = 91.0
+    # Allow opening match page up to N minutes before min minute. Betting still waits until
+    # the *actual match clock* enters the normal window.
+    early_entry: int = 0
     # Half-time betting (1st half) — only when game_id == H1
     bet_halftime: bool = False
     ht_min_minute_exclusive: float = 44.0
@@ -108,6 +116,8 @@ class LiveBettingConfig:
     thread_turn_reload_min_interval_seconds: float = 300.0
     # Multi-threading: one browser (Selenium session) per thread; shared locks + caches below.
     num_threads: int = 1
+    # When True, each thread opens its own Chrome session. Threads still share caches/balances.
+    each_thread_per_browser: bool = False
     # Logging: override the default base name (live_betting / live_betting_tN).
     # If set, log files become "<log_base_name>.log" (or with _tN suffix when multi-threaded).
     log_base_name: str | None = None
@@ -134,6 +144,9 @@ class PendingBet:
     # sizing can treat the outstanding exposure as (stake - cashout_return) instead of full stake,
     # even before bet-history reflects the settlement.
     cashout_expected_return: float | None = None
+    # If we cash out and immediately apply the PnL locally, mark it so we don't double-apply
+    # again when bet history later shows the settlement.
+    cashout_applied: bool = False
 
 
 @dataclass
@@ -170,6 +183,9 @@ class SharedBettingContext:
     result_cache: dict[str, bh.SettledBetInfo] = field(default_factory=dict)
     _bet_cache: list[BetCacheEntry] = field(default_factory=list)
     _skipped_cache: list[BetCacheEntry] = field(default_factory=list)
+    # Short-lived reservation to prevent two threads from opening the same fixture concurrently
+    # (important when each thread has its own browser and UI is no longer serialized).
+    _claim_cache: list[BetCacheEntry] = field(default_factory=list)
 
     bots: list["LiveBettingBot"] = field(default_factory=list)
 
@@ -212,10 +228,15 @@ class WinningMatchState:
     away: str
     bet_tag: str  # "FT" or "HT"
     market_name: str
+    # Stable key to group all pending bets/cashouts for this locked match+tag.
+    # Uses the live-list `match_key` (not team names) because names can vary slightly across pages.
+    match_group_key: str
     profit_target: float  # desired net profit for this match when it finally wins
     net_before: float = 0.0  # cumulative net: returns - stakes (negative means loss)
     last_selection: str | None = None
     has_bet_before: bool = False
+    # Debounce selection changes to avoid cashing out on transient parse/UI glitches.
+    selection_change_count: int = 0
     # The live list is a dynamic SPA and our parser deliberately skips some transient rows
     # (e.g. HT break). Track consecutive "not found" cycles so we can tolerate short misses
     # without unlocking the match.
@@ -487,21 +508,36 @@ class LiveBettingBot(SportyBetLoginBot):
 
     def go_live(self) -> None:
         """
-        Open the football live list. Avoids a full reload on every poll when the
+        Open the configured live list. Avoids a full reload on every poll when the
         session is already on that URL — constant get() was racing the SPA and looked
         like endless refresh; it also often yielded 0 rows if read before render.
         """
-        cur = (self.driver.current_url or "").lower()
+        cur = (self.driver.current_url or "").strip()
         live = (self.cfg.live_url or "").strip()
-        on_list = "sportybet.com" in cur and "football/live_list" in cur
+        cur_l = cur.lower()
+        live_l = live.lower()
+
+        def _norm_url(u: str) -> str:
+            # Compare without query/hash and without trailing slash.
+            x = (u or "").split("?", 1)[0].split("#", 1)[0].rstrip("/")
+            return x.lower()
+
+        on_list = bool(live) and _norm_url(cur) == _norm_url(live)
         if on_list:
-            self.log.debug("Already on football live list; skipping driver.get() reload")
+            self.log.debug("Already on configured live list; skipping driver.get() reload")
             time.sleep(0.5)
         else:
             self.load_url(live)
             time.sleep(2.5)
         self._relogin_if_header_login_visible()
-        self.ensure_football_sport_selected()
+        # Only attempt to click the Football pill on the standard football live list.
+        # Virtual football (vFootball) has a different layout and clicking Football can
+        # navigate back to /sport/football/live_list unexpectedly.
+        try:
+            if "/sport/football/" in live_l and "/sport/vfootball/" not in live_l:
+                self.ensure_football_sport_selected()
+        except Exception:
+            pass
         self._scroll_live_list_for_lazy_rows()
         self._update_league_mapping_from_dom()
 
@@ -826,9 +862,38 @@ class LiveBettingBot(SportyBetLoginBot):
                 self.shared._skipped_cache = [
                     c for c in self.shared._skipped_cache if c.expires_at > now
                 ]
+                self.shared._claim_cache = [
+                    c for c in self.shared._claim_cache if c.expires_at > now
+                ]
         else:
             self._cache = [c for c in self._cache if c.expires_at > now]
             self._skipped_cache = [c for c in self._skipped_cache if c.expires_at > now]
+
+    def _claim_try(self, key: str, *, ttl_seconds: float = 45.0) -> bool:
+        """
+        Reserve a fixture key so other threads won't open it concurrently.
+        Independent from bet/skip caches.
+        """
+        now = time.time()
+        exp = now + max(5.0, float(ttl_seconds))
+        if self.shared is None:
+            return True
+        with self.shared.cache_lock:
+            # Sweep stale claims quickly.
+            self.shared._claim_cache = [c for c in self.shared._claim_cache if c.expires_at > now]
+            if any(c.match_key == key and c.expires_at > now for c in self.shared._claim_cache):
+                return False
+            self.shared._claim_cache.append(BetCacheEntry(key, exp))
+            return True
+
+    def _claim_release(self, key: str) -> None:
+        if self.shared is None:
+            return
+        now = time.time()
+        with self.shared.cache_lock:
+            self.shared._claim_cache = [
+                c for c in self.shared._claim_cache if not (c.match_key == key) and c.expires_at > now
+            ]
 
     def _cache_has(self, key: str) -> bool:
         now = time.time()
@@ -859,6 +924,8 @@ class LiveBettingBot(SportyBetLoginBot):
                 self.shared._bet_cache.append(ent)
         else:
             self._cache.append(ent)
+        # Once it is in bet cache, release any short-lived claim.
+        self._claim_release(key)
 
     def _skipped_cache_add(self, key: str, reason: str) -> None:
         ent = BetCacheEntry(key, time.time() + self.cfg.cache_ttl_seconds)
@@ -871,6 +938,8 @@ class LiveBettingBot(SportyBetLoginBot):
             "[Skip cache] %s — will not retry this fixture until cache TTL (same as bet cache).",
             reason,
         )
+        # Release any short-lived claim.
+        self._claim_release(key)
 
     def stake_per_match(self) -> float:
         """
@@ -918,13 +987,13 @@ class LiveBettingBot(SportyBetLoginBot):
         # in state.net_before because bet history settlement may lag).
         outstanding_loss = 0.0
         try:
-            group = f"{state.home}|{state.away}|{state.bet_tag}"
+            group = str(getattr(state, "match_group_key", "") or "")
             pending_src = (
                 [p for b in self.shared.bots for p in b.pending] if self.shared is not None else list(self.pending)
             )
             for p in pending_src:
                 try:
-                    if (p.match_group_key or "") != group:
+                    if str(p.match_group_key or "") != group:
                         continue
                     exp_ret = float(p.cashout_expected_return) if p.cashout_expected_return is not None else None
                     if exp_ret is not None and exp_ret >= 0:
@@ -956,6 +1025,11 @@ class LiveBettingBot(SportyBetLoginBot):
 
     def eligible_rows(self, rows: list[LiveListRow]) -> list[LiveListRow]:
         out: list[LiveListRow] = []
+        early = 0.0
+        try:
+            early = max(0.0, float(self.cfg.early_entry))
+        except Exception:
+            early = 0.0
         for r in rows:
             if r.league:
                 ex, matched = self._league_filter.should_exclude(r.league)
@@ -983,11 +1057,9 @@ class LiveBettingBot(SportyBetLoginBot):
             if (
                 self.cfg.bet_halftime
                 and (r.game_id or "").strip().upper() == "H1"
-                and minute_in_bet_window(
-                    r.minute,
-                    min_exclusive=self.cfg.ht_min_minute_exclusive,
-                    max_exclusive=self.cfg.ht_max_minute_exclusive,
-                )
+                and r.minute is not None
+                and float(r.minute) >= float(self.cfg.ht_min_minute_exclusive) - early
+                and float(r.minute) < float(self.cfg.ht_max_minute_exclusive)
             ):
                 bet_market = "1st Half - 1X2"
                 bet_tag = "HT"
@@ -995,10 +1067,11 @@ class LiveBettingBot(SportyBetLoginBot):
             else:
                 if not self.cfg.bet_fulltime:
                     continue
-                if not minute_in_bet_window(
-                    r.minute,
-                    min_exclusive=self.cfg.ft_min_minute_exclusive,
-                    max_exclusive=self.cfg.ft_max_minute_exclusive,
+                if r.minute is None:
+                    continue
+                if not (
+                    float(r.minute) >= float(self.cfg.ft_min_minute_exclusive) - early
+                    and float(r.minute) < float(self.cfg.ft_max_minute_exclusive)
                 ):
                     continue
             gap = abs(int(r.home_goals) - int(r.away_goals))
@@ -1041,6 +1114,13 @@ class LiveBettingBot(SportyBetLoginBot):
             # attach per-row bet metadata via element attribute (keeps LiveListRow minimal)
             setattr(r, "_bet_market_name", bet_market)
             setattr(r, "_bet_tag", bet_tag)
+            # Store the *real* window we must obey on match page (no early-entry here).
+            if bet_tag == "HT":
+                setattr(r, "_bet_min_exclusive", float(self.cfg.ht_min_minute_exclusive))
+                setattr(r, "_bet_max_exclusive", float(self.cfg.ht_max_minute_exclusive))
+            else:
+                setattr(r, "_bet_min_exclusive", float(self.cfg.ft_min_minute_exclusive))
+                setattr(r, "_bet_max_exclusive", float(self.cfg.ft_max_minute_exclusive))
             setattr(r, "_bet_cache_key", bet_key)
             out.append(r)
         # Prefer lower minute first (closer to end / window)
@@ -1097,12 +1177,41 @@ class LiveBettingBot(SportyBetLoginBot):
                         k2 = bh.result_cache_key(p.away, p.home)
                         wanted[k1] = p.selection
                         wanted[k2] = p.selection
-                slip.cashout_scan_and_execute(
-                    self.driver,
-                    wanted,
-                    logger=self.log,
-                    max_pages=5,
+                actions = slip.cashout_scan_and_execute_detailed(
+                    self.driver, wanted, logger=self.log, max_pages=5
                 )
+                if actions:
+                    # Immediately settle cashouts so incremental mode can advance trials and
+                    # avoid waiting for bet history to reflect the cashout.
+                    pending_src = (
+                        [p for b in self.shared.bots for p in b.pending]
+                        if self.shared is not None
+                        else list(self.pending)
+                    )
+                    for act in actions:
+                        for p in list(pending_src):
+                            try:
+                                if (
+                                    ((p.home == act.home and p.away == act.away) or (p.home == act.away and p.away == act.home))
+                                    and abs(float(p.stake) - float(act.stake)) < 0.01
+                                    and not bool(getattr(p, "cashout_applied", False))
+                                ):
+                                    # Remove from owner's pending list.
+                                    try:
+                                        if self.shared is not None:
+                                            for b in self.shared.bots:
+                                                if p in b.pending:
+                                                    b.pending.remove(p)
+                                                    b._apply_immediate_cashout(p, float(act.cashout_return))
+                                                    break
+                                        else:
+                                            if p in self.pending:
+                                                self.pending.remove(p)
+                                            self._apply_immediate_cashout(p, float(act.cashout_return))
+                                    except Exception:
+                                        pass
+                            except Exception:
+                                continue
             except Exception:
                 self.log.debug("cashout_scan_and_execute (per-bet) detail", exc_info=True)
 
@@ -1149,10 +1258,15 @@ class LiveBettingBot(SportyBetLoginBot):
             )
             bet_market = getattr(row, "_bet_market_name", "1X2")
             bet_key = getattr(row, "_bet_cache_key", row.match_key)
+            # Reserve this fixture before opening it so other threads don't race into the same match.
+            if not self._claim_try(bet_key, ttl_seconds=90.0):
+                continue
             ok = self._place_bet_sequence(row, sel, stake_amt, bet_market, bet_key)
             if ok:
                 placed += 1
                 self._cache_add(bet_key)
+            else:
+                self._claim_release(bet_key)
             random_human_pause(0.3, 2.0)
         return placed
 
@@ -1183,11 +1297,16 @@ class LiveBettingBot(SportyBetLoginBot):
             r = candidates[0]
             bet_market = getattr(r, "_bet_market_name", "1X2")
             bet_tag = getattr(r, "_bet_tag", "FT")
+            mgk = f"{r.match_key}|{str(bet_tag)}"
+            # Reserve the locked fixture immediately so other threads won't pick it too.
+            if not self._claim_try(mgk, ttl_seconds=300.0):
+                return 0
             self._winning = WinningMatchState(
                 home=r.home,
                 away=r.away,
                 bet_tag=str(bet_tag),
                 market_name=str(bet_market),
+                match_group_key=str(mgk),
                 profit_target=0.0,
             )
             self.log.info(
@@ -1243,22 +1362,32 @@ class LiveBettingBot(SportyBetLoginBot):
                 st.missing_live_count,
                 has_pending_for_locked,
             )
+            self._claim_release(str(st.match_group_key))
             self._winning = None
             return 0
         else:
             st.missing_live_count = 0
 
         sel = self._winning_selection_from_score(live_row.home_goals, live_row.away_goals)
+        sel_norm = (sel or "").strip().lower()
+        last_norm = (st.last_selection or "").strip().lower() if st.last_selection is not None else None
+
+        # Keep group key stable but refresh if somehow missing.
+        try:
+            if not getattr(st, "match_group_key", None):
+                st.match_group_key = f"{live_row.match_key}|{st.bet_tag}"
+        except Exception:
+            pass
 
         # Guard: if we already have a pending bet for this match + current winning selection,
         # do not place another identical bet (prevents repeated re-betting while score is unchanged).
         try:
-            group_key = f"{live_row.match_key}|{st.bet_tag}"
+            group_key = str(st.match_group_key)
             pending_src = (
                 [p for b in self.shared.bots for p in b.pending] if self.shared is not None else list(self.pending)
             )
             already_pending = any(
-                (p.match_group_key == group_key and (p.selection or "").strip().lower() == (sel or "").strip().lower())
+                (str(p.match_group_key or "") == group_key and (p.selection or "").strip().lower() == sel_norm)
                 for p in pending_src
             )
             if already_pending:
@@ -1270,13 +1399,20 @@ class LiveBettingBot(SportyBetLoginBot):
                     group_key,
                 )
                 st.last_selection = sel
+                st.selection_change_count = 0
                 return 0
         except Exception:
             # If this check fails for any reason, fall back to previous behavior.
             self.log.debug("[Winning] pending dedupe check detail", exc_info=True)
 
         # If we have a previous selection and it is no longer winning, cash out.
-        if st.last_selection is not None and st.last_selection != sel:
+        # Debounce to avoid cashing out on transient score/DOM glitches.
+        if st.last_selection is not None and last_norm is not None and last_norm != sel_norm:
+            st.selection_change_count = int(getattr(st, "selection_change_count", 0)) + 1
+        else:
+            st.selection_change_count = 0
+
+        if st.last_selection is not None and last_norm is not None and last_norm != sel_norm and st.selection_change_count >= 2:
             try:
                 # Disambiguate cashout by team + stake. If multiple cashouts exist for the same
                 # teams (e.g. repeated bets), this prevents cashing out the "new" bet by mistake.
@@ -1292,7 +1428,7 @@ class LiveBettingBot(SportyBetLoginBot):
                         if (
                             (p.home == st.home and p.away == st.away) or (p.home == st.away and p.away == st.home)
                         )
-                        and (p.selection or "").strip().lower() == (st.last_selection or "").strip().lower()
+                        and (p.selection or "").strip().lower() == last_norm
                     ]
                     if cand:
                         cand.sort(key=lambda x: float(x.placed_at or 0.0), reverse=True)
@@ -1331,11 +1467,42 @@ class LiveBettingBot(SportyBetLoginBot):
                                     continue
                     except Exception:
                         pass
+                    # Also immediately settle (remove pending + apply pnl) so the winning loop can
+                    # re-bet without being blocked by a lingering pending bet.
+                    try:
+                        pending_src3 = (
+                            [p for b in self.shared.bots for p in b.pending] if self.shared is not None else list(self.pending)
+                        )
+                        for act in actions:
+                            for p in list(pending_src3):
+                                try:
+                                    if (
+                                        ((p.home == act.home and p.away == act.away) or (p.home == act.away and p.away == act.home))
+                                        and abs(float(p.stake) - float(act.stake)) < 0.01
+                                        and not bool(getattr(p, "cashout_applied", False))
+                                    ):
+                                        if self.shared is not None:
+                                            for b in self.shared.bots:
+                                                if p in b.pending:
+                                                    b.pending.remove(p)
+                                                    b._apply_immediate_cashout(p, float(act.cashout_return))
+                                                    break
+                                        else:
+                                            if p in self.pending:
+                                                self.pending.remove(p)
+                                            self._apply_immediate_cashout(p, float(act.cashout_return))
+                                except Exception:
+                                    continue
+                    except Exception:
+                        pass
             except Exception:
                 self.log.debug("[Winning] cashout attempt detail", exc_info=True)
+            finally:
+                # Prevent repeated cashout attempts every cycle for the same flip.
+                st.selection_change_count = 0
 
         # Place/replace bet on current winning selection.
-        bet_key = f"{live_row.match_key}|{st.bet_tag}"
+        bet_key = str(st.match_group_key)
         stake_guess = self.stake_per_match()
         ok = self._place_winning_bet_sequence(live_row, sel, stake_guess, st.market_name, bet_key, st)
         if ok:
@@ -1381,6 +1548,16 @@ class LiveBettingBot(SportyBetLoginBot):
                     row.home,
                     row.away,
                 )
+                return False
+
+            # Early-entry: we may have opened the match before the real betting window starts.
+            # Wait for the on-page match clock to enter the configured window before reading odds.
+            if not self._wait_until_match_in_bet_window(row, timeout_s=240.0):
+                try:
+                    slip.cancel_all_betslips(self.driver, self.log)
+                except Exception:
+                    pass
+                self.go_live()
                 return False
 
             odd_val = slip.read_1x2_selection_odd(
@@ -1498,11 +1675,12 @@ class LiveBettingBot(SportyBetLoginBot):
                     check_after=now + self.cfg.result_wait_seconds,
                     selection=selection,
                     inc_trial=None,
-                    match_group_key=f"{row.match_key}|{state.bet_tag}",
+                    match_group_key=str(getattr(state, "match_group_key", f"{row.match_key}|{state.bet_tag}")),
                 )
             )
             state.last_selection = selection
             state.has_bet_before = True
+            state.selection_change_count = 0
             self.log.info(
                 "[Winning] Pending added %s vs %s sel=%s stake=%.2f | pending_now=%d",
                 row.home,
@@ -1550,6 +1728,74 @@ class LiveBettingBot(SportyBetLoginBot):
     @staticmethod
     def _norm_team(s: str) -> str:
         return " ".join((s or "").strip().lower().split())
+
+    _MATCH_TIME_MMSS_RE = re.compile(r"\|\s*(\d+)\s*:\s*(\d+)\s*$")
+
+    def _read_match_detail_minute(self) -> int | None:
+        """
+        Read the on-match-page clock from the header (e.g. "1st | 34:15").
+        Returns integer minute, or None if not available.
+        """
+        try:
+            time_el = self.driver.find_element(By.CSS_SELECTOR, "div.versus-title .time")
+            txt = (time_el.text or "").strip()
+        except Exception:
+            return None
+        if not txt:
+            return None
+        # Typical: "1st | 34:15" or "2nd | 89:10"
+        m = self._MATCH_TIME_MMSS_RE.search(txt)
+        if m:
+            try:
+                return int(m.group(1))
+            except Exception:
+                return None
+        # Fallback: try patterns like "89'" if present.
+        try:
+            m2 = re.search(r"(\d+)", txt)
+            if m2:
+                return int(m2.group(1))
+        except Exception:
+            pass
+        return None
+
+    def _wait_until_match_in_bet_window(self, row: LiveListRow, *, timeout_s: float = 180.0) -> bool:
+        """
+        If we entered early, wait on the match page until the *actual match clock*
+        is inside the configured window for this row.
+        """
+        try:
+            min_ex = float(getattr(row, "_bet_min_exclusive", self.cfg.ft_min_minute_exclusive))
+            max_ex = float(getattr(row, "_bet_max_exclusive", self.cfg.ft_max_minute_exclusive))
+        except Exception:
+            min_ex, max_ex = float(self.cfg.ft_min_minute_exclusive), float(self.cfg.ft_max_minute_exclusive)
+
+        # If live-list minute is already inside the real window, don't wait.
+        try:
+            if minute_in_bet_window(row.minute, min_exclusive=min_ex, max_exclusive=max_ex):
+                return True
+        except Exception:
+            pass
+
+        deadline = time.monotonic() + float(timeout_s)
+        last_seen: int | None = None
+        while time.monotonic() < deadline:
+            m = self._read_match_detail_minute()
+            if m is not None:
+                last_seen = m
+                if minute_in_bet_window(m, min_exclusive=min_ex, max_exclusive=max_ex):
+                    return True
+                # If we are already beyond max window, stop waiting.
+                if float(m) >= float(max_ex):
+                    break
+            time.sleep(1.0)
+        self.log.info(
+            "[Early entry] Match time not in window yet (last_seen=%s window=(%s,%s)); aborting this attempt.",
+            last_seen if last_seen is not None else "n/a",
+            min_ex,
+            max_ex,
+        )
+        return False
 
     def _find_live_list_click_target(self, home: str, away: str):
         """
@@ -1747,6 +1993,14 @@ class LiveBettingBot(SportyBetLoginBot):
                 )
             random_human_pause()
 
+            # Early-entry: wait until the on-page match clock enters the configured window.
+            if not self._wait_until_match_in_bet_window(row, timeout_s=240.0):
+                return self._fail_bet_flow(
+                    row,
+                    f"Match clock not in betting window yet for {row.home} vs {row.away}.",
+                    cache_key=cache_key,
+                )
+
             odd_val = slip.read_1x2_selection_odd(
                 self.driver,
                 selection,
@@ -1911,6 +2165,13 @@ class LiveBettingBot(SportyBetLoginBot):
 
     def _apply_settled_result(self, p: PendingBet, info: bh.SettledBetInfo) -> None:
         """Apply won/lost to balances (shared wallet if multi-threaded)."""
+        # If we already applied an immediate cashout PnL (from cashout card return),
+        # do not apply again when bet history eventually reflects the settlement.
+        try:
+            if bool(getattr(p, "cashout_applied", False)):
+                return
+        except Exception:
+            pass
         # SportyBet sometimes reports cashouts as "Won" but with total_return < stake.
         # Treat that as a cashout settlement (not a win), and keep PnL based on return-stake.
         is_cashout_settle = (
@@ -2046,6 +2307,151 @@ class LiveBettingBot(SportyBetLoginBot):
                 self.thread_id,
             )
 
+    def _apply_immediate_cashout(self, p: PendingBet, cashout_return: float) -> None:
+        """
+        Apply cashout PnL immediately from the cashout card:
+        pnl = cashout_return - stake.
+        This fixes incremental mode (advance trial / free pending) without waiting for bet history.
+        """
+        try:
+            if bool(getattr(p, "cashout_applied", False)):
+                return
+        except Exception:
+            pass
+        try:
+            ret = float(cashout_return)
+            stake = float(p.stake)
+        except Exception:
+            return
+        pnl = ret - stake
+
+        # Mark so bet-history settlement won't double-apply.
+        p.cashout_expected_return = ret
+        p.cashout_applied = True
+
+        # Winning-mode ledger: cashout is a real net PnL for the locked match.
+        try:
+            if self.cfg.winning and self._winning is not None:
+                if self._winning.home == p.home and self._winning.away == p.away:
+                    self._winning.net_before += float(pnl)
+        except Exception:
+            pass
+
+        # Loss pool: cashout with pnl<0 adds the shortfall.
+        if pnl < 0:
+            self._loss_pool_add(-float(pnl))
+
+        # Apply to balances exactly as recorded.
+        if self.shared is not None:
+            with self.shared.balance_lock:
+                self.shared.estimated_balance += pnl
+                self.shared.tracked_balance += pnl
+                self.shared.losses += 1
+                self.shared.cashout_settles += 1
+        else:
+            self.estimated_balance += pnl
+            self.tracked_balance += pnl
+        self.losses += 1
+        self.cashout_settles += 1
+
+        if self.cfg.incremental:
+            # Cashout means this trial did not win -> advance.
+            self._inc_trial_next = int(self._inc_trial_next) + 1
+
+        self.log.info(
+            "[Cashout immediate] stake=%.2f return=%.2f pnl=%.2f next_trial=%s spent_round=%.2f (thread=%s)",
+            stake,
+            ret,
+            pnl,
+            int(self._inc_trial_next) if self.cfg.incremental else "n/a",
+            float(self._inc_round_spent) if self.cfg.incremental else 0.0,
+            self.thread_id,
+        )
+
+    def _fail_pending_bet_history_resolution(self, p: PendingBet) -> None:
+        """Last resort when fuzzy search + optional DeepSeek could not settle a pending bet."""
+        self.log.error(
+            "[Bet history] Could not resolve settlement for %s vs %s after %d fuzzy attempts "
+            "(DeepSeek fallback failed, skipped, or rejected).",
+            p.home,
+            p.away,
+            BET_HISTORY_MAX_MISS_RETRIES,
+        )
+        if self.cfg.incremental:
+            self.log.warning(
+                "[Incremental] Resetting round — unresolved bet history (prevents wrong stake sizing)."
+            )
+            self._inc_reset_round()
+
+    def _try_deepseek_resolve_pending_bet(self, p: PendingBet, now: float) -> bool:
+        """
+        Scrape full bet-history snapshots and ask DeepSeek for the row index.
+        Returns True if pending was handled (settled, or re-queued as running/unknown).
+        """
+        try:
+            snapshots = bh.collect_bet_history_snapshots(
+                self.driver,
+                max_pages=self.cfg.bet_history_pages,
+                logger=self.log,
+            )
+        except Exception:
+            self.log.error("[Bet history DeepSeek] Snapshot scrape failed.", exc_info=True)
+            return False
+        if not snapshots:
+            self.log.warning("[Bet history DeepSeek] No rows in snapshot; cannot match.")
+            return False
+        try:
+            idx = deepseek_match_bet_history_index(
+                p.home,
+                p.away,
+                p.stake,
+                p.booking_code,
+                snapshots,
+                base_url=self.cfg.deepseek_base_url,
+                model=self.cfg.deepseek_model,
+                timeout_s=self.cfg.deepseek_timeout_s,
+                logger=self.log,
+            )
+        except Exception as e:
+            self.log.error("[Bet history DeepSeek] Matcher failed: %s", e, exc_info=True)
+            return False
+        if idx is None:
+            return False
+        snap = snapshots[idx]
+        if p.stake is not None and snap.get("stake") is not None:
+            try:
+                if abs(float(snap["stake"]) - float(p.stake)) > float(bh.STAKE_TOLERANCE) * 3:
+                    self.log.warning(
+                        "[Bet history DeepSeek] Rejecting pick idx=%s: stake %s vs pending %.2f",
+                        idx,
+                        snap.get("stake"),
+                        float(p.stake),
+                    )
+                    return False
+            except Exception:
+                pass
+        st = snap.get("status")
+        if st not in ("won", "lost", "running", "unknown"):
+            self.log.warning("[Bet history DeepSeek] Invalid status on snapshot: %r", st)
+            return False
+        info = bh.SettledBetInfo(
+            status=cast(Literal["won", "lost", "running", "unknown"], st),
+            stake=float(snap["stake"]) if snap.get("stake") is not None else None,
+            total_return=float(snap["total_return"]) if snap.get("total_return") is not None else None,
+            match_text=str(snap.get("match_text") or ""),
+        )
+        if info.status in ("running", "unknown"):
+            self.log.info(
+                "[Bet history DeepSeek] Row status=%s; re-queue pending (retry counter reset).",
+                info.status,
+            )
+            p.history_retries = 0
+            p.check_after = now + (120.0 if info.status == "running" else 180.0)
+            self.pending.append(p)
+            return True
+        self._apply_settled_result(p, info)
+        return True
+
     def process_due_pending(self) -> None:
         now = time.time()
         due = [p for p in self.pending if p.check_after <= now]
@@ -2124,11 +2530,26 @@ class LiveBettingBot(SportyBetLoginBot):
 
                 info = results.get(key)
                 if info is None:
-                    self.log.warning("Bet not found in history; re-queue in 180s")
-                    p.check_after = now + 180
                     p.history_retries += 1
-                    if p.history_retries < 15:
+                    if p.history_retries < BET_HISTORY_MAX_MISS_RETRIES:
+                        self.log.warning(
+                            "Bet not found in history; re-queue in 180s (retry %d/%d)",
+                            p.history_retries,
+                            BET_HISTORY_MAX_MISS_RETRIES,
+                        )
+                        p.check_after = now + 180
                         self.pending.append(p)
+                        self.go_live()
+                        return
+                    self.log.warning(
+                        "[Bet history] No fuzzy match after %d attempts; trying DeepSeek snapshot fallback.",
+                        BET_HISTORY_MAX_MISS_RETRIES,
+                    )
+                    if self.cfg.deepseek_enabled and self._try_deepseek_resolve_pending_bet(p, now):
+                        bh.read_header_balance(self.driver, self.log)
+                        self.go_live()
+                        return
+                    self._fail_pending_bet_history_resolution(p)
                     self.go_live()
                     return
 
@@ -2168,11 +2589,26 @@ class LiveBettingBot(SportyBetLoginBot):
             return
 
         if info is None:
-            self.log.warning("Bet not found in history; re-queue in 180s")
-            p.check_after = now + 180
             p.history_retries += 1
-            if p.history_retries < 15:
+            if p.history_retries < BET_HISTORY_MAX_MISS_RETRIES:
+                self.log.warning(
+                    "Bet not found in history; re-queue in 180s (retry %d/%d)",
+                    p.history_retries,
+                    BET_HISTORY_MAX_MISS_RETRIES,
+                )
+                p.check_after = now + 180
                 self.pending.append(p)
+                self.go_live()
+                return
+            self.log.warning(
+                "[Bet history] No fuzzy match after %d attempts; trying DeepSeek snapshot fallback.",
+                BET_HISTORY_MAX_MISS_RETRIES,
+            )
+            if self.cfg.deepseek_enabled and self._try_deepseek_resolve_pending_bet(p, now):
+                bh.read_header_balance(self.driver, self.log)
+                self.go_live()
+                return
+            self._fail_pending_bet_history_resolution(p)
             self.go_live()
             return
 
@@ -2205,6 +2641,38 @@ class LiveBettingBot(SportyBetLoginBot):
     def _fmt_signed_money(value: float) -> str:
         sign = "+" if value >= 0 else ""
         return f"{sign}{value:.2f}"
+
+    def _pending_status_detail_lines(self) -> list[str]:
+        """One log line per pending bet with explicit team names (home/away + match string)."""
+        out: list[str] = []
+        try:
+            if self.shared is not None:
+                n = 0
+                for b in self.shared.bots:
+                    for p in b.pending:
+                        n += 1
+                        code = (p.booking_code or "").strip() or "—"
+                        trial = f" trial={p.inc_trial}" if p.inc_trial is not None else ""
+                        home = (p.home or "").strip() or "?"
+                        away = (p.away or "").strip() or "?"
+                        out.append(
+                            f"  pending_match #{n}        = [thread {b.thread_id}] "
+                            f"home={home!r} away={away!r} match=\"{home} vs {away}\" "
+                            f"| sel={p.selection} stake={p.stake:.2f} code={code}{trial}"
+                        )
+            else:
+                for n, p in enumerate(self.pending, start=1):
+                    code = (p.booking_code or "").strip() or "—"
+                    trial = f" trial={p.inc_trial}" if p.inc_trial is not None else ""
+                    home = (p.home or "").strip() or "?"
+                    away = (p.away or "").strip() or "?"
+                    out.append(
+                        f"  pending_match #{n}        = home={home!r} away={away!r} "
+                        f"match=\"{home} vs {away}\" | sel={p.selection} stake={p.stake:.2f} code={code}{trial}"
+                    )
+        except Exception:
+            return ["  pending (detail)        = (error listing pending)"]
+        return out
 
     def log_status(self, actual_balance: float | None = None) -> None:
         est = self._effective_estimated_balance()
@@ -2275,6 +2743,9 @@ class LiveBettingBot(SportyBetLoginBot):
                 f"  win_rate               = {wr_s}  (wins / settled)",
                 "  -- pending / site --------------------------------------------------------",
                 f"  pending_bets           = {pending_pool}",
+            ]
+            + (self._pending_status_detail_lines() if pending_pool > 0 else [])
+            + [
                 f"  site_balance           = {site}",
                 "[STATUS] ------------------------------------------------------------------",
             ]
@@ -2282,7 +2753,8 @@ class LiveBettingBot(SportyBetLoginBot):
         self.log.info("%s", block)
 
     def step(self) -> None:
-        if self.shared is not None:
+        # Shared-browser mode: serialize all Selenium interactions via shared.ui_lock.
+        if self.shared is not None and not bool(self.cfg.each_thread_per_browser):
             with self.shared.ui_lock:
                 # Close any blocking popup that can appear asynchronously.
                 try:
@@ -2323,20 +2795,44 @@ class LiveBettingBot(SportyBetLoginBot):
                             k2 = bh.result_cache_key(p.away, p.home)
                             wanted[k1] = p.selection
                             wanted[k2] = p.selection
-                    c = slip.cashout_scan_and_execute(
-                        self.driver,
-                        wanted,
-                        logger=self.log,
-                        max_pages=5,
+                    actions = slip.cashout_scan_and_execute_detailed(
+                        self.driver, wanted, logger=self.log, max_pages=5
                     )
-                    if c:
-                        self.log.info("[Cashout] Completed: confirms=%d", c)
+                    if actions:
+                        self.log.info("[Cashout] Completed: actions=%d", len(actions))
+                        # Apply immediate cashout settlement so incremental + winning do not stall.
+                        pending_src = (
+                            [p for b in self.shared.bots for p in b.pending]
+                            if self.shared is not None
+                            else list(self.pending)
+                        )
+                        for act in actions:
+                            for p in list(pending_src):
+                                try:
+                                    if (
+                                        ((p.home == act.home and p.away == act.away) or (p.home == act.away and p.away == act.home))
+                                        and abs(float(p.stake) - float(act.stake)) < 0.01
+                                        and not bool(getattr(p, "cashout_applied", False))
+                                    ):
+                                        if self.shared is not None:
+                                            for b in self.shared.bots:
+                                                if p in b.pending:
+                                                    b.pending.remove(p)
+                                                    b._apply_immediate_cashout(p, float(act.cashout_return))
+                                                    break
+                                        else:
+                                            if p in self.pending:
+                                                self.pending.remove(p)
+                                            self._apply_immediate_cashout(p, float(act.cashout_return))
+                                except Exception:
+                                    continue
                     time.sleep(0.25)
                 except Exception:
                     self.log.debug("cashout_scan_and_execute detail", exc_info=True)
                 self.try_place_bets()
         else:
-            # Single-threaded: OK to check results outside any global lock.
+            # Single-threaded OR multi-threaded with one browser per thread:
+            # OK to run Selenium without shared.ui_lock.
             try:
                 slip.dismiss_winning_popup(self.driver, self.log)
             except Exception:
@@ -2360,14 +2856,25 @@ class LiveBettingBot(SportyBetLoginBot):
                     k2 = bh.result_cache_key(p.away, p.home)
                     wanted[k1] = p.selection
                     wanted[k2] = p.selection
-                c = slip.cashout_scan_and_execute(
-                    self.driver,
-                    wanted,
-                    logger=self.log,
-                    max_pages=5,
+                actions = slip.cashout_scan_and_execute_detailed(
+                    self.driver, wanted, logger=self.log, max_pages=5
                 )
-                if c:
-                    self.log.info("[Cashout] Completed: confirms=%d", c)
+                if actions:
+                    self.log.info("[Cashout] Completed: actions=%d", len(actions))
+                    pending_src = list(self.pending)
+                    for act in actions:
+                        for p in list(pending_src):
+                            try:
+                                if (
+                                    ((p.home == act.home and p.away == act.away) or (p.home == act.away and p.away == act.home))
+                                    and abs(float(p.stake) - float(act.stake)) < 0.01
+                                    and not bool(getattr(p, "cashout_applied", False))
+                                ):
+                                    if p in self.pending:
+                                        self.pending.remove(p)
+                                    self._apply_immediate_cashout(p, float(act.cashout_return))
+                            except Exception:
+                                continue
                 time.sleep(0.25)
             except Exception:
                 self.log.debug("cashout_scan_and_execute detail", exc_info=True)
@@ -2386,8 +2893,9 @@ class LiveBettingBot(SportyBetLoginBot):
             self.thread_id,
             cfgd,
         )
-        # Shared-browser mode: login is bootstrapped once in run_threaded_live_bots().
-        if self.shared is None:
+        # Shared-browser mode: login is bootstrapped once in run_threaded_live_bots(),
+        # unless each thread owns its own browser.
+        if self.shared is None or bool(self.cfg.each_thread_per_browser):
             self.login()
             time.sleep(4)
         try:
@@ -2399,7 +2907,9 @@ class LiveBettingBot(SportyBetLoginBot):
 
 def run_threaded_live_bots(cfg: LiveBettingConfig) -> None:
     """
-    Run N parallel LiveBettingBot instances sharing ONE Chrome session.
+    Run N parallel LiveBettingBot instances.
+    - default: threads share ONE Chrome session (serialized UI via shared.ui_lock)
+    - each_thread_per_browser: each thread opens its own Chrome session (no shared UI lock)
     Uses SharedBettingContext for: live-list+bet serialization, bet-history batch cache,
     shared fixture bet/skip cache, shared wallet balances.
     """
@@ -2411,24 +2921,29 @@ def run_threaded_live_bots(cfg: LiveBettingConfig) -> None:
     shared = SharedBettingContext(cfg)
     threads: list[threading.Thread] = []
 
-    # Bootstrap: create one bot to open the shared browser and login once.
-    bootstrap = LiveBettingBot(cfg, shared=shared, thread_id=0, clear_log_on_start=True)
-    with shared.ui_lock:
-        bootstrap.login()
-        shared.driver = bootstrap.driver
+    # Bootstrap shared-driver only when NOT using one-browser-per-thread.
+    if not bool(cfg.each_thread_per_browser):
+        bootstrap = LiveBettingBot(cfg, shared=shared, thread_id=0, clear_log_on_start=True)
+        with shared.ui_lock:
+            bootstrap.login()
+            shared.driver = bootstrap.driver
+            shared.driver_ready.set()
+    else:
+        # No shared driver; threads will open/login their own browsers.
         shared.driver_ready.set()
 
     def worker(tid: int) -> None:
-        # Each worker has its own incremental state + pending list, but shares the driver.
+        # Each worker has its own incremental state + pending list.
         bot = LiveBettingBot(
             cfg,
             shared=shared,
             thread_id=tid,
-            clear_log_on_start=False,
+            clear_log_on_start=(tid == 0),
         )
         shared.driver_ready.wait()
-        bot.driver = shared.driver  # type: ignore[assignment]
-        bot.logged_in = True
+        if not bool(cfg.each_thread_per_browser):
+            bot.driver = shared.driver  # type: ignore[assignment]
+            bot.logged_in = True
         bot.run_forever()
 
     for tid in range(n):

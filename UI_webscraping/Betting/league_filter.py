@@ -167,6 +167,127 @@ def deepseek_map_leagues(
     return mapped
 
 
+def deepseek_match_bet_history_index(
+    home: str,
+    away: str,
+    stake: float | None,
+    booking_code: str | None,
+    snapshots: list[dict],
+    *,
+    base_url: str | None = None,
+    model: str | None = None,
+    timeout_s: float = 35.0,
+    api_key: str | None = None,
+    logger: logging.Logger | None = None,
+) -> int | None:
+    """
+    Given scraped bet-history rows (with stable 0-based index), ask DeepSeek which index
+    corresponds to the pending bet. Returns that index, or None if no confident match.
+    """
+    log = logger or logging.getLogger(__name__)
+    api_key = api_key or _load_deepseek_api_key()
+    if not api_key:
+        raise ValueError("DEEPSEEK_API_KEY is missing (set it in .env).")
+    base_url = (base_url or _load_deepseek_base_url()).rstrip("/")
+    model = (model or _load_deepseek_model()).strip()
+    if not snapshots:
+        return None
+
+    # Keep prompt size reasonable (newest pages are lower page numbers in our scan order).
+    max_rows = 250
+    rows = snapshots[:max_rows]
+    if len(snapshots) > max_rows:
+        log.warning(
+            "[Bet history DeepSeek] Truncating snapshots from %d to %d rows for the prompt.",
+            len(snapshots),
+            max_rows,
+        )
+
+    target = {
+        "home_team": (home or "").strip(),
+        "away_team": (away or "").strip(),
+        "stake": stake,
+        "booking_code": (booking_code or "").strip() or None,
+    }
+    payload = {
+        "model": model,
+        "stream": False,
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You match a user's pending sports bet to one row in their bet history. "
+                    "Output MUST be a single JSON object only, no markdown. "
+                    'Schema: {"picked_index": <integer 0-based index into the provided list>, '
+                    'or null if none of the rows is clearly the same bet}. '
+                    "Use team names, stake amount, and booking code when present. "
+                    "Minor spelling/abbreviation differences are OK for team names."
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    "Pending bet to find:\n"
+                    + json.dumps(target, ensure_ascii=False)
+                    + "\n\nBet history rows (each has index, page, match_text, status, stake, total_return):\n"
+                    + json.dumps(rows, ensure_ascii=False)
+                ),
+            },
+        ],
+    }
+
+    endpoint = f"{base_url}/chat/completions"
+    req = request.Request(
+        url=endpoint,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        },
+        method="POST",
+    )
+
+    log.info(
+        "[Bet history DeepSeek] Match request: model=%s rows=%d target=%s vs %s",
+        model,
+        len(rows),
+        target["home_team"],
+        target["away_team"],
+    )
+    with request.urlopen(req, timeout=float(timeout_s)) as resp:
+        raw = resp.read().decode("utf-8", errors="replace")
+    log.debug("[Bet history DeepSeek] Raw response (first 800 chars): %r", raw[:800])
+    data = json.loads(raw)
+    content = (
+        (((data.get("choices") or [{}])[0]).get("message") or {}).get("content") or ""
+    )
+    js = _extract_json_object(content)
+    if not js:
+        log.warning("[Bet history DeepSeek] No JSON object in assistant content.")
+        return None
+    obj = json.loads(js)
+    if not isinstance(obj, dict):
+        return None
+    picked = obj.get("picked_index")
+    if picked is None:
+        log.info("[Bet history DeepSeek] Model returned picked_index=null (no match).")
+        return None
+    try:
+        idx = int(picked)
+    except Exception:
+        log.warning("[Bet history DeepSeek] Invalid picked_index: %r", picked)
+        return None
+    if idx < 0 or idx >= len(snapshots):
+        log.warning(
+            "[Bet history DeepSeek] picked_index %d out of range (snapshots=%d).",
+            idx,
+            len(snapshots),
+        )
+        return None
+    log.info("[Bet history DeepSeek] Picked index=%d match_text=%r", idx, snapshots[idx].get("match_text"))
+    return idx
+
+
 @dataclass
 class LeagueFilter:
     cache_path: str
