@@ -11,7 +11,7 @@ if __name__ == "__main__":
     sport = "football"
     url = f"https://www.sportybet.com/ng/sport/{sport}/upcoming?time=0"
     markets = SPORT_MARKETS[sport]
-    num_threads = 1  # Number of concurrent browsers/scrapers
+    num_threads = 3  # Number of concurrent browsers/scrapers
 
     def _worker(idx: int):
         s = MarketScraper(url, markets)
